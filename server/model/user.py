@@ -57,7 +57,7 @@ def is_valid_email(email):
     return re.match(email_regex, email)
 
 
-def insert_users_data(fname, lname, artist_name, verified, email, password, gender):
+def insert_users_data(fname, lname, artist_name, email, password, gender):
     """
     Insert data into the users table.
     """
@@ -65,10 +65,7 @@ def insert_users_data(fname, lname, artist_name, verified, email, password, gend
 
     current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     password = hash_password(password)
-    if verified == 'N' or verified == 'NO':
-        verified = 'N'
-    elif verified == 'Y' or verified == 'YES':
-        verified = 'Y'
+    verified = 'N'
 
     if gender == 'male':
         gender = 'M'
