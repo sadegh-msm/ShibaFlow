@@ -1,16 +1,9 @@
-import os
-import logging
-
-import dotenv
 from flask import Flask, request, jsonify
 from waitress import serve
 from model import user
+from configs import config
 
 app = Flask(__name__)
-
-dotenv.load_dotenv('.env')
-port = os.getenv("PORT")
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 
 @app.route("/healthz", methods=['GET'])
@@ -21,7 +14,7 @@ def healthz():
 @app.route("/register", methods=['POST'])
 def register_user():
     user_info = request.form.to_dict()
-    logging.info('user requested sign in', user_info)
+    config.logging.info('user requested sign in', user_info)
 
     exist = user.user_exists(user_info['artist_name'])
 
@@ -79,5 +72,5 @@ def get_music():
 
 if __name__ == "__main__":
     print("starting server")
-    print("server is started on port:", port)
-    serve(app, host="0.0.0.0", port=port)
+    print("server is started on port:", config.port)
+    serve(app, host="0.0.0.0", port=config.port)
