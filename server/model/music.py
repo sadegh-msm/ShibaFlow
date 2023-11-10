@@ -19,7 +19,7 @@ CONSTRAINT fk_users
 );"""
 
 
-def connect_to_database(database_name='./db/Flow.db'):
+def connect_to_database(database_name='./model/db/Flow.db'):
     """
     Connect to the SQLite database and return the connection and cursor.
     """

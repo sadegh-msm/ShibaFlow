@@ -16,7 +16,7 @@ joining_date DATE
 );"""
 
 
-def connect_to_database(database_name='./db/Flow.db'):
+def connect_to_database(database_name='./model/db/Flow.db'):
     """
     Connect to the SQLite database and return the connection and cursor.
     """
@@ -99,3 +99,29 @@ def drop_user_table():
     cursor.execute('DROP TABLE IF EXISTS users')
 
     close_connection(conn)
+
+
+def check_user(artist_name, password):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT password FROM users WHERE artist_name = ?', (artist_name,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    password = hash_password(password)
+    if user and user[0] == password:  # Replace 5 with the index of the password column in your table
+        return True
+    else:
+        return False
+
+
+def user_exists(artist_name):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM users WHERE artist_name = ?', (artist_name,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user is not None
