@@ -41,7 +41,7 @@ def register_user():
 @app.route("/login", methods=['POST'])
 def login_user():
     user_info = request.form.to_dict()
-    logging.info('user requested login', user_info)
+    config.logging.info('user requested login', user_info)
 
     ok = user.check_user(user_info['artist_name'], user_info['password'])
     if ok:
