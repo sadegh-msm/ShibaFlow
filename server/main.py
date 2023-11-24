@@ -1,5 +1,5 @@
 import binascii
-
+import logging.config
 from flask import Flask, request, jsonify
 from waitress import serve
 from model import user, music
@@ -7,17 +7,22 @@ from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
+
+logger.setLevel(logging.NOTSET)
 
 
 @app.route("/healthz", methods=['GET'])
 def healthz():
+    logger.info("called")
     return "ok"
 
 
 @app.route("/register", methods=['POST'])
 def register_user():
     user_info = request.form.to_dict()
-    config.logging.info('user requested sign in', user_info)
+    logger.info('user requested sign in', user_info)
 
     exist = user.user_exists(user_info['artist_name'])
 
@@ -44,7 +49,7 @@ def register_user():
 @app.route("/login", methods=['POST'])
 def login_user():
     user_info = request.form.to_dict()
-    config.logging.info('user requested login', user_info)
+    logger.info('user requested login', user_info)
 
     ok = user.check_user(user_info['artist_name'], user_info['password'])
     if ok:
@@ -57,21 +62,21 @@ def login_user():
 def new_song():
     song_info = request.form.to_dict()
     data = request.files.to_dict()
-    config.logging.info('user requested new song', song_info)
+    logger.info('user requested new song', song_info)
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
         music_name = song_info['title'] + '.mp3'
         cover_name = song_info['title'] + '.jpg'
-        config.logging.info('uploading music to s3')
+        logger.info('uploading music to s3')
         arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
                        data['music'], music_name)
-        config.logging.info('finished uploading music to s3')
+        logger.info('finished uploading music to s3')
 
-        config.logging.info('uploading cover to s3')
+        logger.info('uploading cover to s3')
         arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket,
                        data['cover'], cover_name)
-        config.logging.info('finished uploading cover to s3')
+        logger.info('finished uploading cover to s3')
 
         song_id = music.insert_musics_data(song_info['title'], song_info['album_name'], music_name,
                                            cover_name, song_info['genre'], song_info['duration'],
@@ -96,7 +101,7 @@ def new_song():
 @app.route("/song", methods=['GET'])
 def get_song():
     song_info = request.form.to_dict()
-    config.logging.info('user requested song', song_info)
+    logger.info('user requested song', song_info)
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
@@ -105,16 +110,18 @@ def get_song():
             music_name = song_info['title'] + '.mp3'
             cover_name = song_info['title'] + '.jpg'
 
-            config.logging.info('downloading music from s3')
-            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name, 'music')
-            config.logging.info('finished downloading music from s3')
+            logger.info('downloading music from s3')
+            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name,
+                             'music')
+            logger.info('finished downloading music from s3')
 
-            config.logging.info('downloading cover from s3')
-            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name, 'cover')
-            config.logging.info('finished downloading cover from s3')
+            logger.info('downloading cover from s3')
+            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name,
+                             'cover')
+            logger.info('finished downloading cover from s3')
 
-            song_file = open('./Flows/'+music_name, 'rb')
-            cover_file = open('./Cover_flows/'+cover_name, 'rb')
+            song_file = open('./Flows/' + music_name, 'rb')
+            cover_file = open('./Cover_flows/' + cover_name, 'rb')
             song_hex = binascii.hexlify(song_file.read())
             cover_hex = binascii.hexlify(cover_file.read())
             response_data = {
@@ -145,6 +152,6 @@ def report_song():
 
 
 if __name__ == "__main__":
-    print("starting server")
-    print("server is started on port:", config.port)
+    logger.info("starting server")
+    logger.info("server is started on port:" + config.port)
     serve(app, host="0.0.0.0", port=config.port)
