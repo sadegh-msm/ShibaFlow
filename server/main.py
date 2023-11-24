@@ -153,6 +153,24 @@ def get_song():
         return jsonify({'error': 'artist name or password is wrong'}), 401
 
 
+@app.route("/allsongs", methods=['GET'])
+def get_all_songs():
+    song_info = request.form.to_dict()
+    logger.info('user requested all songs', song_info)
+
+    songs = music.get_all_musics()
+    if songs:
+        response_data = {
+            'message': 'songs found',
+            'songs_info': songs
+        }
+        logger.info('songs found', song_info)
+        return jsonify(response_data), 200
+    else:
+        logger.info('songs not found', song_info)
+        return jsonify({'error': 'songs not found'}), 404
+
+
 @app.route("/like", methods=['GET'])
 def like_song():
     pass

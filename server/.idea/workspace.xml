@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="fix logging">
+    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="add logs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/db/Flow.db" beforeDir="false" afterPath="$PROJECT_DIR$/model/db/Flow.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/music.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -196,7 +198,11 @@
       <workItem from="1700820126903" duration="12112000" />
       <workItem from="1700834111287" duration="513000" />
       <workItem from="1700835890478" duration="1519000" />
-      <workItem from="1700839953069" duration="479000" />
+      <workItem from="1700839953069" duration="501000" />
+      <workItem from="1700840505262" duration="168000" />
+      <workItem from="1700842307086" duration="889000" />
+      <workItem from="1700846211562" duration="52000" />
+      <workItem from="1700846280695" duration="825000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>
@@ -247,7 +253,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700837347571</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="add logs">
+      <created>1700840448070</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1700840448070</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -260,13 +273,14 @@
     <MESSAGE value="add requirement" />
     <MESSAGE value="change files" />
     <MESSAGE value="fix logging" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix logging" />
+    <MESSAGE value="add logs" />
+    <option name="LAST_COMMIT_MESSAGE" value="add logs" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/server$model.coverage" NAME="model Coverage Results" MODIFIED="1699426111834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/server$pip3_9.coverage" NAME="pip3.9 Coverage Results" MODIFIED="1699372944744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/bin" />
     <SUITE FILE_PATH="coverage/server$user.coverage" NAME="user Coverage Results" MODIFIED="1699649246897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
     <SUITE FILE_PATH="coverage/server$config.coverage" NAME="config Coverage Results" MODIFIED="1699650313415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/configs" />
-    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1700837290743" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1700847105729" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

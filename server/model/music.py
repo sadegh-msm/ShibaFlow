@@ -62,7 +62,8 @@ def insert_musics_data(title, album_name, file_path, cover_path, genre, duration
 
     close_connection(conn)
 
-    return find_music_by_title(title)[0]['music_id']
+    return find_music_by_title(title)[0][0]
+
 
 
 def update_music_data(title, album_name, genre, music_id):
@@ -173,6 +174,17 @@ def get_musics_data(title, album_name, artist_name):
         'SELECT * FROM musics WHERE title = ? AND album_name = ? AND publisher_id = ?',
         music)
     result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None
+
+
+def get_all_musics():
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics')
+    result = cursor.fetchall()
 
     close_connection(conn)
 
