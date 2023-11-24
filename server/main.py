@@ -173,19 +173,40 @@ def get_all_songs():
 
 @app.route("/songbyid", methods=['GET'])
 def get_music_by_id():
-    song_info = request.form.to_dict()
-    logger.info('user requested song by id', song_info)
+    song_id = request.args.get('id')
+    logger.info('user requested song by id', song_id)
 
-    song = music.find_music_by_id(song_info['music_id'])
+    song = music.find_music_by_id(song_id)
     if song:
+        music_name = song[1] + '.mp3'
+        cover_name = song[1] + '.jpg'
+        logger.info('downloading music from s3')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name, 'music')
+        logger.info('finished downloading music from s3')
+
+        logger.info('downloading cover from s3')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name, 'cover')
+        logger.info('finished downloading cover from s3')
+
+        song_file = open('./Flows/' + music_name, 'rb')
+        cover_file = open('./Cover_flows/' + cover_name, 'rb')
+        song_hex = binascii.hexlify(song_file.read())
+        cover_hex = binascii.hexlify(cover_file.read())
+
         response_data = {
             'message': 'song found',
-            'song_info': song
+            'song_info': {
+                    'title': song[1],
+                    'song': song_hex.decode('utf-8'),
+                    'cover': cover_hex.decode('utf-8'),
+                    'album_name': song[3],
+                    'artist_name': user.find_artist_name_by_id(song[2]),
+                }
         }
-        logger.info('song found', song_info)
+        logger.info('song found', song)
         return jsonify(response_data), 200
     else:
-        logger.info('song not found', song_info)
+        logger.info('song not found', song)
         return jsonify({'error': 'song not found'}), 404
 
 
