@@ -27,6 +27,7 @@ def register_user():
     exist = user.user_exists(user_info['artist_name'])
 
     if exist:
+        logger.info('user already exist', user_info)
         return jsonify({'error': "user with this artist name already exist"}), 409
 
     ok = user.insert_users_data(user_info['fname'], user_info['lname'], user_info['artist_name'], user_info['email'],
@@ -41,8 +42,10 @@ def register_user():
                 'email': user_info['email'],
             }
         }
+        logger.info('user created', user_info)
         return jsonify(response_data), 201
     else:
+        logger.info('user failed to create', user_info)
         return jsonify({'error': "bad request"}), 400
 
 
@@ -53,8 +56,10 @@ def login_user():
 
     ok = user.check_user(user_info['artist_name'], user_info['password'])
     if ok:
+        logger.info('user logged in', user_info)
         return jsonify({'ok': 'logged in successfully'}), 200
     else:
+        logger.info('user failed to login', user_info)
         return jsonify({'error': 'artist name or password is wrong'}), 401
 
 
@@ -93,8 +98,12 @@ def new_song():
                     'artist_name': song_info['artist_name'],
                 }
             }
+            logger.info('new song added', song_info)
             return jsonify(response_data), 201
+        else:
+            return jsonify({'error': 'cant add music'}), 400
     else:
+        logger.info('username or password is incorrect', song_info)
         return jsonify({'error': 'artist name or password is wrong'}), 401
 
 
@@ -134,10 +143,13 @@ def get_song():
                     'artist_name': song_info['artist_name'],
                 }
             }
+            logger.info('song found', song_info)
             return jsonify(response_data), 200
         else:
+            logger.info('song not found', song_info)
             return jsonify({'error': 'song not found'}), 404
     else:
+        logger.info('username or password is incorrect', song_info)
         return jsonify({'error': 'artist name or password is wrong'}), 401
 
 
