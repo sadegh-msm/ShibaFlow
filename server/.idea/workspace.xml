@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="fix bugs and add functionality to s3">
+    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cover_flows/sweater weather.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Flows/sweater weather.mp3" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -193,6 +195,7 @@
       <workItem from="1699684831778" duration="2172000" />
       <workItem from="1700817957022" duration="1871000" />
       <workItem from="1700820126903" duration="12112000" />
+      <workItem from="1700834111287" duration="299000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>
@@ -215,7 +218,21 @@
       <option name="project" value="LOCAL" />
       <updated>1700833713636</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="add requirement">
+      <created>1700834210765</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1700834210765</updated>
+    </task>
+    <task id="LOCAL-00005" summary="change files">
+      <created>1700834372102</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1700834372102</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,7 +242,9 @@
     <MESSAGE value="add database logic" />
     <MESSAGE value="add object storage" />
     <MESSAGE value="fix bugs and add functionality to s3" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix bugs and add functionality to s3" />
+    <MESSAGE value="add requirement" />
+    <MESSAGE value="change files" />
+    <option name="LAST_COMMIT_MESSAGE" value="change files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/server$model.coverage" NAME="model Coverage Results" MODIFIED="1699426111834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
