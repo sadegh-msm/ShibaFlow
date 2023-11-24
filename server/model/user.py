@@ -70,7 +70,7 @@ def insert_users_data(fname, lname, artist_name, email, password, gender):
     if gender == 'male':
         gender = 'M'
     elif gender == 'female':
-        gender = 'Y'
+        gender = 'F'
 
     ok = is_valid_email(email)
     if ok:
