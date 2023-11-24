@@ -125,3 +125,36 @@ def user_exists(artist_name):
     close_connection(conn)
 
     return user is not None
+
+
+def find_user_by_artist_name(artist_name):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM users WHERE artist_name = ?', (artist_name,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user if user else None
+
+
+def find_user_id_by_artist_name(artist_name):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT user_id FROM users WHERE artist_name = ?', (artist_name,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user[0] if user else None
+
+
+def find_user_by_email(email):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user if user else None

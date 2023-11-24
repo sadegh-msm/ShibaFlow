@@ -64,9 +64,8 @@ def like_song():
 def report_song():
     pass
 
-
 @app.route("/song", methods=['GET'])
-def get_music():
+def get_song():
     pass
 
 

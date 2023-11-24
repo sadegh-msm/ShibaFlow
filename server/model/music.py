@@ -10,7 +10,7 @@ file_path VARCHAR(100),
 cover_path VARCHAR(100), 
 genre VARCHAR(20), 
 likes INTEGER, 
-reports INTEGER,
+reports INTEGER, 
 duration INTEGER, 
 release_date DATE, 
 CONSTRAINT fk_users 
@@ -76,12 +76,57 @@ def drop_music_table():
     close_connection(conn)
 
 
-def find_user_id_by_artist_name(artist_name):
+def find_music_by_id(music_id):
     conn, cursor = connect_to_database()
 
-    cursor.execute('SELECT user_id FROM users WHERE artist_name = ?', (artist_name,))
+    cursor.execute('SELECT * FROM musics WHERE music_id = ?', (music_id,))
     result = cursor.fetchone()
 
     close_connection(conn)
 
-    return result[0] if result else None
+    return result if result else None
+
+
+def find_music_by_title(title):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE title = ?', (title,))
+    result = cursor.fetchall()
+
+    close_connection(conn)
+
+    return result if result else None
+
+
+def find_music_by_genre(genre):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE genre = ?', (genre,))
+    result = cursor.fetchall()
+
+    close_connection(conn)
+
+    return result if result else None
+
+
+def find_music_by_album_name(album_name):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE album_name = ?', (album_name,))
+    result = cursor.fetchall()
+
+    close_connection(conn)
+
+    return result if result else None
+
+
+def find_music_by_publisher_id(publisher_id):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE publisher_id = ?', (publisher_id,))
+    result = cursor.fetchall()
+
+    close_connection(conn)
+
+    return result if result else None
+
