@@ -1,6 +1,8 @@
 import sqlite3
 from datetime import datetime
 
+from model.user import find_user_id_by_artist_name
+
 create_musics_table_command = """CREATE TABLE musics ( 
 music_id INTEGER PRIMARY KEY AUTOINCREMENT, 
 title VARCHAR(50), 
@@ -59,6 +61,37 @@ def insert_musics_data(title, album_name, file_path, cover_path, genre, duration
         music)
 
     close_connection(conn)
+
+    return find_music_by_title(title)[0]
+
+
+def update_music_data(title, album_name, genre, music_id):
+    """
+    Insert data into the musics table.
+    """
+    conn, cursor = connect_to_database()
+
+    music = [title, album_name, genre, music_id]
+    cursor.execute('UPDATE musics SET title = ?, album_name = ?, genre = ? WHERE music_id = ?', music)
+
+    close_connection(conn)
+
+
+def check_music_exist(title, album_name, genre, duration, artist_name):
+    """
+    Insert data into the musics table.
+    """
+    conn, cursor = connect_to_database()
+
+    publisher_id = find_user_id_by_artist_name(artist_name)
+    music = [title, album_name, genre, duration, publisher_id]
+    cursor.execute(
+        'SELECT * FROM musics WHERE title = ?, album_name = ?, genre = ?, duration = ? WHERE publisher_id = ?', music)
+    result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None
 
 
 def delete_music_by_id(music_id):
@@ -130,3 +163,17 @@ def find_music_by_publisher_id(publisher_id):
 
     return result if result else None
 
+
+def get_musics_data(title, album_name, genre, duration, artist_name):
+    conn, cursor = connect_to_database()
+
+    publisher_id = find_user_id_by_artist_name(artist_name)
+    music = [title, album_name, genre, duration, publisher_id]
+    cursor.execute(
+        'SELECT * FROM musics WHERE title = ? AND album_name = ? AND genre = ? AND duration = ? AND publisher_id = ?',
+        music)
+    result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None

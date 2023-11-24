@@ -45,7 +45,7 @@ def arvan_downloader(endpoint_url, access_key, secret_key, bucket_name, key):
 
             bucket.download_file(
                 Key=object_name,
-                Filename=object_name
+                Filename='./Flows/' + object_name
             )
 
         except ClientError as e:

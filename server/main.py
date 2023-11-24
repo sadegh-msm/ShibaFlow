@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from waitress import serve
-from model import user
+from model import user, music
 from configs import config
+from objectStorage.s3 import arvan_uploader, arvan_downloader
 
 app = Flask(__name__)
 
@@ -51,8 +52,71 @@ def login_user():
 
 
 @app.route("/song", methods=['POST'])
-def register_song():
-    pass
+def new_song():
+    song_info = request.form.to_dict()
+    config.logging.info('user requested new song', song_info)
+
+    ok = user.check_user(song_info['artist_name'], song_info['password'])
+    if ok:
+        arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
+                       song_info['music'], song_info['title'+'.mp3'])
+        arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket,
+                       song_info['cover'], song_info['title'+'.jpg'])
+
+        song_id = music.insert_musics_data(song_info['title'], song_info['album_name'], song_info['file_path'],
+                                           song_info['cover_path'], song_info['genre'], song_info['duration'],
+                                           song_info['artist_name'])
+        if new_song:
+            response_data = {
+                'message': 'song uploaded successfully',
+                'song_info': {
+                    'song_id': song_id,
+                    'title': song_info['title'],
+                    'album_name': song_info['album_name'],
+                    'genre': song_info['genre'],
+                    'duration': song_info['duration'],
+                    'artist_name': song_info['artist_name'],
+                }
+            }
+            return jsonify(response_data), 201
+    else:
+        return jsonify({'error': 'artist name or password is wrong'}), 401
+
+
+@app.route("/song", methods=['GET'])
+def get_song():
+    song_info = request.form.to_dict()
+    config.logging.info('user requested song', song_info)
+
+    ok = user.check_user(song_info['artist_name'], song_info['password'])
+    if ok:
+        song = music.get_musics_data(song_info['title'], song_info['album_name'], song_info['genre'],
+                                     song_info['duration'], song_info['artist_name'])
+        if song:
+            music_name = song_info['title'] + '.mp3'
+            cover_name = song_info['title'] + '.jpg'
+            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name)
+            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name)
+
+            song_file = open('./Flows/'+music_name, 'r')
+            cover_file = open('./Cover_flows'+cover_name, 'r')
+            response_data = {
+                'message': 'song found',
+                'song_info': {
+                    'title': song_info['title'],
+                    'song': song_file,
+                    'cover': cover_file,
+                    'album_name': song_info['album_name'],
+                    'genre': song_info['genre'],
+                    'duration': song_info['duration'],
+                    'artist_name': song_info['artist_name'],
+                }
+            }
+            return jsonify(response_data), 200
+        else:
+            return jsonify({'error': 'song not found'}), 404
+    else:
+        return jsonify({'error': 'artist name or password is wrong'}), 401
 
 
 @app.route("/like", methods=['GET'])
@@ -62,10 +126,6 @@ def like_song():
 
 @app.route("/report", methods=['GET'])
 def report_song():
-    pass
-
-@app.route("/song", methods=['GET'])
-def get_song():
     pass
 
 
