@@ -171,6 +171,24 @@ def get_all_songs():
         return jsonify({'error': 'songs not found'}), 404
 
 
+@app.route("/songbyid", methods=['GET'])
+def get_music_by_id():
+    song_info = request.form.to_dict()
+    logger.info('user requested song by id', song_info)
+
+    song = music.find_music_by_id(song_info['music_id'])
+    if song:
+        response_data = {
+            'message': 'song found',
+            'song_info': song
+        }
+        logger.info('song found', song_info)
+        return jsonify(response_data), 200
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
 @app.route("/like", methods=['GET'])
 def like_song():
     pass
