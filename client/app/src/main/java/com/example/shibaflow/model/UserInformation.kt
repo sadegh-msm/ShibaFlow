@@ -1,4 +1,4 @@
-package com.example.shibaflowproject.model
+package com.example.shibaflow.model
 
 object MyInfo {
     var userInformation: UserInformation = UserInformation()

@@ -1,4 +1,4 @@
-package com.example.shibaflowproject.interfaces
+package com.example.shibaflow.interfaces
 
 import android.widget.TextView
 import android.widget.Toast
@@ -55,9 +55,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 
 import com.example.shibaflow.R
-import com.example.shibaflowproject.api.LoginHandler
-import com.example.shibaflowproject.model.MyInfo
-import com.example.shibaflowproject.model.UserInformation
+import com.example.shibaflow.api.LoginHandler
+import com.example.shibaflow.model.MyInfo
+import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.launch
 
 @Composable

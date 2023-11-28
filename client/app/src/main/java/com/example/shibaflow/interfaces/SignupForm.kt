@@ -1,4 +1,4 @@
-package com.example.shibaflowproject.interfaces
+package com.example.shibaflow.interfaces
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -38,9 +38,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.shibaflow.R
-import com.example.shibaflowproject.api.SignupHandler
-import com.example.shibaflowproject.model.MyInfo
-import com.example.shibaflowproject.model.UserInformation
+import com.example.shibaflow.api.SignupHandler
+import com.example.shibaflow.model.MyInfo
+import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 

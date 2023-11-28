@@ -1,4 +1,4 @@
-package com.example.shibaflowproject.interfaces
+package com.example.shibaflow.interfaces
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.shibaflow.R
-import com.example.shibaflowproject.model.Song
+import com.example.shibaflow.model.Song
 
 
 @Composable

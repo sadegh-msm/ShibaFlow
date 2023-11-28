@@ -1,6 +1,6 @@
-package com.example.shibaflowproject.api
+package com.example.shibaflow.api
 
-import com.example.shibaflowproject.model.Song
+import com.example.shibaflow.model.Song
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.forms.submitForm
@@ -11,6 +11,9 @@ import io.ktor.http.parameters
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
+suspend fun main() {
+    getAllSongs()
+}
 suspend fun SignupHandler(
     firstname: String,
     lastname: String,

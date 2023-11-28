@@ -14,7 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
-import com.example.shibaflowproject.interfaces.LoginForm
+import com.example.shibaflow.interfaces.LoginForm
+import com.example.shibaflow.interfaces.SignupForm
+import com.example.shibaflow.interfaces.SongListApp
+import com.example.shibaflow.interfaces.UploadForm
 
 
 class MainActivity : ComponentActivity() {
@@ -63,18 +66,18 @@ fun UsersApplication() {
         composable(route = "login_page") {
             LoginForm(navController)
         }
-//        composable(route = "signup_page") {
-//            SignupForm(navController)
-//
-//        }
-//        composable(route = "music_page") {
-//            SongListApp(navController)
-//
-//        }
-//        composable(route = "upload_page") {
-//            UploadForm(navController)
-//
-//        }
+        composable(route = "signup_page") {
+            SignupForm(navController)
+
+        }
+        composable(route = "music_page") {
+            SongListApp(navController)
+
+        }
+        composable(route = "upload_page") {
+            UploadForm(navController)
+
+        }
     }
 
 

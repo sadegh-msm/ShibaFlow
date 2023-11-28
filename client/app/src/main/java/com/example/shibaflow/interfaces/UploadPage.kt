@@ -1,4 +1,4 @@
-package com.example.shibaflowproject.interfaces
+package com.example.shibaflow.interfaces
 
 import android.net.Uri
 import android.widget.Toast
