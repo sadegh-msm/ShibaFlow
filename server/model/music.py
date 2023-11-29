@@ -165,14 +165,12 @@ def find_music_by_publisher_id(publisher_id):
     return result if result else None
 
 
-def get_musics_data(title, album_name, artist_name):
+def get_musics_by_title_artist(title, artist_name):
     conn, cursor = connect_to_database()
 
     publisher_id = find_user_id_by_artist_name(artist_name)
-    music = [title, album_name, publisher_id]
-    cursor.execute(
-        'SELECT * FROM musics WHERE title = ? AND album_name = ? AND publisher_id = ?',
-        music)
+    music = [title, publisher_id]
+    cursor.execute('SELECT * FROM musics WHERE title = ? AND publisher_id = ?', music)
     result = cursor.fetchone()
 
     close_connection(conn)
