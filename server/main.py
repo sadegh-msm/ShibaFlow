@@ -1,6 +1,5 @@
-import binascii
 import logging.config
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
 from model import user, music
 from configs import config
@@ -74,8 +73,8 @@ def new_song():
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
-        music_name = song_info['artist_name'] + '/' + song_info['title'] + '.mp3'
-        cover_name = song_info['artist_name'] + '/' + song_info['title'] + '.jpg'
+        music_name = 'http://195.248.242.169:8080/songbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.mp3'
+        cover_name = 'http://195.248.242.169:8080/coverbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.jpg'
         logger.info('uploading music to s3')
         arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
                        data['music'], music_name)
@@ -162,14 +161,14 @@ def get_all_songs():
 def get_music_by_id(music_filename):
     logger.info('user requested song by id', music_filename)
 
-    song_info = music_filename.split('/')
+    song_info = music_filename.split('@')
     if song_info[1]:
         logger.info('downloading music from s3')
         arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_filename, 'music')
         logger.info('finished downloading music from s3')
 
         logger.info('song found', music_filename)
-        return send_from_directory(app.config["SONGS"], music_filename)
+        return send_from_directory(app.config['SONGS'], music_filename)
     else:
         logger.info('song not found', music_filename)
         return jsonify({'error': 'song not found'}), 404
@@ -179,14 +178,14 @@ def get_music_by_id(music_filename):
 def get_cover_by_id(cover_filename):
     logger.info('user requested cover by id', cover_filename)
 
-    cover_info = cover_filename.split('/')
+    cover_info = cover_filename.split('@')
     if cover_info[1]:
         logger.info('downloading cover from s3')
         arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_filename, 'cover')
         logger.info('finished downloading cover from s3')
 
         logger.info('cover found', cover_filename)
-        return send_from_directory(app.config["SONGS_COVER"], cover_filename)
+        return send_from_directory(app.config['SONGS_COVER'], cover_filename)
     else:
         logger.info('cover not found', cover_filename)
         return jsonify({'error': 'cover not found'}), 404

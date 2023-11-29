@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="fix get song by id">
+    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change database">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/music.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -204,7 +203,7 @@
       <workItem from="1700846280695" duration="1046000" />
       <workItem from="1700847471205" duration="9000" />
       <workItem from="1700847494946" duration="1273000" />
-      <workItem from="1701254573628" duration="1611000" />
+      <workItem from="1701254573628" duration="4110000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>
@@ -276,7 +275,21 @@
       <option name="project" value="LOCAL" />
       <updated>1700847943942</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="add cover and song endpoint">
+      <created>1701256213287</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701256213287</updated>
+    </task>
+    <task id="LOCAL-00012" summary="change database">
+      <created>1701256518899</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1701256518899</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -292,13 +305,15 @@
     <MESSAGE value="add logs" />
     <MESSAGE value="add get all songs" />
     <MESSAGE value="add get song by id" />
-    <option name="LAST_COMMIT_MESSAGE" value="add get song by id" />
+    <MESSAGE value="add cover and song endpoint" />
+    <MESSAGE value="change database" />
+    <option name="LAST_COMMIT_MESSAGE" value="change database" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/server$model.coverage" NAME="model Coverage Results" MODIFIED="1699426111834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/server$pip3_9.coverage" NAME="pip3.9 Coverage Results" MODIFIED="1699372944744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv/bin" />
     <SUITE FILE_PATH="coverage/server$user.coverage" NAME="user Coverage Results" MODIFIED="1699649246897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/model" />
     <SUITE FILE_PATH="coverage/server$config.coverage" NAME="config Coverage Results" MODIFIED="1699650313415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/configs" />
-    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1701253240452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1701256374747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
