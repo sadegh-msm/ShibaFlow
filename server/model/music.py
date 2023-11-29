@@ -65,7 +65,6 @@ def insert_musics_data(title, album_name, file_path, cover_path, genre, duration
     return find_music_by_title(title)[0][0]
 
 
-
 def update_music_data(title, album_name, genre, music_id):
     """
     Insert data into the musics table.
