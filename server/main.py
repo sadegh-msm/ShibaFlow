@@ -1,16 +1,18 @@
-import binascii
 import logging.config
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
 from model import user, music
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
+import os
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
-
 logger.setLevel(logging.NOTSET)
+
+app.config["SONGS_COVER"] = os.getenv("HOME")+'/ShibaFlow/server/Flows'
+app.config["SONGS"] = os.getenv("HOME")+'/ShibaFlow/server/Cover_flows'
 
 
 @app.route("/healthz", methods=['GET'])
@@ -71,8 +73,8 @@ def new_song():
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
-        music_name = song_info['title'] + '.mp3'
-        cover_name = song_info['title'] + '.jpg'
+        music_name = 'http://195.248.242.169:8080/songbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.mp3'
+        cover_name = 'http://195.248.242.169:8080/coverbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.jpg'
         logger.info('uploading music to s3')
         arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
                        data['music'], music_name)
@@ -108,37 +110,21 @@ def new_song():
 
 
 @app.route("/song", methods=['GET'])
-def get_song():
+def get_song_info():
     song_info = request.form.to_dict()
     logger.info('user requested song', song_info)
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
-        song = music.get_musics_data(song_info['title'], song_info['album_name'], song_info['artist_name'])
+        song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
         if song:
-            music_name = song_info['title'] + '.mp3'
-            cover_name = song_info['title'] + '.jpg'
-
-            logger.info('downloading music from s3')
-            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name,
-                             'music')
-            logger.info('finished downloading music from s3')
-
-            logger.info('downloading cover from s3')
-            arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name,
-                             'cover')
-            logger.info('finished downloading cover from s3')
-
-            song_file = open('./Flows/' + music_name, 'rb')
-            cover_file = open('./Cover_flows/' + cover_name, 'rb')
-            song_hex = binascii.hexlify(song_file.read())
-            cover_hex = binascii.hexlify(cover_file.read())
             response_data = {
                 'message': 'song found',
                 'song_info': {
                     'title': song_info['title'],
-                    'song': song_hex.decode('utf-8'),
-                    'cover': cover_hex.decode('utf-8'),
+                    'duration': song_info['duration'],
+                    'genre': song_info['genre'],
+                    'likes': song_info['likes'],
                     'album_name': song_info['album_name'],
                     'artist_name': song_info['artist_name'],
                 }
@@ -171,43 +157,38 @@ def get_all_songs():
         return jsonify({'error': 'songs not found'}), 404
 
 
-@app.route("/songbyid", methods=['GET'])
-def get_music_by_id():
-    song_id = request.args.get('id')
-    logger.info('user requested song by id', song_id)
+@app.route("/songbyid/<music_filename>", methods=['GET'])
+def get_music_by_id(music_filename):
+    logger.info('user requested song by id', music_filename)
 
-    song = music.find_music_by_id(song_id)
-    if song:
-        music_name = song[1] + '.mp3'
-        cover_name = song[1] + '.jpg'
+    song_info = music_filename.split('@')
+    if song_info[1]:
         logger.info('downloading music from s3')
-        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_name, 'music')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_filename, 'music')
         logger.info('finished downloading music from s3')
 
+        logger.info('song found', music_filename)
+        return send_from_directory(app.config['SONGS'], music_filename)
+    else:
+        logger.info('song not found', music_filename)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/coverbyid/<cover_filename>", methods=['GET'])
+def get_cover_by_id(cover_filename):
+    logger.info('user requested cover by id', cover_filename)
+
+    cover_info = cover_filename.split('@')
+    if cover_info[1]:
         logger.info('downloading cover from s3')
-        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_name, 'cover')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_filename, 'cover')
         logger.info('finished downloading cover from s3')
 
-        song_file = open('./Flows/' + music_name, 'rb')
-        cover_file = open('./Cover_flows/' + cover_name, 'rb')
-        song_hex = binascii.hexlify(song_file.read())
-        cover_hex = binascii.hexlify(cover_file.read())
-
-        response_data = {
-            'message': 'song found',
-            'song_info': {
-                    'title': song[1],
-                    'song': song_hex.decode('utf-8'),
-                    'cover': cover_hex.decode('utf-8'),
-                    'album_name': song[3],
-                    'artist_name': user.find_artist_name_by_id(song[2]),
-                }
-        }
-        logger.info('song found', song)
-        return jsonify(response_data), 200
+        logger.info('cover found', cover_filename)
+        return send_from_directory(app.config['SONGS_COVER'], cover_filename)
     else:
-        logger.info('song not found', song)
-        return jsonify({'error': 'song not found'}), 404
+        logger.info('cover not found', cover_filename)
+        return jsonify({'error': 'cover not found'}), 404
 
 
 @app.route("/like", methods=['GET'])
