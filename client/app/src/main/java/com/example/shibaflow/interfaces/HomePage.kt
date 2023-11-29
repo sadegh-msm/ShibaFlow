@@ -29,6 +29,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,7 +46,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.shibaflow.R
+import com.example.shibaflow.api.LoginHandler
+import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.model.Song
+import com.example.shibaflow.model.UserInformation
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -60,12 +70,16 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(50.dp)
                     .clickable {
-                        Toast.makeText(context, "Start downloading..", Toast.LENGTH_SHORT).show()
+                        Toast
+                            .makeText(context, "Start downloading..", Toast.LENGTH_SHORT)
+                            .show()
                     }
             ){
                 Icon(
                     painter = painterResource(id = R.drawable.download),
-                    modifier = Modifier.width(500.dp).height(500.dp)
+                    modifier = Modifier
+                        .width(500.dp)
+                        .height(500.dp)
                         .padding(15.dp),
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.background
@@ -89,7 +103,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = song.artist,
+                    text = song.album,
                     modifier = Modifier
                         .padding(4.dp)
                         .fillMaxWidth(),
@@ -106,7 +120,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                 )
             }
             Image(
-                painter = painterResource(id = song.coverResourceId),
+                painter = painterResource(id = R.drawable.shibainu),
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
@@ -124,7 +138,28 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SongList(songList: List<Song>,navController: NavController, modifier: Modifier = Modifier) {
+fun SongList(navController: NavController, modifier: Modifier = Modifier) {
+    var songListState by remember { mutableStateOf(listOf<Song>()) }
+    var isLoad by remember { mutableStateOf(false) }
+    var isLoad2 by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    if (!isLoad) {
+                val scope = rememberCoroutineScope()
+                LaunchedEffect(key1 = songListState) {
+                    Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
+                    scope.launch {
+                        val (songs,ok) = getAllSongs()
+                        songListState = songs
+                        if (ok == "ok"){
+                            isLoad = true
+                            isLoad2 = true
+
+                        }
+
+                    }
+                    }
+                }
+
     Scaffold(
             topBar = {
                 TopAppBar()
@@ -132,6 +167,7 @@ fun SongList(songList: List<Song>,navController: NavController, modifier: Modifi
             containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
             floatingActionButton = {
                 FloatingActionButton(onClick = {
+
                     navController.navigate("upload_page")
                 }) {
                     Icon(
@@ -144,37 +180,101 @@ fun SongList(songList: List<Song>,navController: NavController, modifier: Modifi
             },
             floatingActionButtonPosition = FabPosition.End,
 //        isFloatingActionButtonDocked = true
-        ) { it ->
-            LazyColumn(modifier = modifier.padding(all = 16.dp), contentPadding = it) {
-                items(songList) { song ->
-                    SongCard(
-                        song = song,
-                        modifier = Modifier.padding(8.dp)
-                    )
+        ) { it -> LazyColumn(modifier = modifier.padding(all = 16.dp), contentPadding = it) {
+                if (isLoad2){
+                    items(songListState) { song ->
+                        SongCard(
+                            song = song,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
             }
         }
+//    Column {
+//        ShibaFlowButton(
+//            onClick = {
+//                isLoad = true
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 16.dp),
+//            enabled = true,
+//            color = MaterialTheme.colorScheme.surfaceTint,
+//        ){
+//            if (isLoad) {
+//                Text("Load ...")
+//                val scope = rememberCoroutineScope()
+//
+//                LaunchedEffect(key1 = songListState) {
+//                    scope.launch {
+//                        val (songs,ok) = getAllSongs()
+//                        songListState = songs
+////                        songListState = songs
+//                        if (ok == "ok"){
+//                            isLoad = false
+//                            isLoad2 = true
+//
+//                        }
+//
+//                    }
+//                    }
+//                }
+//            else{
+//                Text(text = "Load")
+//            }
+//        }
+//        if (isLoad2) {
+//            LazyColumn(modifier = modifier.padding(all = 16.dp)) {
+//                items(songListState) { song ->
+//                    SongCard(
+//                        song = song,
+//                        modifier = Modifier.padding(8.dp)
+//                    )
+//                }
+//            }
+//        }
+//    }
+
 }
+
 
 
 
 @Composable
 fun SongListApp(navController: NavController) {
-    SongList(songList = getSampleSongs(),navController)
+    SongList(navController)
 }
 
 
-@Composable
-fun getSampleSongs(): List<Song> {
-    return listOf(
-        Song("Siah Mese Barf", "Sepehr Khalse", "4:15", R.drawable.shibainu),
-        Song("Radioactive", "Imagine Dragons", "3:50", R.drawable.shibainu),
-        Song("Tehran Ta LA", "Koorosh", "5:22", R.drawable.shibainu),
-        // Add more songs as needed
-    )
+//@Composable
+//fun getSampleSongs(): List<Song> {
+//    var songs by remember { mutableStateOf(emptyList<Song>()) }
+//    var isLoad by remember { mutableStateOf(false) }
+//    val context = LocalContext.current
+//    if (!isLoad) {
+//        val scope = rememberCoroutineScope()
+//
+//        LaunchedEffect(key1 = songs) {
+//            scope.launch {
+//                songs = getAllSongs()
+//                Toast.makeText(context, "Wait to load songs", Toast.LENGTH_SHORT)
+//                isLoad = true
+//            }
+//        }
+//    }
+//
+////    return listOf(
+////        Song("Siah Mese Barf", "Sepehr Khalse", "4:15", R.drawable.shibainu),
+////        Song("Radioactive", "Imagine Dragons", "3:50", R.drawable.shibainu),
+////        Song("Tehran Ta LA", "Koorosh", "5:22", R.drawable.shibainu),
+////        // Add more songs as needed
+////    )
+//}
+//
+fun checkGetSongs(){
+
 }
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(modifier: Modifier = Modifier){

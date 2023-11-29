@@ -77,5 +77,7 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:2.3.6")
     implementation ("io.ktor:ktor-client-android:2.3.6")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
+    implementation("com.google.code.gson:gson:2.10.1")
+
 
 }
