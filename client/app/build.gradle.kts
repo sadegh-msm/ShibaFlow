@@ -7,6 +7,7 @@ android {
     namespace = "com.example.shibaflow"
     compileSdk = 33
 
+
     defaultConfig {
         applicationId = "com.example.shibaflow"
         minSdk = 24
@@ -78,6 +79,9 @@ dependencies {
     implementation ("io.ktor:ktor-client-android:2.3.6")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
     implementation("com.google.code.gson:gson:2.10.1")
-
-
+    implementation("io.coil-kt:coil-compose:2.4.0")
+//    implementation ("com.google.android.exoplayer:exoplayer-core:2.18.5.")
+//    implementation ("com.google.android.exoplayer:exoplayer-dash:2.18.5")
+//    implementation ("com.google.android.exoplayer:extension-cronet:2.18.5")
+//    implementation ("com.google.android.exoplayer:exoplayer-ui:2.18.5")
 }

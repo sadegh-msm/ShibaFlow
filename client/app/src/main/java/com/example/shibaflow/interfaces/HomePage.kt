@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.shibaflow.R
 import com.example.shibaflow.api.LoginHandler
 import com.example.shibaflow.api.getAllSongs
@@ -119,8 +120,18 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center
                 )
             }
-            Image(
-                painter = painterResource(id = R.drawable.shibainu),
+//            Image(
+//                painter = painterResource(id = R.drawable.shibainu),
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .size(100.dp)
+//                    .padding(all = 8.dp)
+//                    .clip(CircleShape)
+//                ,
+//                contentScale = ContentScale.Crop
+//            )
+            AsyncImage(
+                model = song.coverImage,
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)

@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import coil.compose.AsyncImage
 import com.example.shibaflow.interfaces.checkLogin
 import com.example.shibaflow.model.Song
 import io.ktor.client.*
@@ -21,10 +22,13 @@ import com.google.gson.JsonArray
 
 
 suspend fun main() {
+//    println("heb")
+//
+//    getAllSongs()
 
 
-    var (songListState,ok) = getAllSongs()
-    println(songListState)
+//    var (songListState,ok) = getAllSongs()
+//    println(songListState)
 //    println(songListState.isEmpty())
 //    println(getAllSongs())
 //    println(LoginHandler("ll","2020"))
@@ -117,8 +121,13 @@ suspend fun getAllSongs(): Pair<List<Song>,String> {
     if (response.status.value == 200){
         ok = "ok"
     }
-//    val content: String = response.bodyAsText()
-    var  content = "{\"message\":\"songs found\",\"songs_info\":[[1,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 16:25:43\"],[2,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:01:12\"],[3,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:03:10\"]]}"
+    println(response)
+    val content: String = response.bodyAsText().toString()
+    println(response.bodyAsText())
+//    var  content = "{\"message\":\"songs found\",\"songs_info\":[[1,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 16:25:43\"],[2,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:01:12\"],[3,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:03:10\"]]}"
+//    var content = "{\"message\":\"songs found\",\"songs_info\":[[1,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 16:25:43\"],[2,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:01:12\"],[3,\"sweater weather\",2,\"i love you\",\"sweater weather.mp3\",\"sweater weather.jpg\",\"rock\",0,0,\"4:00\",\"2023-11-24 21:03:10\"],[4,\"doja\",2,\"random\",\"doja.mp3\",\"doja.jpg\",\"rap\",0,0,\"4:00\",\"2023-11-29 14:13:51\"],[5,\"doja\",2,\"random\",\"doja.mp3\",\"doja.jpg\",\"rap\",0,0,\"4:00\",\"2023-11-29 14:14:44\"]]}"
+    println(content)
+
     val gson = Gson()
 //    println(content)
     val jsonForm = gson.fromJson(content, SongsResponse::class.java)
@@ -137,7 +146,12 @@ suspend fun getAllSongs(): Pair<List<Song>,String> {
             lastPlayed = jsonArray[10].asString
         )
     }
+    println(songs)
     return Pair(songs,ok)
+}
+fun getCover(url:String){
+
+
 }
 
 
