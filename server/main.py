@@ -11,8 +11,10 @@ logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - 
 logger = logging.getLogger()
 logger.setLevel(logging.NOTSET)
 
-app.config["SONGS_COVER"] = os.getenv("HOME")+'/ShibaFlow/server/Flows'
-app.config["SONGS"] = os.getenv("HOME")+'/ShibaFlow/server/Cover_flows'
+# app.config["SONGS"] = os.getenv("HOME")+'/android/ShibaFlow/server/Flows'
+# app.config["SONGS_COVER"] = os.getenv("HOME")+'/android/ShibaFlow/server/Cover_flows'
+app.config["SONGS"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Flows/'
+app.config["SONGS_COVER"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Cover_flows'
 
 
 @app.route("/healthz", methods=['GET'])
@@ -73,8 +75,8 @@ def new_song():
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
-        music_name = 'http://195.248.242.169:8080/songbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.mp3'
-        cover_name = 'http://195.248.242.169:8080/coverbyid/' + song_info['artist_name'] + '@' + song_info['title'] + '.jpg'
+        music_name = song_info['artist_name'] + '@' + song_info['title'] + '.mp3'
+        cover_name = song_info['artist_name'] + '@' + song_info['title'] + '.jpg'
         logger.info('uploading music to s3')
         arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
                        data['music'], music_name)
@@ -114,29 +116,24 @@ def get_song_info():
     song_info = request.form.to_dict()
     logger.info('user requested song', song_info)
 
-    ok = user.check_user(song_info['artist_name'], song_info['password'])
-    if ok:
-        song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
-        if song:
-            response_data = {
-                'message': 'song found',
-                'song_info': {
-                    'title': song_info['title'],
-                    'duration': song_info['duration'],
-                    'genre': song_info['genre'],
-                    'likes': song_info['likes'],
-                    'album_name': song_info['album_name'],
-                    'artist_name': song_info['artist_name'],
-                }
+    song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
+    if song:
+        response_data = {
+            'message': 'song found',
+            'song_info': {
+                'title': song_info['title'],
+                'duration': song_info['duration'],
+                'genre': song_info['genre'],
+                'likes': song_info['likes'],
+                'album_name': song_info['album_name'],
+                'artist_name': song_info['artist_name'],
             }
-            logger.info('song found', song_info)
-            return jsonify(response_data), 200
-        else:
-            logger.info('song not found', song_info)
-            return jsonify({'error': 'song not found'}), 404
+        }
+        logger.info('song found', song_info)
+        return jsonify(response_data), 200
     else:
-        logger.info('username or password is incorrect', song_info)
-        return jsonify({'error': 'artist name or password is wrong'}), 401
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
 
 
 @app.route("/allsongs", methods=['GET'])
@@ -145,6 +142,10 @@ def get_all_songs():
     logger.info('user requested all songs', song_info)
 
     songs = music.get_all_musics()
+    for i in range(len(songs)):
+        songs[i] = list(songs[i])
+        songs[i][4] = 'http://195.248.242.169:8080/songbyid/' + songs[i][4]
+        songs[i][5] = 'http://195.248.242.169:8080/coverbyid/' + songs[i][5]
     if songs:
         response_data = {
             'message': 'songs found',
@@ -154,7 +155,7 @@ def get_all_songs():
         return jsonify(response_data), 200
     else:
         logger.info('songs not found', song_info)
-        return jsonify({'error': 'songs not found'}), 404
+        return jsonify({'error': 'songs not found'}), 200
 
 
 @app.route("/songbyid/<music_filename>", methods=['GET'])
@@ -168,7 +169,7 @@ def get_music_by_id(music_filename):
         logger.info('finished downloading music from s3')
 
         logger.info('song found', music_filename)
-        return send_from_directory(app.config['SONGS'], music_filename)
+        return send_from_directory(app.config['SONGS'], music_filename), 200
     else:
         logger.info('song not found', music_filename)
         return jsonify({'error': 'song not found'}), 404
@@ -185,7 +186,7 @@ def get_cover_by_id(cover_filename):
         logger.info('finished downloading cover from s3')
 
         logger.info('cover found', cover_filename)
-        return send_from_directory(app.config['SONGS_COVER'], cover_filename)
+        return send_from_directory(app.config['SONGS_COVER'], cover_filename), 200
     else:
         logger.info('cover not found', cover_filename)
         return jsonify({'error': 'cover not found'}), 404
