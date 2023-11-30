@@ -6,8 +6,10 @@ clean:
 	rm -rf Flow/*
 	rm -rf Cover_flows/*
 	rm -rf *.png
+	rm -rf *.jpg
 	rm -rf *.pyc
 	rm -rf *.log
+	rm -rf *.mp3
 
 # build the docker image
 build:
