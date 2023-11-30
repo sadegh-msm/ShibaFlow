@@ -1,4 +1,4 @@
-ip default:
+app:
 	python3 main.py
 
 # delete all files in Flow and Cover_flows
