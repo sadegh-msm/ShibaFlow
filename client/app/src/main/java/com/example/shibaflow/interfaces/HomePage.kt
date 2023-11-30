@@ -1,5 +1,7 @@
 package com.example.shibaflow.interfaces
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import android.widget.Toast
@@ -45,14 +47,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.shibaflow.R
 import com.example.shibaflow.api.LoginHandler
 import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.UserInformation
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
-
-
+private var exoPlayer: ExoPlayer? = null
+fun playSong(url: String,context:Context){
+    if(exoPlayer?.playWhenReady ==true){
+        exoPlayer!!.release()
+        exoPlayer = ExoPlayer.Builder(context).build()
+    }
+    else{
+        val mediaItem = MediaItem.fromUri(Uri.parse(url))
+        exoPlayer = ExoPlayer.Builder(context).build()
+        exoPlayer?.setMediaItem(mediaItem)
+        exoPlayer?.prepare()
+        exoPlayer?.playWhenReady = true
+    }
+}
 @Composable
 fun SongCard(song: Song, modifier: Modifier = Modifier) {
     Card(
@@ -73,6 +90,8 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                         Toast
                             .makeText(context, "Start downloading..", Toast.LENGTH_SHORT)
                             .show()
+                        playSong(song.mp3File,context)
+
                     }
             ){
                 Icon(
@@ -119,8 +138,9 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center
                 )
             }
-            Image(
-                painter = painterResource(id = R.drawable.shibainu),
+
+            AsyncImage(
+                model = song.coverImage,
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
@@ -191,50 +211,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 }
             }
         }
-//    Column {
-//        ShibaFlowButton(
-//            onClick = {
-//                isLoad = true
-//            },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 16.dp),
-//            enabled = true,
-//            color = MaterialTheme.colorScheme.surfaceTint,
-//        ){
-//            if (isLoad) {
-//                Text("Load ...")
-//                val scope = rememberCoroutineScope()
-//
-//                LaunchedEffect(key1 = songListState) {
-//                    scope.launch {
-//                        val (songs,ok) = getAllSongs()
-//                        songListState = songs
-////                        songListState = songs
-//                        if (ok == "ok"){
-//                            isLoad = false
-//                            isLoad2 = true
-//
-//                        }
-//
-//                    }
-//                    }
-//                }
-//            else{
-//                Text(text = "Load")
-//            }
-//        }
-//        if (isLoad2) {
-//            LazyColumn(modifier = modifier.padding(all = 16.dp)) {
-//                items(songListState) { song ->
-//                    SongCard(
-//                        song = song,
-//                        modifier = Modifier.padding(8.dp)
-//                    )
-//                }
-//            }
-//        }
-//    }
 
 }
 
@@ -247,34 +223,7 @@ fun SongListApp(navController: NavController) {
 }
 
 
-//@Composable
-//fun getSampleSongs(): List<Song> {
-//    var songs by remember { mutableStateOf(emptyList<Song>()) }
-//    var isLoad by remember { mutableStateOf(false) }
-//    val context = LocalContext.current
-//    if (!isLoad) {
-//        val scope = rememberCoroutineScope()
-//
-//        LaunchedEffect(key1 = songs) {
-//            scope.launch {
-//                songs = getAllSongs()
-//                Toast.makeText(context, "Wait to load songs", Toast.LENGTH_SHORT)
-//                isLoad = true
-//            }
-//        }
-//    }
-//
-////    return listOf(
-////        Song("Siah Mese Barf", "Sepehr Khalse", "4:15", R.drawable.shibainu),
-////        Song("Radioactive", "Imagine Dragons", "3:50", R.drawable.shibainu),
-////        Song("Tehran Ta LA", "Koorosh", "5:22", R.drawable.shibainu),
-////        // Add more songs as needed
-////    )
-//}
-//
-fun checkGetSongs(){
 
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(modifier: Modifier = Modifier){

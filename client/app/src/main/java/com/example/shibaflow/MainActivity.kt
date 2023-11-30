@@ -19,7 +19,6 @@ import com.example.shibaflow.interfaces.SignupForm
 import com.example.shibaflow.interfaces.SongListApp
 import com.example.shibaflow.interfaces.UploadForm
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,32 +31,14 @@ class MainActivity : ComponentActivity() {
                 ) {
                     UsersApplication()
 
+
+
                 }
             }
         }
     }
 }
-//class MainActivity : ComponentActivity() {
-//    @OptIn(ExperimentalMaterial3Api::class)
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            Surface {
-//                MaterialTheme {
-//                    Surface(
-//                        modifier = Modifier.fillMaxSize(),
-//                        color = MaterialTheme.colorScheme.primaryContainer
-//                    ) {
-//                        UsersApplication()
-//
-//                    }
-//                }
-//
-//            }
-//        }
-//    }
-//}
+
 @Composable
 fun UsersApplication() {
     val navController = rememberNavController()
