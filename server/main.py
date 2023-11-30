@@ -4,8 +4,8 @@ from waitress import serve
 from model import user, music
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
+from .utils import util
 import os
-
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -30,6 +30,17 @@ def healthz():
 def register_user():
     user_info = request.form.to_dict()
     logger.info('user requested sign in', user_info)
+
+    infos = ['fname', 'lname', 'artist_name', 'email', 'password']
+    if util.check_for_key(user_info, infos):
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if user_info['fname'] == '' or user_info['lname'] == '' or user_info['artist_name'] == '' or user_info[
+        'email'] == '' or \
+            user_info['password'] == '':
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
 
     exist = user.user_exists(user_info['artist_name'])
 
@@ -61,6 +72,15 @@ def login_user():
     user_info = request.form.to_dict()
     logger.info('user requested login', user_info)
 
+    infos = ['artist_name', 'password']
+    if util.check_for_key(user_info, infos):
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if user_info['artist_name'] == '' or user_info['password'] == '':
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
     ok = user.check_user(user_info['artist_name'], user_info['password'])
     if ok:
         logger.info('user logged in', user_info)
@@ -76,8 +96,13 @@ def new_song():
     data = request.files.to_dict()
     logger.info('user requested new song', song_info)
 
-    if not song_info['title'] or not song_info['album_name'] or not song_info['genre'] or not song_info[
-        'artist_name'] or not song_info['password']:
+    infos = ['title', 'album_name', 'genre', 'artist_name', 'password']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['title'] == '' or song_info['album_name'] == '' or song_info['genre'] == '' or song_info[
+        'artist_name'] == '' or song_info['password'] == '':
         logger.info('bad request', song_info)
         return jsonify({'error': 'bad request'}), 400
 
@@ -140,6 +165,15 @@ def get_song_info():
     song_info = request.form.to_dict()
     logger.info('user requested song', song_info)
 
+    infos = ['title', 'artist_name']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['title'] == '' or song_info['artist_name'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
     song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
     if song:
         response_data = {
@@ -162,8 +196,7 @@ def get_song_info():
 
 @app.route("/allsongs", methods=['GET'])
 def get_all_songs():
-    song_info = request.form.to_dict()
-    logger.info('user requested all songs', song_info)
+    logger.info('user requested all songs')
 
     songs = music.get_all_musics()
     for i in range(len(songs)):
@@ -176,10 +209,10 @@ def get_all_songs():
             'message': 'songs found',
             'songs_info': songs
         }
-        logger.info('songs found', song_info)
+        logger.info('songs found')
         return jsonify(response_data), 200
     else:
-        logger.info('songs not found', song_info)
+        logger.info('songs not found')
         return jsonify({'error': 'songs not found'}), 200
 
 
@@ -224,6 +257,15 @@ def like_song():
     song_info = request.form.to_dict()
     logger.info('user requested like song', song_info)
 
+    infos = ['title', 'artist_name']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['title'] == '' or song_info['artist_name'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
     song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
     if song:
         ok = music.like_song(song[0])
@@ -242,6 +284,15 @@ def like_song():
 def like_by_id():
     song_info = request.form.to_dict()
     logger.info('user requested like song by id', song_info)
+
+    infos = ['music_id']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['music_id'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
 
     song = music.find_music_by_id(song_info['music_id'])
     if song:
@@ -262,6 +313,15 @@ def report_song():
     song_info = request.form.to_dict()
     logger.info('user requested report song', song_info)
 
+    infos = ['title', 'artist_name']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['title'] == '' or song_info['artist_name'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
     song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
     if song:
         ok = music.report_song(song[0])
@@ -280,6 +340,15 @@ def report_song():
 def report_by_id():
     song_info = request.form.to_dict()
     logger.info('user requested report song by id', song_info)
+
+    infos = ['music_id']
+    if util.check_for_key(song_info, infos):
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if song_info['music_id'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
 
     song = music.find_music_by_id(song_info['music_id'])
     if song:

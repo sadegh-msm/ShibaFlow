@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change database filed">
+    <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="add report and like">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cover_flows/sajad@the beach.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flows/sadegh@doja.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Flows/sajad@the beach.mp3" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/music.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -242,7 +237,7 @@
       <workItem from="1701329926163" duration="3286000" />
       <workItem from="1701360160069" duration="208000" />
       <workItem from="1701360380088" duration="3000" />
-      <workItem from="1701360406164" duration="4627000" />
+      <workItem from="1701360406164" duration="6208000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>
@@ -335,7 +330,21 @@
       <option name="project" value="LOCAL" />
       <updated>1701259686401</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="change some variables to optional">
+      <created>1701365493232</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1701365493232</updated>
+    </task>
+    <task id="LOCAL-00015" summary="add report and like">
+      <created>1701365713356</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1701365713356</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -354,7 +363,9 @@
     <MESSAGE value="add cover and song endpoint" />
     <MESSAGE value="change database" />
     <MESSAGE value="change database filed" />
-    <option name="LAST_COMMIT_MESSAGE" value="change database filed" />
+    <MESSAGE value="change some variables to optional" />
+    <MESSAGE value="add report and like" />
+    <option name="LAST_COMMIT_MESSAGE" value="add report and like" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/server$model.coverage" NAME="model Coverage Results" MODIFIED="1699426111834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
