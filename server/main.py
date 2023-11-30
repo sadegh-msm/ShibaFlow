@@ -238,9 +238,61 @@ def like_song():
         return jsonify({'error': 'song not found'}), 404
 
 
+@app.route("/likebyid", methods=['GET'])
+def like_by_id():
+    song_info = request.form.to_dict()
+    logger.info('user requested like song by id', song_info)
+
+    song = music.find_music_by_id(song_info['music_id'])
+    if song:
+        ok = music.like_song(song[0])
+        if ok:
+            logger.info('song liked', song_info)
+            return jsonify({'ok': 'song liked successfully'}), 200
+        else:
+            logger.info('song failed to like', song_info)
+            return jsonify({'error': 'bad request'}), 400
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
 @app.route("/report", methods=['GET'])
 def report_song():
-    pass
+    song_info = request.form.to_dict()
+    logger.info('user requested report song', song_info)
+
+    song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
+    if song:
+        ok = music.report_song(song[0])
+        if ok:
+            logger.info('song reported', song_info)
+            return jsonify({'ok': 'song reported successfully'}), 200
+        else:
+            logger.info('song failed to report', song_info)
+            return jsonify({'error': 'bad request'}), 400
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/reportbyid", methods=['GET'])
+def report_by_id():
+    song_info = request.form.to_dict()
+    logger.info('user requested report song by id', song_info)
+
+    song = music.find_music_by_id(song_info['music_id'])
+    if song:
+        ok = music.report_song(song[0])
+        if ok:
+            logger.info('song reported', song_info)
+            return jsonify({'ok': 'song reported successfully'}), 200
+        else:
+            logger.info('song failed to report', song_info)
+            return jsonify({'error': 'bad request'}), 400
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
 
 
 if __name__ == "__main__":

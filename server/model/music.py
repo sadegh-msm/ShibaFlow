@@ -224,3 +224,14 @@ def like_song(music_id):
     cursor.execute('UPDATE musics SET likes = likes + 1 WHERE music_id = ?', (music_id,))
 
     close_connection(conn)
+
+
+def report_song(music_id):
+    """
+    Report a song from the musics table by music_id.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('UPDATE musics SET reports = reports + 1 WHERE music_id = ?', (music_id,))
+
+    close_connection(conn)
