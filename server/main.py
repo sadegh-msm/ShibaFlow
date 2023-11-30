@@ -11,10 +11,10 @@ logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - 
 logger = logging.getLogger()
 logger.setLevel(logging.NOTSET)
 
-# app.config["SONGS"] = os.getenv("HOME")+'/android/ShibaFlow/server/Flows'
-# app.config["SONGS_COVER"] = os.getenv("HOME")+'/android/ShibaFlow/server/Cover_flows'
-app.config["SONGS"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Flows/'
-app.config["SONGS_COVER"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Cover_flows'
+app.config["SONGS"] = os.getenv("HOME")+'/android/ShibaFlow/server/Flows/'
+app.config["SONGS_COVER"] = os.getenv("HOME")+'/android/ShibaFlow/server/Cover_flows/'
+# app.config["SONGS"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Flows/'
+# app.config["SONGS_COVER"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Cover_flows'
 
 
 @app.route("/healthz", methods=['GET'])
