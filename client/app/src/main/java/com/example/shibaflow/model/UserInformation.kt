@@ -1,15 +1,15 @@
 package com.example.shibaflow.model
 
+import com.google.gson.JsonArray
+
 object MyInfo {
     var userInformation: UserInformation = UserInformation()
     var song: Song = Song()
 }
-//data class Song(
-//    val title: String="",
-//    val artist: String= "",
-//    val duration: String= "",
-//    val coverResourceId: Int= 0
-//)
+data class SongsResponse(
+    val message: String,
+    val songs_info: List<JsonArray>
+)
 data class Song(
     var id: Int = 0,
     var title: String = "",
