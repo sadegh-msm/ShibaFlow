@@ -8,3 +8,11 @@ clean:
 	rm -rf *.png
 	rm -rf *.pyc
 	rm -rf *.log
+
+# build the docker image
+build:
+	docker build -t Shibaflow .
+
+# run the docker image
+run:
+	docker run -it Shibaflow -p 8080:8080

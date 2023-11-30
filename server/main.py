@@ -367,4 +367,4 @@ def report_by_id():
 if __name__ == "__main__":
     logger.info("starting server")
     logger.info("server is started on port:" + config.port)
-    serve(app, host="0.0.0.0", port=config.port)
+    serve(app, host=config.host, port=config.port)
