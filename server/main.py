@@ -4,7 +4,7 @@ from waitress import serve
 from model import user, music
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
-from .utils import util
+from utils import util
 import os
 
 app = Flask(__name__)
