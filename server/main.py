@@ -6,13 +6,16 @@ from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 import os
 
+
 app = Flask(__name__)
 logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 logger.setLevel(logging.NOTSET)
 
-app.config["SONGS"] = os.getenv("HOME")+'/android/ShibaFlow/server/Flows/'
-app.config["SONGS_COVER"] = os.getenv("HOME")+'/android/ShibaFlow/server/Cover_flows/'
+app.config["SONGS"] = os.getenv("HOME") + '/android/ShibaFlow/server/Flows/'
+app.config["SONGS_COVER"] = os.getenv("HOME") + '/android/ShibaFlow/server/Cover_flows/'
+
+
 # app.config["SONGS"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Flows/'
 # app.config["SONGS_COVER"] = '/Users/mohamadsadegh/daneshgaaaa/term7/android/ShibaFlow/server/Cover_flows'
 
@@ -35,7 +38,7 @@ def register_user():
         return jsonify({'error': "user with this artist name already exist"}), 409
 
     ok = user.insert_users_data(user_info['fname'], user_info['lname'], user_info['artist_name'], user_info['email'],
-                                user_info['password'], user_info['gender'])
+                                user_info['password'])
     if ok:
         response_data = {
             'message': 'User registered successfully',
@@ -73,23 +76,45 @@ def new_song():
     data = request.files.to_dict()
     logger.info('user requested new song', song_info)
 
+    if not song_info['title'] or not song_info['album_name'] or not song_info['genre'] or not song_info[
+        'artist_name'] or not song_info['password']:
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    if 'music' not in data.keys():
+        logger.info('music file not found', song_info)
+        return jsonify({'error': 'music file not found'}), 400
+
+    if data['music'].filename.split('.')[-1] != 'mp3':
+        logger.info('file format is not correct', song_info)
+        return jsonify({'error': 'music file format is not correct'}), 400
+
+    if data['cover'].filename.split('.')[-1] != 'jpg' and data['cover'].filename.split('.')[-1] != 'jpeg' and \
+            data['cover'].filename.split('.')[-1] != 'png':
+        logger.info('file format is not correct', song_info)
+        return jsonify({'error': 'cover file format is not correct'}), 400
+
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
         music_name = song_info['artist_name'] + '@' + song_info['title'] + '.mp3'
         cover_name = song_info['artist_name'] + '@' + song_info['title'] + '.jpg'
         logger.info('uploading music to s3')
-        arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket,
-                       data['music'], music_name)
+        arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, data['music'],
+                       music_name)
         logger.info('finished uploading music to s3')
 
-        logger.info('uploading cover to s3')
-        arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket,
-                       data['cover'], cover_name)
-        logger.info('finished uploading cover to s3')
+        if 'cover' in data.keys() or data['cover'].filename != '':
+            logger.info('uploading cover to s3')
+            arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, data['cover'],
+                           cover_name)
+            logger.info('finished uploading cover to s3')
 
-        song_id = music.insert_musics_data(song_info['title'], song_info['album_name'], music_name,
-                                           cover_name, song_info['genre'], song_info['duration'],
-                                           song_info['artist_name'])
+            song_id = music.insert_musics_data(song_info['title'], song_info['album_name'], music_name,
+                                               cover_name, song_info['genre'], song_info['artist_name'])
+        else:
+            song_id = music.insert_musics_data(song_info['title'], song_info['album_name'], music_name,
+                                               '', song_info['genre'], song_info['artist_name'])
+
         if new_song:
             response_data = {
                 'message': 'song uploaded successfully',
@@ -98,7 +123,6 @@ def new_song():
                     'title': song_info['title'],
                     'album_name': song_info['album_name'],
                     'genre': song_info['genre'],
-                    'duration': song_info['duration'],
                     'artist_name': song_info['artist_name'],
                 }
             }
@@ -145,7 +169,8 @@ def get_all_songs():
     for i in range(len(songs)):
         songs[i] = list(songs[i])
         songs[i][4] = 'http://195.248.242.169:8080/songbyid/' + songs[i][4]
-        songs[i][5] = 'http://195.248.242.169:8080/coverbyid/' + songs[i][5]
+        if songs[i][5] != '':
+            songs[i][5] = 'http://195.248.242.169:8080/coverbyid/' + songs[i][5]
     if songs:
         response_data = {
             'message': 'songs found',
@@ -165,7 +190,8 @@ def get_music_by_id(music_filename):
     song_info = music_filename.split('@')
     if song_info[1]:
         logger.info('downloading music from s3')
-        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_filename, 'music')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.music_bucket, music_filename,
+                         'music')
         logger.info('finished downloading music from s3')
 
         logger.info('song found', music_filename)
@@ -182,7 +208,8 @@ def get_cover_by_id(cover_filename):
     cover_info = cover_filename.split('@')
     if cover_info[1]:
         logger.info('downloading cover from s3')
-        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_filename, 'cover')
+        arvan_downloader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, cover_filename,
+                         'cover')
         logger.info('finished downloading cover from s3')
 
         logger.info('cover found', cover_filename)
@@ -194,7 +221,21 @@ def get_cover_by_id(cover_filename):
 
 @app.route("/like", methods=['GET'])
 def like_song():
-    pass
+    song_info = request.form.to_dict()
+    logger.info('user requested like song', song_info)
+
+    song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
+    if song:
+        ok = music.like_song(song[0])
+        if ok:
+            logger.info('song liked', song_info)
+            return jsonify({'ok': 'song liked successfully'}), 200
+        else:
+            logger.info('song failed to like', song_info)
+            return jsonify({'error': 'bad request'}), 400
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
 
 
 @app.route("/report", methods=['GET'])

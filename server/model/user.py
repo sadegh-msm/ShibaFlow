@@ -57,7 +57,7 @@ def is_valid_email(email):
     return re.match(email_regex, email)
 
 
-def insert_users_data(fname, lname, artist_name, email, password, gender):
+def insert_users_data(fname, lname, artist_name, email, password):
     """
     Insert data into the users table.
     """
@@ -66,11 +66,7 @@ def insert_users_data(fname, lname, artist_name, email, password, gender):
     current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     password = hash_password(password)
     verified = 'N'
-
-    if gender == 'male':
-        gender = 'M'
-    elif gender == 'female':
-        gender = 'F'
+    gender = 'U'
 
     ok = is_valid_email(email)
     if ok:
@@ -87,6 +83,9 @@ def insert_users_data(fname, lname, artist_name, email, password, gender):
 
 
 def delete_user_by_id(user_id):
+    """
+    Delete a user from the users table by user_id.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('DELETE FROM users WHERE user_id = ?', (user_id,))
@@ -95,6 +94,9 @@ def delete_user_by_id(user_id):
 
 
 def drop_user_table():
+    """
+    Drop the users table.
+    """
     conn, cursor = connect_to_database()
     cursor.execute('DROP TABLE IF EXISTS users')
 
@@ -102,6 +104,9 @@ def drop_user_table():
 
 
 def check_user(artist_name, password):
+    """
+    Check if a user exists in the users table.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT password FROM users WHERE artist_name = ?', (artist_name,))
@@ -117,6 +122,9 @@ def check_user(artist_name, password):
 
 
 def user_exists(artist_name):
+    """
+    Check if a user exists in the users table.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM users WHERE artist_name = ?', (artist_name,))
@@ -128,6 +136,9 @@ def user_exists(artist_name):
 
 
 def find_user_by_artist_name(artist_name):
+    """
+    Find a user in the users table by artist_name.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM users WHERE artist_name = ?', (artist_name,))
@@ -139,6 +150,9 @@ def find_user_by_artist_name(artist_name):
 
 
 def find_user_id_by_artist_name(artist_name):
+    """
+    Find a user in the users table by artist_name.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT user_id FROM users WHERE artist_name = ?', (artist_name,))
@@ -150,6 +164,9 @@ def find_user_id_by_artist_name(artist_name):
 
 
 def find_user_by_email(email):
+    """
+    Find a user in the users table by email.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
@@ -159,7 +176,11 @@ def find_user_by_email(email):
 
     return user if user else None
 
+
 def find_artist_name_by_id(user_id):
+    """
+    Find a user in the users table by user_id.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT artist_name FROM users WHERE user_id = ?', (user_id,))

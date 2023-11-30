@@ -45,7 +45,7 @@ def close_connection(conn):
     conn.close()
 
 
-def insert_musics_data(title, album_name, file_path, cover_path, genre, duration, artist_name):
+def insert_musics_data(title, album_name, file_path, cover_path, genre, artist_name):
     """
     Insert data into the musics table.
     """
@@ -55,7 +55,7 @@ def insert_musics_data(title, album_name, file_path, cover_path, genre, duration
     reports = 0
     likes = 0
     publisher_id = find_user_id_by_artist_name(artist_name)
-    music = [title, publisher_id, album_name, file_path, cover_path, genre, likes, reports, duration, release_date]
+    music = [title, publisher_id, album_name, file_path, cover_path, genre, likes, reports, '0', release_date]
     cursor.execute(
         'INSERT INTO musics (title, publisher_id, album_name, file_path, cover_path, genre, likes, reports, duration, release_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         music)
@@ -77,16 +77,16 @@ def update_music_data(title, album_name, genre, music_id):
     close_connection(conn)
 
 
-def check_music_exist(title, album_name, genre, duration, artist_name):
+def check_music_exist(title, album_name, genre, artist_name):
     """
     Insert data into the musics table.
     """
     conn, cursor = connect_to_database()
 
     publisher_id = find_user_id_by_artist_name(artist_name)
-    music = [title, album_name, genre, duration, publisher_id]
+    music = [title, album_name, genre, publisher_id]
     cursor.execute(
-        'SELECT * FROM musics WHERE title = ?, album_name = ?, genre = ?, duration = ? WHERE publisher_id = ?', music)
+        'SELECT * FROM musics WHERE title = ?, album_name = ?, genre = ? WHERE publisher_id = ?', music)
     result = cursor.fetchone()
 
     close_connection(conn)
@@ -95,6 +95,9 @@ def check_music_exist(title, album_name, genre, duration, artist_name):
 
 
 def delete_music_by_id(music_id):
+    """
+    Delete a music from the musics table by music_id.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('DELETE FROM musics WHERE music_id = ?', (music_id,))
@@ -103,6 +106,9 @@ def delete_music_by_id(music_id):
 
 
 def drop_music_table():
+    """
+    Drop the musics table.
+    """
     conn, cursor = connect_to_database()
     cursor.execute('DROP TABLE IF EXISTS musics')
 
@@ -110,6 +116,9 @@ def drop_music_table():
 
 
 def find_music_by_id(music_id):
+    """
+    Find a music from the musics table by music_id.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics WHERE music_id = ?', (music_id,))
@@ -121,6 +130,9 @@ def find_music_by_id(music_id):
 
 
 def find_music_by_title(title):
+    """
+    Find a music from the musics table by title.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics WHERE title = ?', (title,))
@@ -132,6 +144,9 @@ def find_music_by_title(title):
 
 
 def find_music_by_genre(genre):
+    """
+    Find a music from the musics table by genre.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics WHERE genre = ?', (genre,))
@@ -143,6 +158,9 @@ def find_music_by_genre(genre):
 
 
 def find_music_by_album_name(album_name):
+    """
+    Find a music from the musics table by album_name.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics WHERE album_name = ?', (album_name,))
@@ -154,6 +172,9 @@ def find_music_by_album_name(album_name):
 
 
 def find_music_by_publisher_id(publisher_id):
+    """
+    Find a music from the musics table by publisher_id.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics WHERE publisher_id = ?', (publisher_id,))
@@ -165,6 +186,9 @@ def find_music_by_publisher_id(publisher_id):
 
 
 def get_musics_by_title_artist(title, artist_name):
+    """
+    Find a music from the musics table by title and artist_name.
+    """
     conn, cursor = connect_to_database()
 
     publisher_id = find_user_id_by_artist_name(artist_name)
@@ -178,6 +202,9 @@ def get_musics_by_title_artist(title, artist_name):
 
 
 def get_all_musics():
+    """
+    Find all music from the musics table.
+    """
     conn, cursor = connect_to_database()
 
     cursor.execute('SELECT * FROM musics')
@@ -186,3 +213,14 @@ def get_all_musics():
     close_connection(conn)
 
     return result if result else None
+
+
+def like_song(music_id):
+    """
+    Like a song from the musics table by music_id.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('UPDATE musics SET likes = likes + 1 WHERE music_id = ?', (music_id,))
+
+    close_connection(conn)
