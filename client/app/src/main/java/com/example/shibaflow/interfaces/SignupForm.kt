@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 fun SignupForm(navController: NavHostController) {
     Surface(
         color = MaterialTheme.colorScheme.onSecondaryContainer,
-
         ) {
 //        var information = MyInfo.userInformation
         var information by remember { mutableStateOf(UserInformation()) }
@@ -63,7 +62,6 @@ fun SignupForm(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)
         ) {
-
             Image(
                 painter = painterResource(id = R.drawable.shibainu), // Replace with your image resource
                 contentDescription = null, // Provide a meaningful description
@@ -74,7 +72,6 @@ fun SignupForm(navController: NavHostController) {
                     .aspectRatio(1f)
                     .fillMaxHeight(),
             )
-
             UsernameField(
                 value = information.username,
                 onChange = { data -> information = information.copy(username = data) },
@@ -99,13 +96,6 @@ fun SignupForm(navController: NavHostController) {
             EmailField(
                 value = information.email,
                 onChange = { data -> information = information.copy(email = data) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
-            )
-            GenderField(
-                value = information.gender,
-                onChange = { data -> information = information.copy(gender = data) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)

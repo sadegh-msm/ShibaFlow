@@ -16,6 +16,7 @@ import com.google.gson.JsonArray
 suspend fun main() {
 
 }
+
 suspend fun SignupHandler(
     firstname: String,
     lastname: String,
@@ -43,11 +44,8 @@ suspend fun SignupHandler(
     } else if (response.status.value == 409) {
         Pair("Duplicate Information", "")
     } else {
-        Pair("Incorrect Information","")
-
+        Pair("Incorrect Information", "")
     }
-
-
 }
 
 suspend fun LoginHandler(artistName: String, password: String): Pair<String, String> {
@@ -69,12 +67,11 @@ suspend fun LoginHandler(artistName: String, password: String): Pair<String, Str
 }
 
 
-
-suspend fun getAllSongs(): Pair<List<Song>,String> {
+suspend fun getAllSongs(): Pair<List<Song>, String> {
     val client = HttpClient(CIO)
     val response: HttpResponse = client.get("http://195.248.242.169:8080/allsongs")
     var ok = ""
-    if (response.status.value == 200){
+    if (response.status.value == 200) {
         ok = "ok"
     }
     val content: String = response.bodyAsText().toString()
@@ -95,7 +92,7 @@ suspend fun getAllSongs(): Pair<List<Song>,String> {
             lastPlayed = jsonArray[10].asString
         )
     }
-    return Pair(songs,ok)
+    return Pair(songs, ok)
 }
 
 

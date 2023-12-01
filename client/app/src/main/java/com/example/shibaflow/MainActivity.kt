@@ -30,9 +30,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     UsersApplication()
-
-
-
                 }
             }
         }
@@ -49,35 +46,12 @@ fun UsersApplication() {
         }
         composable(route = "signup_page") {
             SignupForm(navController)
-
         }
         composable(route = "music_page") {
             SongListApp(navController)
-
         }
         composable(route = "upload_page") {
             UploadForm(navController)
-
         }
-    }
-
-
-}
-
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ShibaFlowTheme {
-        Greeting("Android")
     }
 }

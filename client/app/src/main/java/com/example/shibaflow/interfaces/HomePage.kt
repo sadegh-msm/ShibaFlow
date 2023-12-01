@@ -56,13 +56,14 @@ import com.example.shibaflow.model.UserInformation
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
+
+
 private var exoPlayer: ExoPlayer? = null
-fun playSong(url: String,context:Context){
-    if(exoPlayer?.playWhenReady ==true){
+fun playSong(url: String, context: Context) {
+    if (exoPlayer?.playWhenReady == true) {
         exoPlayer!!.release()
         exoPlayer = ExoPlayer.Builder(context).build()
-    }
-    else{
+    } else {
         val mediaItem = MediaItem.fromUri(Uri.parse(url))
         exoPlayer = ExoPlayer.Builder(context).build()
         exoPlayer?.setMediaItem(mediaItem)
@@ -70,6 +71,7 @@ fun playSong(url: String,context:Context){
         exoPlayer?.playWhenReady = true
     }
 }
+
 @Composable
 fun SongCard(song: Song, modifier: Modifier = Modifier) {
     Card(
@@ -90,10 +92,9 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                         Toast
                             .makeText(context, "Start downloading..", Toast.LENGTH_SHORT)
                             .show()
-                        playSong(song.mp3File,context)
-
+                        playSong(song.mp3File, context)
                     }
-            ){
+            ) {
                 Icon(
                     painter = painterResource(id = R.drawable.download),
                     modifier = Modifier
@@ -103,11 +104,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.background
                 )
-
             }
-
-
-
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -145,16 +142,13 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(100.dp)
                     .padding(all = 8.dp)
-                    .clip(CircleShape)
-                ,
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
 
         }
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,57 +158,56 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     var isLoad2 by remember { mutableStateOf(false) }
     val context = LocalContext.current
     if (!isLoad) {
-                val scope = rememberCoroutineScope()
-                LaunchedEffect(key1 = songListState) {
-                    Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
-                    scope.launch {
-                        val (songs,ok) = getAllSongs()
-                        songListState = songs
-                        if (ok == "ok"){
-                            isLoad = true
-                            isLoad2 = true
-
-                        }
-
-                    }
-                    }
-                }
-
-    Scaffold(
-            topBar = {
-                TopAppBar()
-            },
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-
-                    navController.navigate("upload_page")
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.upload),
-                        modifier = Modifier.width(20.dp).height(20.dp),
-                        contentDescription = "",
-                        tint = Color.Black
-                    )
-                }
-            },
-            floatingActionButtonPosition = FabPosition.End,
-//        isFloatingActionButtonDocked = true
-        ) { it -> LazyColumn(modifier = modifier.padding(all = 16.dp), contentPadding = it) {
-                if (isLoad2){
-                    items(songListState) { song ->
-                        SongCard(
-                            song = song,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
+        val scope = rememberCoroutineScope()
+        LaunchedEffect(key1 = songListState) {
+            Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
+            scope.launch {
+                val (songs, ok) = getAllSongs()
+                songListState = songs
+                if (ok == "ok") {
+                    isLoad = true
+                    isLoad2 = true
                 }
             }
         }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar()
+        },
+        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+
+                navController.navigate("upload_page")
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.upload),
+                    modifier = Modifier
+                        .width(20.dp)
+                        .height(20.dp),
+                    contentDescription = "",
+                    tint = Color.Black
+                )
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End,
+//        isFloatingActionButtonDocked = true
+    ) { it ->
+        LazyColumn(modifier = modifier.padding(all = 16.dp), contentPadding = it) {
+            if (isLoad2) {
+                items(songListState) { song ->
+                    SongCard(
+                        song = song,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+        }
+    }
 
 }
-
-
 
 
 @Composable
@@ -223,13 +216,12 @@ fun SongListApp(navController: NavController) {
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(modifier: Modifier = Modifier){
+fun TopAppBar(modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
         title = {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(

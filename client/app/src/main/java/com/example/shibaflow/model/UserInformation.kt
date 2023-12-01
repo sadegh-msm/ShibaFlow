@@ -6,10 +6,12 @@ object MyInfo {
     var userInformation: UserInformation = UserInformation()
     var song: Song = Song()
 }
+
 data class SongsResponse(
     val message: String,
     val songs_info: List<JsonArray>
 )
+
 data class Song(
     var id: Int = 0,
     var title: String = "",
