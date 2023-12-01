@@ -96,7 +96,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     }
             ) {
                 Icon(
-                    painter = painterResource(id = com.google.android.exoplayer2.ui.R.drawable.exo_icon_play),
+                    painter = painterResource(id = com.google.android.exoplayer2.ui.R.drawable.exo_ic_play_circle_filled),
                     modifier = Modifier
                         .width(1000.dp)
                         .height(1000.dp)
