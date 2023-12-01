@@ -90,17 +90,17 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     .size(50.dp)
                     .clickable {
                         Toast
-                            .makeText(context, "Start downloading..", Toast.LENGTH_SHORT)
+                            .makeText(context, "playing...", Toast.LENGTH_SHORT)
                             .show()
                         playSong(song.mp3File, context)
                     }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.download),
+                    painter = painterResource(id = com.google.android.exoplayer2.ui.R.drawable.exo_icon_play),
                     modifier = Modifier
-                        .width(500.dp)
-                        .height(500.dp)
-                        .padding(15.dp),
+                        .width(1000.dp)
+                        .height(1000.dp)
+                        .padding(10.dp),
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.background
                 )
@@ -157,6 +157,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     var isLoad by remember { mutableStateOf(false) }
     var isLoad2 by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
     if (!isLoad) {
         val scope = rememberCoroutineScope()
         LaunchedEffect(key1 = songListState) {
@@ -179,7 +180,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-
                 navController.navigate("upload_page")
             }) {
                 Icon(
@@ -195,18 +195,17 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
         floatingActionButtonPosition = FabPosition.End,
 //        isFloatingActionButtonDocked = true
     ) { it ->
-        LazyColumn(modifier = modifier.padding(all = 16.dp), contentPadding = it) {
+        LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
             if (isLoad2) {
                 items(songListState) { song ->
                     SongCard(
                         song = song,
-                        modifier = Modifier.padding(8.dp)
+                        modifier = Modifier.padding(1.dp)
                     )
                 }
             }
         }
     }
-
 }
 
 
@@ -246,7 +245,6 @@ fun TopAppBar(modifier: Modifier = Modifier) {
             }
         },
         modifier = modifier,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
-
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
 }

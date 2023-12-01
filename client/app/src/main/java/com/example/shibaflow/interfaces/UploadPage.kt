@@ -75,8 +75,8 @@ fun UploadForm(navController: NavController){
         val context = LocalContext.current
         ShibaFlowButton(
             onClick = { isUpload = true
-                Toast.makeText(context, "Upload Completed", Toast.LENGTH_SHORT).show()
-                navController.navigate("music_page")
+                    Toast.makeText(context, "Uploading content...", Toast.LENGTH_SHORT).show()
+                    navController.navigate("music_page")
                       },
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,10 +87,8 @@ fun UploadForm(navController: NavController){
             Text("Upload")
         }
     }
-
-
-
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MusicField(
