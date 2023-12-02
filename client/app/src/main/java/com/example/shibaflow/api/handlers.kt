@@ -11,6 +11,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import io.ktor.client.request.forms.formData
+import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 
 
 suspend fun main() {
@@ -93,4 +97,45 @@ suspend fun getAllSongs(): Pair<List<Song>, String> {
         )
     }
     return Pair(songs, ok)
+}
+suspend fun uploadMusicHandler (
+    title: String,
+    genre: String,
+    password: String,
+    artistName: String,
+    albumName: String,
+    musicURI:ByteArray,
+    imageURI:ByteArray?
+
+
+): Pair<String,String> {
+    val client = HttpClient(CIO)
+    val response: HttpResponse = client.submitFormWithBinaryData(
+        url = "http://195.248.242.169:8080/song",
+        formData = formData {
+            append("artist_name", artistName)
+            append("password", password)
+            append("title", title)
+            append("genre", genre)
+            append("duration", "")
+            append("album_name", albumName)
+            append("music", musicURI, Headers.build {
+                append(HttpHeaders.ContentType, "audio/mpeg")
+                append(HttpHeaders.ContentDisposition, "filename=\"music.mp3\"")
+            })
+            if (imageURI != null) {
+                append("cover", imageURI, Headers.build {
+                    append(HttpHeaders.ContentType, "image/jpg")
+                    append(HttpHeaders.ContentDisposition, "filename=\"cover.jpg\"")
+                })
+            }
+
+        }
+    )
+    client.close()
+    return if (response.status.value == 201) {
+        Pair("Your information is correct.", "ok")
+    } else {
+        Pair("Your information is incorrect.", "")
+    }
 }

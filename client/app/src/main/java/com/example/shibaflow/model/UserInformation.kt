@@ -12,6 +12,19 @@ data class SongsResponse(
     val songs_info: List<JsonArray>
 )
 
+data class UploadSong(
+    var title: String="",
+    var album: String = "",
+    var mp3File: ByteArray? = null,
+    var coverImage: ByteArray? = null,
+    var genre: String = ""
+
+) {
+    fun isUploadEmpty(): Boolean {
+        return title== "" || mp3File == null
+    }
+}
+
 data class Song(
     var id: Int = 0,
     var title: String = "",
@@ -29,14 +42,15 @@ data class Song(
 data class UserInformation(
     var username: String = "",
     var password: String = "",
-    var firstname:String = "",
-    var lasttname:String = "",
-    var email:String = "",
-    var gender:String = "",
+    var firstname: String = "",
+    var lasttname: String = "",
+    var email: String = "",
+    var gender: String = "",
 ) {
     fun isLoginNotEmpty(): Boolean {
         return username.isNotEmpty() && password.isNotEmpty()
     }
+
     fun isSignupNotEmpty(): Boolean {
         return username.isNotEmpty() && password.isNotEmpty()
     }
