@@ -2,6 +2,7 @@ package com.example.shibaflow.interfaces
 
 import android.content.Context
 import android.net.Uri
+import android.widget.SearchView
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import android.widget.Toast
@@ -32,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -56,6 +59,17 @@ import com.example.shibaflow.model.UserInformation
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextField
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.dp
 
 
 private var exoPlayer: ExoPlayer? = null
@@ -70,6 +84,51 @@ fun playSong(url: String, context: Context) {
         exoPlayer?.prepare()
         exoPlayer?.playWhenReady = true
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchView(
+    modifier: Modifier = Modifier,
+    state: MutableState<TextFieldValue>
+) {
+    TextField(
+        value = state.value,
+        onValueChange = { value ->
+            state.value = value
+        },
+        modifier = modifier.fillMaxWidth(),
+        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
+        leadingIcon = {
+            Icon(
+                Icons.Default.Search,
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(15.dp)
+                    .size(24.dp)
+            )
+        },
+        trailingIcon = {
+            if (state.value != TextFieldValue("")) {
+                IconButton(
+                    onClick = {
+                        state.value =
+                            TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .size(24.dp)
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        shape = RectangleShape
+    )
 }
 
 @Composable
@@ -145,7 +204,6 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
-
         }
     }
 }
@@ -157,6 +215,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     var isLoad by remember { mutableStateOf(false) }
     var isLoad2 by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var textState = remember { mutableStateOf(TextFieldValue("")) }
 
     if (!isLoad) {
         val scope = rememberCoroutineScope()
@@ -194,7 +253,8 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
         },
         floatingActionButtonPosition = FabPosition.End,
 //        isFloatingActionButtonDocked = true
-    ) { it ->
+    )
+    { it ->
         LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
             if (isLoad2) {
                 items(songListState) { song ->
@@ -205,8 +265,50 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 }
             }
         }
+        Column {
+            SearchView(modifier, textState)
+            ItemList(state = textState)
+        }
     }
 }
+
+@Composable
+fun ItemList(state: MutableState<TextFieldValue>) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val showToast = remember { mutableStateOf(false) }
+
+    if (state.value.text != "") {
+        LaunchedEffect(key1 = state.value.text) {
+            scope.launch {
+                val (songs, ok) = getAllSongs()
+                if (ok == "ok") {
+                    val filteredSongs = songs.filter { song ->
+                        song.title.contains(state.value.text, ignoreCase = true)
+                    }
+                    if (filteredSongs.isNotEmpty()) {
+//                        Column {
+//                            filteredSongs.forEach { song ->
+//                                SongCard(
+//                                    song = song,
+//                                    modifier = Modifier.padding(1.dp)
+//                                )
+//                            }
+//                        }
+                    } else {
+                        showToast.value = true
+                    }
+                }
+            }
+        }
+    }
+
+    if (showToast.value) {
+        Toast.makeText(context, "No results found.", Toast.LENGTH_SHORT).show()
+        showToast.value = false
+    }
+}
+
 
 
 @Composable
