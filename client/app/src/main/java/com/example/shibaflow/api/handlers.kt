@@ -140,10 +140,10 @@ suspend fun uploadMusicHandler (
 }
 
 suspend fun likeDislikeSong (
-    songID: String,
+    songID: Int,
     action: String,
 
-): Pair<String,String> {
+    ): Pair<String,String> {
     val client = HttpClient(CIO)
     val response: HttpResponse = client.submitFormWithBinaryData(
         url = "http://195.248.242.169:8080/    endpoint",
