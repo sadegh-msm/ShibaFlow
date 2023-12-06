@@ -10,7 +10,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.http.Headers
@@ -139,3 +138,48 @@ suspend fun uploadMusicHandler (
         Pair("Your information is incorrect.", "")
     }
 }
+
+suspend fun likeDislikeSong (
+    songID: String,
+    action: String,
+
+): Pair<String,String> {
+    val client = HttpClient(CIO)
+    val response: HttpResponse = client.submitFormWithBinaryData(
+        url = "http://195.248.242.169:8080/    endpoint",
+        formData = formData {
+            append("songID", songID)
+            append("action", action)
+        }
+    )
+    client.close()
+    return if (response.status.value == 201) {
+        Pair("action is done", "ok")
+    } else {
+        Pair("something went wrong", "")
+    }
+}
+
+suspend fun checkSongLiked (
+    songID: Int,
+    userID: String,
+
+    ): Boolean {
+//    val client = HttpClient(CIO)
+//    val response: HttpResponse = client.submitFormWithBinaryData(
+//        url = "http://195.248.242.169:8080/    endpoint",
+//        formData = formData {
+//            append("songID", songID)
+//            append("userID", userID)
+//        }
+//    )
+//    client.close()
+//    return if (response.status.value == 201) {
+//        "liked or not"
+//    } else {
+//        ""
+//    }
+    return songID % 2 != 0
+}
+
+

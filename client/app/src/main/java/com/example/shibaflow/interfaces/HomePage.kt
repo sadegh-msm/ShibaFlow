@@ -2,7 +2,7 @@ package com.example.shibaflow.interfaces
 
 import android.content.Context
 import android.net.Uri
-import android.widget.SearchView
+import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import android.widget.Toast
@@ -52,24 +52,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.shibaflow.R
-import com.example.shibaflow.api.LoginHandler
 import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.model.Song
-import com.example.shibaflow.model.UserInformation
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.unit.dp
+import com.example.shibaflow.api.checkSongLiked
+import com.example.shibaflow.model.MyInfo
 
 
 private var exoPlayer: ExoPlayer? = null
@@ -133,6 +128,16 @@ fun SearchView(
 
 @Composable
 fun SongCard(song: Song, modifier: Modifier = Modifier) {
+    val s = rememberCoroutineScope()
+    var isLiked by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        s.launch {
+            isLiked = checkSongLiked(song.id, MyInfo.userInformation.username)
+            Log.d("myTag", "$isLiked song ID: ${song.id}");
+        }
+    }
+    var firstTime by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier.padding(all = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -144,18 +149,18 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val context = LocalContext.current
+
             Box(
                 modifier = Modifier
                     .size(50.dp)
                     .clickable {
-                        Toast
-                            .makeText(context, "playing...", Toast.LENGTH_SHORT)
-                            .show()
-                        playSong(song.mp3File, context)
+                        isLiked = !isLiked
                     }
             ) {
                 Icon(
-                    painter = painterResource(id = com.google.android.exoplayer2.ui.R.drawable.exo_ic_play_circle_filled),
+                    painter = painterResource(
+                        id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
+                    ),
                     modifier = Modifier
                         .width(1000.dp)
                         .height(1000.dp)
@@ -163,7 +168,31 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.background
                 )
+
+                val scope = rememberCoroutineScope()
+
+                LaunchedEffect(key1 = isLiked) {
+                    scope.launch {
+                        if (isLiked) {
+                            if (firstTime) {
+                                Toast
+                                    .makeText(context, "Liked!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            firstTime = true
+                        } else {
+                            if (firstTime) {
+                                Toast
+                                    .makeText(context, "Unliked!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            firstTime = true
+                        }
+                    }
+                }
             }
+
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -207,6 +236,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -308,7 +338,6 @@ fun ItemList(state: MutableState<TextFieldValue>) {
         showToast.value = false
     }
 }
-
 
 
 @Composable
