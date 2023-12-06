@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CommentsPage(songId: Int, navController: NavController) {
-    // State to hold the comments and loading status
     val (comments, setComments) = remember { mutableStateOf<List<String>>(emptyList()) }
     val (loading, setLoading) = remember { mutableStateOf(true) }
     val (newComment, setNewComment) = remember { mutableStateOf(TextFieldValue()) }
@@ -51,10 +50,8 @@ fun CommentsPage(songId: Int, navController: NavController) {
                     setComments(fetchedComments)
                     setNewComment(TextFieldValue())
                 } else {
-                    // Handle error case
                 }
             } catch (e: Exception) {
-                // Handle exception
             }
         }
     }
@@ -66,10 +63,8 @@ fun CommentsPage(songId: Int, navController: NavController) {
                 if (ok == "ok") {
                     setComments(fetchedComments)
                 } else {
-                    // Handle error case
                 }
             } catch (e: Exception) {
-                // Handle exception
             } finally {
                 setLoading(false)
             }

@@ -141,96 +141,34 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
     Card(
         modifier = modifier.padding(all = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(size = 50.dp)
+        shape = RoundedCornerShape(size = 16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            val context = LocalContext.current
-
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clickable {
-                        isLiked = !isLiked
-                    }
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
-                    ),
-                    modifier = Modifier
-                        .width(1000.dp)
-                        .height(1000.dp)
-                        .padding(10.dp),
-                    contentDescription = "",
-                    tint = MaterialTheme.colorScheme.background
-                )
-
-                val scope = rememberCoroutineScope()
-
-                LaunchedEffect(key1 = isLiked) {
-                    scope.launch {
-                        if (isLiked) {
-                            if (firstTime) {
-                                Toast
-                                    .makeText(context, "Liked!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            firstTime = true
-                        } else {
-                            if (firstTime) {
-                                Toast
-                                    .makeText(context, "Unliked!", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                            firstTime = true
-                        }
-                    }
-                }
-            }
-
-            // Comment Icon
-            Icon(
-                painterResource(id = R.drawable.comment),
-                contentDescription = "Comment",
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(10.dp)
-                    .clickable {
-                        // Handle comment icon click, navigate to comment page
-                        navController.navigate("comment_page/${song.id}")
-                    }
-            )
-
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
                 Text(
                     text = song.title,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = song.album,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center
                 )
                 Text(
                     text = song.duration,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center
                 )
@@ -240,15 +178,43 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                 model = song.coverImage,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(100.dp)
-                    .padding(all = 8.dp)
-                    .clip(CircleShape),
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(size = 16.dp)),
                 contentScale = ContentScale.Crop
             )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
+                    ),
+                    contentDescription = "Like",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            isLiked = !isLiked
+                        }
+                )
+
+                Icon(
+                    painterResource(id = R.drawable.comment),
+                    contentDescription = "Comment",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            navController.navigate("comment_page/${song.id}")
+                        }
+                )
+            }
         }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
