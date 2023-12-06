@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import com.example.shibaflow.interfaces.LoginForm
+import com.example.shibaflow.interfaces.PanelPage
 import com.example.shibaflow.interfaces.SignupForm
 import com.example.shibaflow.interfaces.SongListApp
 import com.example.shibaflow.interfaces.UploadForm
@@ -59,8 +60,11 @@ fun UsersApplication() {
             songId?.let {
                 CommentsPage(songId = it, navController = navController)
             } ?: run {
-                // Handle invalid or missing songId
             }
+        }
+
+        composable(route = "panel_page") {
+            PanelPage(navController)
         }
 
 

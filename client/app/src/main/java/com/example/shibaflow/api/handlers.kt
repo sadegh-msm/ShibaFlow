@@ -1,6 +1,5 @@
 package com.example.shibaflow.api
 
-import com.example.shibaflow.model.CommentsResponse
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
 import io.ktor.client.*
@@ -240,4 +239,33 @@ suspend fun postCommentToEndpoint (songID: Int, comment: String): Pair<String, S
     }
 
 }
+
+suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
+    val client = HttpClient(CIO)
+    val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
+    var ok = ""
+    if (response.status.value == 200) {
+        ok = "ok"
+    }
+    val content: String = response.bodyAsText().toString()
+    val gson = Gson()
+    val jsonForm = gson.fromJson(content, SongsResponse::class.java)
+    val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
+        Song(
+            id = jsonArray[0].asInt,
+            title = jsonArray[1].asString,
+            artistId = jsonArray[2].asInt,
+            album = jsonArray[3].asString,
+            mp3File = jsonArray[4].asString,
+            coverImage = jsonArray[5].asString,
+            genre = jsonArray[6].asString,
+            playCount = jsonArray[7].asInt,
+            skipCount = jsonArray[8].asInt,
+            duration = jsonArray[9].asString,
+            lastPlayed = jsonArray[10].asString
+        )
+    }
+    return Pair(songs, ok)
+}
+
 
