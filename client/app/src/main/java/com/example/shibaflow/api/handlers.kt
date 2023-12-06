@@ -1,5 +1,6 @@
 package com.example.shibaflow.api
 
+import com.example.shibaflow.model.CommentsResponse
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
 import io.ktor.client.*
@@ -182,4 +183,61 @@ suspend fun checkSongLiked (
     return songID % 2 != 0
 }
 
+suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
+//    val client = HttpClient(CIO)
+//    val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+//
+//    val ok = if (response.status.value == 200) "ok" else "error"
+//
+//    val content: String = response.bodyAsText().toString()
+//    val gson = Gson()
+//    val jsonForm = gson.fromJson(content, CommentsResponse::class.java)
+//    val comments: List<String> = jsonForm.comments
+    var x : List<String> = listOf("ss", ":fsfsf", "f sf")
+
+    return Pair(x, "ok")
+}
+
+//suspend fun postCommentToEndpoint(songId: Int, comment: String): Pair<String, String> {
+//    try {
+//        // Replace with your actual API endpoint
+//        val apiUrl = "http://your-api-endpoint.com/post_comment"
+//
+//        val response = httpClient.submitForm<Unit>(
+//            urlString = apiUrl,
+//            formParameters = Parameters.build {
+//                append("songId", songId.toString())
+//                append("comment", comment)
+//            }
+//        )
+//
+//        return if (response.status.value == 201) {
+//            Pair("Comment posted successfully.", "ok")
+//        } else {
+//            Pair("Failed to post comment.", "")
+//        }
+//    } catch (e: Exception) {
+//        // Handle exceptions that may occur during the API call
+//        return Pair("Failed to post comment. ${e.message}", "")
+//    }
+//}
+
+suspend fun postCommentToEndpoint (songID: Int, comment: String): Pair<String, String>{
+    val client = HttpClient(CIO)
+    val response: HttpResponse = client.submitFormWithBinaryData(
+        url = "http://195.248.242.169:8080/    endpoint",
+        formData = formData {
+                append("songID", songID.toString())
+                append("comment", comment)
+        }
+    )
+    client.close()
+
+    return if (response.status.value == 201) {
+            Pair("Comment posted successfully.", "ok")
+    } else {
+            Pair("Failed to post comment.", "")
+    }
+
+}
 

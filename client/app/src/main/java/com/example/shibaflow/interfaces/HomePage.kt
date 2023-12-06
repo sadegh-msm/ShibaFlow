@@ -108,7 +108,7 @@ fun SearchView(
                 IconButton(
                     onClick = {
                         state.value =
-                            TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                            TextFieldValue("")
                     }
                 ) {
                     Icon(
@@ -127,13 +127,13 @@ fun SearchView(
 }
 
 @Composable
-fun SongCard(song: Song, modifier: Modifier = Modifier) {
+fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController) {
     val s = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         s.launch {
             isLiked = checkSongLiked(song.id, MyInfo.userInformation.username)
-            Log.d("myTag", "$isLiked song ID: ${song.id}");
+            Log.d("myTag", "$isLiked song ID: ${song.id}")
         }
     }
     var firstTime by remember { mutableStateOf(false) }
@@ -192,6 +192,18 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
                 }
             }
 
+            // Comment Icon
+            Icon(
+                painterResource(id = R.drawable.comment),
+                contentDescription = "Comment",
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(10.dp)
+                    .clickable {
+                        // Handle comment icon click, navigate to comment page
+                        navController.navigate("comment_page/${song.id}")
+                    }
+            )
 
             Column(
                 modifier = Modifier.weight(1f),
@@ -238,6 +250,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier) {
 }
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongList(navController: NavController, modifier: Modifier = Modifier) {
@@ -282,7 +295,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             }
         },
         floatingActionButtonPosition = FabPosition.End,
-//        isFloatingActionButtonDocked = true
     )
     { it ->
         LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
@@ -290,7 +302,9 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 items(songListState) { song ->
                     SongCard(
                         song = song,
-                        modifier = Modifier.padding(1.dp)
+                        modifier = Modifier.padding(1.dp),
+                        navController = navController
+
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.shibaflow
 
+import CommentsPage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,7 +25,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ShibaFlowTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -53,5 +53,16 @@ fun UsersApplication() {
         composable(route = "upload_page") {
             UploadForm(navController)
         }
+
+        composable(route = "comment_page/{songId}") { backStackEntry ->
+            val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull()
+            songId?.let {
+                CommentsPage(songId = it, navController = navController)
+            } ?: run {
+                // Handle invalid or missing songId
+            }
+        }
+
+
     }
 }

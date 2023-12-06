@@ -55,3 +55,5 @@ data class UserInformation(
         return username.isNotEmpty() && password.isNotEmpty()
     }
 }
+data class CommentsResponse(val comments: List<String>)
+
