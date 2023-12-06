@@ -197,29 +197,6 @@ suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
     return Pair(x, "ok")
 }
 
-//suspend fun postCommentToEndpoint(songId: Int, comment: String): Pair<String, String> {
-//    try {
-//        // Replace with your actual API endpoint
-//        val apiUrl = "http://your-api-endpoint.com/post_comment"
-//
-//        val response = httpClient.submitForm<Unit>(
-//            urlString = apiUrl,
-//            formParameters = Parameters.build {
-//                append("songId", songId.toString())
-//                append("comment", comment)
-//            }
-//        )
-//
-//        return if (response.status.value == 201) {
-//            Pair("Comment posted successfully.", "ok")
-//        } else {
-//            Pair("Failed to post comment.", "")
-//        }
-//    } catch (e: Exception) {
-//        // Handle exceptions that may occur during the API call
-//        return Pair("Failed to post comment. ${e.message}", "")
-//    }
-//}
 
 suspend fun postCommentToEndpoint (songID: Int, comment: String): Pair<String, String>{
     val client = HttpClient(CIO)

@@ -63,8 +63,8 @@ fun SignupForm(navController: NavHostController) {
                 .padding(horizontal = 30.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.shibainu), // Replace with your image resource
-                contentDescription = null, // Provide a meaningful description
+                painter = painterResource(id = R.drawable.shibainu),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(bottom = 32.dp)
                     .width(150.dp)
@@ -111,7 +111,6 @@ fun SignupForm(navController: NavHostController) {
                     .padding(bottom = 30.dp)
             )
 
-            // Sign up button
             ShibaFlowButton(
                 onClick = { isSigningUp = true},
                 modifier = Modifier
@@ -140,7 +139,6 @@ fun SignupForm(navController: NavHostController) {
                 }
             }
 
-            // Login button
             ShibaFlowButton(
                 text = "Login",
                 onClick = { navController.navigate("login_page") },

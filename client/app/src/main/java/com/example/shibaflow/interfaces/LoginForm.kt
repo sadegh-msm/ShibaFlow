@@ -77,10 +77,9 @@ fun LoginForm(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)
         ) {
-            // Add Image at the top of the column
             Image(
-                painter = painterResource(id = R.drawable.shibainu), // Replace with your image resource
-                contentDescription = null, // Provide a meaningful description
+                painter = painterResource(id = R.drawable.shibainu),
+                contentDescription = null,
                 modifier = Modifier
                     .padding(bottom = 48.dp)
                     .fillMaxWidth()
@@ -88,7 +87,6 @@ fun LoginForm(navHostController: NavHostController) {
                     .fillMaxHeight()
             )
 
-            // Rest of your UI components
             UsernameField(
                 value = info.username,
                 onChange = { data -> info = info.copy(username = data) },
