@@ -40,18 +40,21 @@ def close_connection(conn):
     conn.close()
 
 
-def insert_music_interactions_data(user_id, music_id, comment_text="", like_status=False, dislike_status=False, report_status=False):
+def insert_music_interactions_data(cursor, user_id, music_id, comment_text="", like_status=False, dislike_status=False, report_status=False):
     """
     Insert data into the musics table.
     """
-    conn, cursor = connect_to_database()
+    conn = None
+    if cursor is None:
+        conn, cursor = connect_to_database()
 
     music_interaction = [user_id, music_id, comment_text, like_status, dislike_status, report_status]
     cursor.execute(
         'INSERT INTO music_interactions (user_id, music_id, comment_text, like_status, dislike_status, report_status) VALUES (?, ?, ?, ?, ?, ?)',
         music_interaction)
 
-    close_connection(conn)
+    if cursor is None:
+        close_connection(conn)
 
 
 def find_music_interactions_by_music_id(music_id):
@@ -84,7 +87,10 @@ def find_music_interactions_by_user_id_and_music_id(user_id, music_id):
     cursor.execute('SELECT * FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
     music_interactions = cursor.fetchall()
     close_connection(conn)
-    return music_interactions
+
+    if len(music_interactions) == 0:
+        return None
+    return music_interactions[0]
 
 
 def like_music(user_id, music_id):
@@ -92,6 +98,10 @@ def like_music(user_id, music_id):
     Like a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, like_status=True)
+
     cursor.execute('UPDATE music_interactions SET like_status = ? WHERE user_id = ? AND music_id = ?', (True, user_id, music_id))
     close_connection(conn)
 
@@ -101,7 +111,12 @@ def dislike_music(user_id, music_id):
     Dislike a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, dislike_status=True)
+
     cursor.execute('UPDATE music_interactions SET dislike_status = ? WHERE user_id = ? AND music_id = ?', (True, user_id, music_id))
+
     close_connection(conn)
 
 
@@ -110,7 +125,12 @@ def report_music(user_id, music_id):
     Report a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, report_status=True)
+
     cursor.execute('UPDATE music_interactions SET report_status = ? WHERE user_id = ? AND music_id = ?', (True, user_id, music_id))
+
     close_connection(conn)
 
     return True
@@ -121,6 +141,10 @@ def comment_music(user_id, music_id, comment_text):
     Comment a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, comment_text=comment_text)
+
     cursor.execute('UPDATE music_interactions SET comment_text = ? WHERE user_id = ? AND music_id = ?', (comment_text, user_id, music_id))
     close_connection(conn)
 
@@ -188,3 +212,24 @@ def check_dislike_status(user_id, music_id):
     close_connection(conn)
     return dislike_status[0] if dislike_status else None
 
+
+def check_report_status(user_id, music_id):
+    """
+    Check report status of a music.
+    """
+    conn, cursor = connect_to_database()
+    cursor.execute('SELECT report_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
+    report_status = cursor.fetchone()
+    close_connection(conn)
+    return report_status[0] if report_status else None
+
+
+def get_comments(music_id):
+    """
+    Get comments of a music.
+    """
+    conn, cursor = connect_to_database()
+    cursor.execute('SELECT artist_name, comment_text FROM music_interactions INNER JOIN users ON music_interactions.user_id = users.user_id WHERE music_id = ?', (music_id,))
+    comments = cursor.fetchall()
+    close_connection(conn)
+    return comments

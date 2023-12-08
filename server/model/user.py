@@ -4,15 +4,15 @@ from datetime import datetime
 import sqlite3
 
 create_users_table_command = """CREATE TABLE users ( 
-user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-fname VARCHAR(20), 
-lname VARCHAR(30), 
-artist_name VARCHAR(30) UNIQUE, 
-verified CHAR(1), 
-email VARCHAR(30), 
-password VARCHAR(100), 
-gender CHAR(1), 
-joining_date DATE
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    fname VARCHAR(20), 
+    lname VARCHAR(30), 
+    artist_name VARCHAR(30) UNIQUE, 
+    verified CHAR(1), 
+    email VARCHAR(30), 
+    password VARCHAR(100), 
+    gender CHAR(1), 
+    joining_date DATE
 );"""
 
 

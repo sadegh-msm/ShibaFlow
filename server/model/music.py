@@ -4,17 +4,17 @@ from datetime import datetime
 from model.user import find_user_id_by_artist_name
 
 create_musics_table_command = """CREATE TABLE musics ( 
-music_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-title VARCHAR(50), 
-publisher_id INTEGER, 
-album_name VARCHAR(50), 
-file_path VARCHAR(100), 
-cover_path VARCHAR(100), 
-genre VARCHAR(20), 
-release_date DATE, 
-CONSTRAINT fk_users 
-    FOREIGN KEY (publisher_id) 
-    REFERENCES users(user_id) 
+    music_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    title VARCHAR(50), 
+    publisher_id INTEGER, 
+    album_name VARCHAR(50), 
+    file_path VARCHAR(100), 
+    cover_path VARCHAR(100), 
+    genre VARCHAR(20), 
+    release_date DATE, 
+    CONSTRAINT fk_users 
+        FOREIGN KEY (publisher_id) 
+        REFERENCES users(user_id) 
 );"""
 
 
@@ -218,6 +218,20 @@ def check_music_exist_by_id(music_id):
 
     cursor.execute('SELECT * FROM musics WHERE music_id = ?', (music_id,))
     result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None
+
+
+def get_all_musics_by_user_id(user_id):
+    """
+    Find all music from the musics table.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE publisher_id = ?', (user_id,))
+    result = cursor.fetchall()
 
     close_connection(conn)
 
