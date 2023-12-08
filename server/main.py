@@ -1,7 +1,7 @@
 import logging.config
 from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
-from model import user, music
+from model import user, music, music_interaction
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 from utils import util
