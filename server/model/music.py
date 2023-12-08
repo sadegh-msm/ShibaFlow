@@ -208,3 +208,17 @@ def get_all_musics():
     close_connection(conn)
 
     return result if result else None
+
+
+def check_music_exist_by_id(music_id):
+    """
+    Check music exist by music_id.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE music_id = ?', (music_id,))
+    result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None

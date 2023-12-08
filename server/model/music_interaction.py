@@ -113,6 +113,8 @@ def report_music(user_id, music_id):
     cursor.execute('UPDATE music_interactions SET report_status = ? WHERE user_id = ? AND music_id = ?', (True, user_id, music_id))
     close_connection(conn)
 
+    return True
+
 
 def comment_music(user_id, music_id, comment_text):
     """
@@ -163,4 +165,26 @@ def join_music_interactions_and_musics_and_users():
     music_interactions_and_musics_and_users = cursor.fetchall()
     close_connection(conn)
     return music_interactions_and_musics_and_users
+
+
+def check_like_status(user_id, music_id):
+    """
+    Check like status of a music.
+    """
+    conn, cursor = connect_to_database()
+    cursor.execute('SELECT like_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
+    like_status = cursor.fetchone()
+    close_connection(conn)
+    return like_status[0] if like_status else None
+
+
+def check_dislike_status(user_id, music_id):
+    """
+    Check dislike status of a music.
+    """
+    conn, cursor = connect_to_database()
+    cursor.execute('SELECT dislike_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
+    dislike_status = cursor.fetchone()
+    close_connection(conn)
+    return dislike_status[0] if dislike_status else None
 

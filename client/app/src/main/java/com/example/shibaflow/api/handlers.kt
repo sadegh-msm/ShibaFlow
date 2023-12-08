@@ -142,14 +142,15 @@ suspend fun uploadMusicHandler (
 suspend fun likeDislikeSong (
     songID: Int,
     action: String,
-
+    userID: String
     ): Pair<String,String> {
     val client = HttpClient(CIO)
     val response: HttpResponse = client.submitFormWithBinaryData(
-        url = "http://195.248.242.169:8080/    endpoint",
+        url = "http://195.248.242.169:8080/interact",
         formData = formData {
             append("songID", songID)
             append("action", action)
+            append("userID", userID)
         }
     )
     client.close()
@@ -167,14 +168,14 @@ suspend fun checkSongLiked (
     ): Boolean {
 //    val client = HttpClient(CIO)
 //    val response: HttpResponse = client.submitFormWithBinaryData(
-//        url = "http://195.248.242.169:8080/    endpoint",
+//        url = "http://195.248.242.169:8080/checklike",
 //        formData = formData {
 //            append("songID", songID)
 //            append("userID", userID)
 //        }
 //    )
 //    client.close()
-//    return if (response.status.value == 201) {
+//    return if (response.status.value == 200) {
 //        "liked or not"
 //    } else {
 //        ""

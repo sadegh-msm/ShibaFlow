@@ -189,3 +189,17 @@ def find_artist_name_by_id(user_id):
     close_connection(conn)
 
     return user[0] if user else None
+
+
+def find_user_by_id(user_id):
+    """
+    Find a user in the users table by user_id.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM users WHERE user_id = ?', (user_id,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user if user else None
