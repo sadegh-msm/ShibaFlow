@@ -142,7 +142,7 @@ suspend fun uploadMusicHandler (
 suspend fun likeDislikeSong (
     songID: Int,
     action: String,
-    userID: String
+//    userID: String
     ): Pair<String,String> {
     val client = HttpClient(CIO)
     val response: HttpResponse = client.submitFormWithBinaryData(
@@ -150,7 +150,7 @@ suspend fun likeDislikeSong (
         formData = formData {
             append("songID", songID)
             append("action", action)
-            append("userID", userID)
+//            append("userID", userID)
         }
     )
     client.close()
@@ -199,14 +199,14 @@ suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
 }
 
 
-suspend fun postCommentToEndpoint (songID: Int, userID: String, comment: String): Pair<String, String>{
+suspend fun postCommentToEndpoint(songID: Int, comment: String): Pair<String, String>{
     val client = HttpClient(CIO)
     val response: HttpResponse = client.submitFormWithBinaryData(
         url = "http://195.248.242.169:8080/comment",
         formData = formData {
                 append("songID", songID.toString())
                 append("comment", comment)
-                append("userID", userID)
+//                append("userID", userID)
         }
     )
     client.close()

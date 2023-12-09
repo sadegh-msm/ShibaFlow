@@ -59,6 +59,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.RectangleShape
 import com.example.shibaflow.api.checkSongLiked
 import com.example.shibaflow.api.likeDislikeSong
@@ -234,25 +235,52 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongList(navController: NavController, modifier: Modifier = Modifier) {
-    var songListState by remember { mutableStateOf(listOf<Song>()) }
+    var songListState = remember { mutableStateListOf<Song>() }
     var isLoad by remember { mutableStateOf(false) }
     var isLoad2 by remember { mutableStateOf(false) }
+    var isFiltering by remember { mutableStateOf(false) }
+    var songFilteredListState = remember { mutableStateListOf<Song>() }
     val context = LocalContext.current
     var textState = remember { mutableStateOf(TextFieldValue("")) }
+    val scope = rememberCoroutineScope()
 
     if (!isLoad) {
-        val scope = rememberCoroutineScope()
         LaunchedEffect(key1 = songListState) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
-                songListState = songs
+                songListState.clear()
+                songListState.addAll(songs)
+                if (!isFiltering) {
+                    songFilteredListState.clear()
+                    songFilteredListState.addAll(songListState)
+                }
+
                 if (ok == "ok") {
                     isLoad = true
                     isLoad2 = true
                 }
             }
         }
+    }
+
+    if (textState.value.text.trim().length > 2 && isLoad2) {
+        LaunchedEffect(key1 = textState.value.text) {
+            scope.launch {
+                songFilteredListState.clear()
+                songFilteredListState.addAll(songListState.filter { song ->
+                    song.title.contains(textState.value.text, ignoreCase = true)
+                })
+                if (songFilteredListState.isEmpty()) {
+                    Toast.makeText(context, "No results found.", Toast.LENGTH_SHORT).show()
+                }
+                isFiltering = true
+            }
+        }
+    } else {
+        isFiltering = false
+        songFilteredListState.clear()
+        songFilteredListState.addAll(songListState)
     }
 
     Scaffold(
@@ -303,55 +331,21 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     )
     { it ->
         LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
+            item {
+                SearchView(modifier, textState)
+            }
             if (isLoad2) {
-                items(songListState) { song ->
+                items(songFilteredListState) { song ->
                     SongCard(
                         song = song,
                         modifier = Modifier.padding(1.dp),
                         navController = navController
-
                     )
                 }
             }
         }
-        Column {
-            SearchView(modifier, textState)
-            ItemList(state = textState)
-        }
     }
 }
-
-@Composable
-fun ItemList(state: MutableState<TextFieldValue>) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val showToast = remember { mutableStateOf(false) }
-
-    if (state.value.text != "") {
-        LaunchedEffect(key1 = state.value.text) {
-            scope.launch {
-                val (songs, ok) = getAllSongs()
-                if (ok == "ok") {
-                    val filteredSongs = songs.filter { song ->
-                        song.title.contains(state.value.text, ignoreCase = true)
-                    }
-                    if (filteredSongs.isNotEmpty())
-                    {
-
-                    } else {
-                        showToast.value = true
-                    }
-                }
-            }
-        }
-    }
-
-    if (showToast.value) {
-        Toast.makeText(context, "No results found.", Toast.LENGTH_SHORT).show()
-        showToast.value = false
-    }
-}
-
 
 @Composable
 fun SongListApp(navController: NavController) {
