@@ -12,10 +12,15 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import com.google.gson.Gson
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.parameter
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 
 
 suspend fun main() {
@@ -52,7 +57,7 @@ suspend fun SignupHandler(
         }
     } catch (e: ClientRequestException) {
         return Pair("Client request error: ${e.response.status}", "")
-    }catch (e: Exception) {
+    } catch (e: Exception) {
         return Pair("Error occurred: ${e.message}", "")
     }
 }
@@ -100,10 +105,10 @@ suspend fun getAllSongs(): Pair<List<Song>, String> {
                 mp3File = jsonArray[4].asString,
                 coverImage = jsonArray[5].asString,
                 genre = jsonArray[6].asString,
-                playCount = jsonArray[7].asInt,
-                skipCount = jsonArray[8].asInt,
-                duration = jsonArray[9].asString,
-                lastPlayed = jsonArray[10].asString
+//                playCount = jsonArray[7].asInt,
+//                skipCount = jsonArray[8].asInt,
+//                duration = jsonArray[9].asString,
+                lastPlayed = jsonArray[7].asString
             )
         }
         return Pair(songs, ok)
@@ -153,7 +158,7 @@ suspend fun uploadMusicHandler(
         }
     } catch (e: ClientRequestException) {
         return Pair("Client request error: ${e.response.status}", "")
-    }catch (e: Exception) {
+    } catch (e: Exception) {
         return Pair("Error occurred: ${e.message}", "")
     }
 }
@@ -191,13 +196,16 @@ suspend fun checkSongLiked(
 ): Boolean {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/checklike",
-            formData = formData {
-                append("songID", songID)
+        val response: HttpResponse = client.get("http://195.248.242.169:8080/checklike") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("songID", songID.toString())
                 append("userID", userID)
-            }
-        )
+            }))
+//            method = HttpMethod.Get
+//            parameter("songID", songID.toString())
+//            parameter("userID", userID)
+//            body
+        }
         client.close()
         Log.d("YourTag", response.status.value.toString())
         return response.status.value == 200
@@ -212,31 +220,24 @@ suspend fun checkSongLiked(
 
 
 suspend fun getCommentsForSong(songId: Int): List<Comment> {
-    try {
-        val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+    val client = HttpClient(CIO)
+    val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
 
-        val ok = if (response.status.value == 200) "ok" else "error"
+    val ok = if (response.status.value == 200) "ok" else "error"
 
-        val content: String = response.bodyAsText().toString()
-        val gson = Gson()
-        val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
+    val content: String = response.bodyAsText().toString()
+    val gson = Gson()
+    val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
+    Log.d("get comments", response.status.value.toString())
 
-        // Assuming CommentsResponse has a field named 'comments' which is a list of pairs
-        val comments: List<Comment> = commentsResponse.comments.map { pair ->
-            Comment(username = pair.first, comment = pair.second)
-        }
-
-        // Return the list of comments
-        return comments
-    } catch (e: ClientRequestException) {
-        // Handle specific client request exception if needed
-    } catch (e: Exception) {
-        // Handle other exceptions if needed
+    // Assuming CommentsResponse has a field named 'comments' which is a list of pairs
+    val comments: List<Comment> = commentsResponse.comments.map { pair ->
+        Comment(username = pair.first, comment = pair.second)
     }
 
-    // Return an empty list if an exception occurs
-    return emptyList()
+    // Return the list of comments
+    return comments
+
 }
 
 data class Comment(val username: String, val comment: String)
@@ -244,7 +245,11 @@ data class Comment(val username: String, val comment: String)
 data class CommentsResponse(val comments: List<Pair<String, String>>)
 
 
-suspend fun postCommentToEndpoint(userID: String, songID: Int, comment: String): Pair<String, String> {
+suspend fun postCommentToEndpoint(
+    userID: String,
+    songID: Int,
+    comment: String
+): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
         val response: HttpResponse = client.submitFormWithBinaryData(
@@ -256,6 +261,7 @@ suspend fun postCommentToEndpoint(userID: String, songID: Int, comment: String):
             }
         )
         client.close()
+        Log.d("post comments", response.status.value.toString())
 
         return when (response.status.value) {
             201 -> Pair("Comment posted successfully.", "ok")
@@ -263,10 +269,11 @@ suspend fun postCommentToEndpoint(userID: String, songID: Int, comment: String):
         }
     } catch (e: ClientRequestException) {
         return Pair("Client request error: ${e.response.status}", "")
-    }catch (e: Exception) {
+    } catch (e: Exception) {
         return Pair("Error occurred: ${e.message}", "")
     }
 }
+
 suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
     try {
         val client = HttpClient(CIO)
@@ -295,7 +302,7 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
         return Pair(songs, ok)
     } catch (e: ClientRequestException) {
         return Pair(emptyList(), "Client request error: ${e.response.status}")
-    }  catch (e: Exception) {
+    } catch (e: Exception) {
         return Pair(emptyList(), "Error occurred: ${e.message}")
     }
 }
