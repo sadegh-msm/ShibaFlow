@@ -1,4 +1,6 @@
 package com.example.shibaflow.interfaces
+import androidx.compose.ui.platform.LocalContext
+
 
 import android.content.Context
 import android.net.Uri
@@ -68,16 +70,17 @@ import com.example.shibaflow.model.MyInfo
 
 private var exoPlayer: ExoPlayer? = null
 fun playSong(url: String, context: Context) {
-    if (exoPlayer?.playWhenReady == true) {
-        exoPlayer!!.release()
-        exoPlayer = ExoPlayer.Builder(context).build()
-    } else {
-        val mediaItem = MediaItem.fromUri(Uri.parse(url))
-        exoPlayer = ExoPlayer.Builder(context).build()
-        exoPlayer?.setMediaItem(mediaItem)
-        exoPlayer?.prepare()
-        exoPlayer?.playWhenReady = true
-    }
+    releasePlayer()
+    val mediaItem = MediaItem.fromUri(Uri.parse(url))
+    exoPlayer = ExoPlayer.Builder(context).build()
+    exoPlayer?.setMediaItem(mediaItem)
+    exoPlayer?.prepare()
+    exoPlayer?.playWhenReady = true
+}
+
+private fun releasePlayer() {
+    exoPlayer?.release()
+    exoPlayer = null
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,6 +128,8 @@ fun SearchView(
     )
 }
 
+
+
 @Composable
 fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController) {
     val s = rememberCoroutineScope()
@@ -136,11 +141,19 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
         }
     }
     var firstTime by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
 
     Card(
-        modifier = modifier.padding(all = 8.dp),
+
+        modifier = modifier
+            .padding(all = 8.dp)
+            .clickable {
+                playSong(song.mp3File, context)
+            },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(size = 16.dp)
+
     ) {
         Column(
             modifier = Modifier

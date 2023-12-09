@@ -181,6 +181,7 @@ suspend fun likeDislikeSong(
             }
         )
         client.close()
+        Log.d("dislike", response.status.value.toString())
         return when (response.status.value) {
             201 -> Pair("Action is done", "ok")
             else -> Pair("Something went wrong", "")
