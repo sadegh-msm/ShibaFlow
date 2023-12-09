@@ -44,16 +44,30 @@ fun CommentsPage(songId: Int, navController: NavController) {
 
         val coroutineScope = rememberCoroutineScope()
 
+
         fun postComment() {
             coroutineScope.launch {
                 try {
-                    val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username, songId, newComment.text)
-                    if (ok == "ok") {
-                        val (fetchedComments, _) = getCommentsForSong(songId)
-                        setComments(fetchedComments)
-                        setNewComment(TextFieldValue())
-                    } else {
-                        // Handle the case where posting a comment was not successful
+                    // Filter out empty comments
+                    if (newComment.text.isNotBlank()) {
+                        val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username, songId, newComment.text)
+                        if (ok == "ok") {
+                            // Fetch the updated comments, including all comments for the song
+                            val (fetchedComments, _) = getCommentsForSong(songId)
+
+                            // Append the new comment to the existing comments
+                            val updatedComments = comments.toMutableList().apply {
+                                add(Comment(username = MyInfo.userInformation.username, comment = newComment.text))
+                            }
+
+                            // Set the updated comments state
+                            setComments(updatedComments)
+
+                            // Clear the text field after posting the comment
+                            setNewComment(TextFieldValue())
+                        } else {
+                            // Handle the case where posting a comment was not successful
+                        }
                     }
                 } catch (e: Exception) {
                     // Handle exceptions
@@ -61,18 +75,27 @@ fun CommentsPage(songId: Int, navController: NavController) {
             }
         }
 
+
+
         LaunchedEffect(key1 = songId) {
             coroutineScope.launch {
                 try {
                     val (fetchedComments, _) = getCommentsForSong(songId)
-                    setComments(fetchedComments)
+
+                    // Append the fetched comments to the existing list
+                    val updatedComments = comments.toMutableList().apply {
+                        addAll(fetchedComments)
+                    }
+
+                    setComments(updatedComments)
                 } catch (e: Exception) {
-                    // Handle exceptions
+                    // Handle exceptions, e.g., log an error
                 } finally {
                     setLoading(false)
                 }
             }
         }
+
 
         Scaffold(
             topBar = {
@@ -91,11 +114,11 @@ fun CommentsPage(songId: Int, navController: NavController) {
                         modifier = Modifier
                             .weight(1f)
                     ) {
+                        // Display all comments without filtering
                         items(comments) { comment ->
                             CommentItem(comment = comment)
                         }
                     }
-
                     OutlinedTextField(
                         value = newComment,
                         onValueChange = { setNewComment(it) },
@@ -125,21 +148,25 @@ fun CommentsPage(songId: Int, navController: NavController) {
     }
 }
 
+
 @Composable
 fun CommentItem(comment: Comment) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Text(
-            text = "${comment.username}: ${comment.comment}",
+    if (comment.comment.isNotBlank()) {
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-        )
+                .padding(8.dp)
+        ) {
+            Text(
+                text = "${comment.username}: ${comment.comment}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

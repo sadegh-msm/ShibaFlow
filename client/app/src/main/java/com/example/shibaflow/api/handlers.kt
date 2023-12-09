@@ -22,6 +22,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.http.isSuccess
 
 
 suspend fun main() {
@@ -225,21 +226,23 @@ suspend fun getCommentsForSong(songId: Int): Pair<List<Comment>, String> {
         val client = HttpClient(CIO)
         val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
 
-        val ok = response.headers[HttpHeaders.Server] ?: ""
+        if (response.status.isSuccess()) {
+            val content: String = response.bodyAsText().toString()
+            Log.d("get comments", content)
 
-        val content: String = response.bodyAsText().toString()
-        Log.d("get comments", content)
+            val gson = Gson()
+            val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
 
-        val gson = Gson()
-        val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
-
-        if (commentsResponse.ok == "comments found") {
-            val comments: List<Comment> = commentsResponse.comments.map { pair ->
-                Comment(username = pair[0], comment = pair[1])
+            if (commentsResponse.ok == "comments found") {
+                val comments: List<Comment> = commentsResponse.comments.map { pair ->
+                    Comment(username = pair[0], comment = pair[1])
+                }
+                return Pair(comments, "ok")
+            } else {
+                return Pair(emptyList(), "No comments found")
             }
-            return Pair(comments, "ok")
         } else {
-            return Pair(emptyList(), "No comments found")
+            return Pair(emptyList(), "Server returned non-successful status code: ${response.status}")
         }
     } catch (e: ClientRequestException) {
         return Pair(emptyList(), "Client request error: ${e.response.status}")
