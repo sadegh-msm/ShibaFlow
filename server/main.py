@@ -274,7 +274,7 @@ def check_like():
             return jsonify({'ok': 'user liked song'}), 200
         else:
             logger.info('user did not like song', song_info)
-            return jsonify({'ok': 'user did not like song'}), 200
+            return jsonify({'ok': 'user did not like song'}), 209
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
@@ -298,7 +298,7 @@ def check_dislike():
             return jsonify({'ok': 'user disliked song'}), 200
         else:
             logger.info('user did not dislike song', song_info)
-            return jsonify({'ok': 'user did not dislike song'}), 200
+            return jsonify({'ok': 'user did not dislike song'}), 209
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
@@ -346,7 +346,7 @@ def check_report():
             return jsonify({'ok': 'user reported song'}), 200
         else:
             logger.info('user did not report song', song_info)
-            return jsonify({'ok': 'user did not report song'}), 200
+            return jsonify({'ok': 'user did not report song'}), 209
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
