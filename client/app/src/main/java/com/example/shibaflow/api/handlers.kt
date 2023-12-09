@@ -10,6 +10,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import com.google.gson.Gson
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.http.Headers
@@ -28,162 +29,190 @@ suspend fun SignupHandler(
     gender: String,
     artistName: String
 ): Pair<String, String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.submitForm(
-        url = "http://195.248.242.169:8080/register",
-        formParameters = parameters {
-            append("fname", firstname)
-            append("lname", lastname)
-            append("email", email)
-            append("password", password)
-            append("gender", gender)
-            append("artist_name", artistName)
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitForm(
+            url = "http://195.248.242.169:8080/register",
+            formParameters = parameters {
+                append("fname", firstname)
+                append("lname", lastname)
+                append("email", email)
+                append("password", password)
+                append("gender", gender)
+                append("artist_name", artistName)
+            }
+        )
+        client.close()
+
+        return when (response.status.value) {
+            201 -> Pair("User has been created successfully.", "ok")
+            409 -> Pair("Duplicate Information", "")
+            else -> Pair("Incorrect Information", "")
         }
-    )
-    client.close()
-    println(response)
-    return if (response.status.value == 201) {
-        Pair("User has been created successfully.", "ok")
-    } else if (response.status.value == 409) {
-        Pair("Duplicate Information", "")
-    } else {
-        Pair("Incorrect Information", "")
+    } catch (e: ClientRequestException) {
+        return Pair("Client request error: ${e.response.status}", "")
+    }catch (e: Exception) {
+        return Pair("Error occurred: ${e.message}", "")
     }
 }
 
 suspend fun LoginHandler(artistName: String, password: String): Pair<String, String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.submitForm(
-        url = "http://195.248.242.169:8080/login",
-        formParameters = parameters {
-            append("password", password)
-            append("artist_name", artistName)
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitForm(
+            url = "http://195.248.242.169:8080/login",
+            formParameters = parameters {
+                append("password", password)
+                append("artist_name", artistName)
+            }
+        )
+        client.close()
+
+        return when (response.status.value) {
+            200 -> Pair("Your username or password is incorrect.", "ok")
+            else -> Pair("Your username or password is incorrect.", "")
         }
-    )
-    client.close()
-    println(response)
-    return if (response.status.value == 200) {
-        Pair("Your username or password is incorrect.", "ok")
-    } else {
-        Pair("Your username or password is incorrect.", "")
+    } catch (e: ClientRequestException) {
+        return Pair("Client request error: ${e.response.status}", "")
+    } catch (e: Exception) {
+        return Pair("Error occurred: ${e.message}", "")
     }
 }
 
 
 suspend fun getAllSongs(): Pair<List<Song>, String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.get("http://195.248.242.169:8080/allsongs")
-    var ok = ""
-    if (response.status.value == 200) {
-        ok = "ok"
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.get("http://195.248.242.169:8080/allsongs")
+
+        val ok = if (response.status.value == 200) "ok" else ""
+
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, SongsResponse::class.java)
+        val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
+            Song(
+                id = jsonArray[0].asInt,
+                title = jsonArray[1].asString,
+                artistId = jsonArray[2].asInt,
+                album = jsonArray[3].asString,
+                mp3File = jsonArray[4].asString,
+                coverImage = jsonArray[5].asString,
+                genre = jsonArray[6].asString,
+                playCount = jsonArray[7].asInt,
+                skipCount = jsonArray[8].asInt,
+                duration = jsonArray[9].asString,
+                lastPlayed = jsonArray[10].asString
+            )
+        }
+        return Pair(songs, ok)
+    } catch (e: ClientRequestException) {
+        return Pair(emptyList(), "Client request error: ${e.response.status}")
+    } catch (e: Exception) {
+        return Pair(emptyList(), "Error occurred: ${e.message}")
     }
-    val content: String = response.bodyAsText().toString()
-    val gson = Gson()
-    val jsonForm = gson.fromJson(content, SongsResponse::class.java)
-    val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
-        Song(
-            id = jsonArray[0].asInt,
-            title = jsonArray[1].asString,
-            artistId = jsonArray[2].asInt,
-            album = jsonArray[3].asString,
-            mp3File = jsonArray[4].asString,
-            coverImage = jsonArray[5].asString,
-            genre = jsonArray[6].asString,
-            playCount = jsonArray[7].asInt,
-            skipCount = jsonArray[8].asInt,
-            duration = jsonArray[9].asString,
-            lastPlayed = jsonArray[10].asString
-        )
-    }
-    return Pair(songs, ok)
 }
-suspend fun uploadMusicHandler (
+
+suspend fun uploadMusicHandler(
     title: String,
     genre: String,
     password: String,
     artistName: String,
     albumName: String,
-    musicURI:ByteArray,
-    imageURI:ByteArray?
-
-
-): Pair<String,String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.submitFormWithBinaryData(
-        url = "http://195.248.242.169:8080/song",
-        formData = formData {
-            append("artist_name", artistName)
-            append("password", password)
-            append("title", title)
-            append("genre", genre)
-            append("duration", "")
-            append("album_name", albumName)
-            append("music", musicURI, Headers.build {
-                append(HttpHeaders.ContentType, "audio/mpeg")
-                append(HttpHeaders.ContentDisposition, "filename=\"music.mp3\"")
-            })
-            if (imageURI != null) {
-                append("cover", imageURI, Headers.build {
-                    append(HttpHeaders.ContentType, "image/jpg")
-                    append(HttpHeaders.ContentDisposition, "filename=\"cover.jpg\"")
+    musicURI: ByteArray,
+    imageURI: ByteArray?
+): Pair<String, String> {
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "http://195.248.242.169:8080/song",
+            formData = formData {
+                append("artist_name", artistName)
+                append("password", password)
+                append("title", title)
+                append("genre", genre)
+                append("duration", "")
+                append("album_name", albumName)
+                append("music", musicURI, Headers.build {
+                    append(HttpHeaders.ContentType, "audio/mpeg")
+                    append(HttpHeaders.ContentDisposition, "filename=\"music.mp3\"")
                 })
+                if (imageURI != null) {
+                    append("cover", imageURI, Headers.build {
+                        append(HttpHeaders.ContentType, "image/jpg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"cover.jpg\"")
+                    })
+                }
             }
-
+        )
+        client.close()
+        return when (response.status.value) {
+            201 -> Pair("Your information is correct.", "ok")
+            else -> Pair("Your information is incorrect.", "")
         }
-    )
-    client.close()
-    return if (response.status.value == 201) {
-        Pair("Your information is correct.", "ok")
-    } else {
-        Pair("Your information is incorrect.", "")
+    } catch (e: ClientRequestException) {
+        return Pair("Client request error: ${e.response.status}", "")
+    }catch (e: Exception) {
+        return Pair("Error occurred: ${e.message}", "")
     }
 }
 
-suspend fun likeDislikeSong (
+suspend fun likeDislikeSong(
     songID: Int,
-    action: String,
-//    userID: String
-    ): Pair<String,String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.submitFormWithBinaryData(
-        url = "http://195.248.242.169:8080/interact",
-        formData = formData {
-            append("songID", songID)
-            append("action", action)
-//            append("userID", userID)
+    action: String
+): Pair<String, String> {
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "http://195.248.242.169:8080/endpoint",
+            formData = formData {
+                append("songID", songID)
+                append("action", action)
+            }
+        )
+        client.close()
+        return when (response.status.value) {
+            201 -> Pair("Action is done", "ok")
+            else -> Pair("Something went wrong", "")
         }
-    )
-    client.close()
-    return if (response.status.value == 201) {
-        Pair("action is done", "ok")
-    } else {
-        Pair("something went wrong", "")
+    } catch (e: ClientRequestException) {
+        return Pair("Client request error: ${e.response.status}", "")
+    } catch (e: Exception) {
+        return Pair("Error occurred: ${e.message}", "")
     }
 }
 
-suspend fun checkSongLiked (
+suspend fun checkSongLiked(
     songID: Int,
-    userID: String,
-
-    ): Boolean {
+    userID: String
+): Boolean {
+    try {
 //    val client = HttpClient(CIO)
 //    val response: HttpResponse = client.submitFormWithBinaryData(
-//        url = "http://195.248.242.169:8080/checklike",
+//        url = "http://195.248.242.169:8080/    endpoint",
 //        formData = formData {
 //            append("songID", songID)
 //            append("userID", userID)
 //        }
 //    )
 //    client.close()
-//    return if (response.status.value == 200) {
+//    return if (response.status.value == 201) {
 //        "liked or not"
 //    } else {
 //        ""
 //    }
-    return songID % 2 != 0
+        return songID % 2 != 0
+    } catch (e: ClientRequestException) {
+        // Handle specific client request exception if needed
+    } catch (e: Exception) {
+        // Handle other exceptions if needed
+    }
+    return false
 }
 
+
 suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
+    try {
 //    val client = HttpClient(CIO)
 //    val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
 //
@@ -193,58 +222,70 @@ suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
 //    val gson = Gson()
 //    val jsonForm = gson.fromJson(content, CommentsResponse::class.java)
 //    val comments: List<String> = jsonForm.comments
-    var x : List<String> = listOf("ss", ":fsfsf", "f sf")
-
-    return Pair(x, "ok")
+        val comments: List<String> = listOf("ss", ":fsfsf", "f sf")
+        return Pair(comments, "ok")
+    } catch (e: ClientRequestException) {
+        // Handle specific client request exception if needed
+    } catch (e: Exception) {
+        // Handle other exceptions if needed
+    }
+    return Pair(emptyList(), "Error occurred")
 }
 
 
-suspend fun postCommentToEndpoint(songID: Int, comment: String): Pair<String, String>{
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.submitFormWithBinaryData(
-        url = "http://195.248.242.169:8080/comment",
-        formData = formData {
+suspend fun postCommentToEndpoint(songID: Int, comment: String): Pair<String, String> {
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "http://195.248.242.169:8080/endpoint",
+            formData = formData {
                 append("songID", songID.toString())
                 append("comment", comment)
-//                append("userID", userID)
-        }
-    )
-    client.close()
-
-    return if (response.status.value == 201) {
-            Pair("Comment posted successfully.", "ok")
-    } else {
-            Pair("Failed to post comment.", "")
-    }
-
-}
-
-suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
-    var ok = ""
-    if (response.status.value == 200) {
-        ok = "ok"
-    }
-    val content: String = response.bodyAsText().toString()
-    val gson = Gson()
-    val jsonForm = gson.fromJson(content, SongsResponse::class.java)
-    val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
-        Song(
-            id = jsonArray[0].asInt,
-            title = jsonArray[1].asString,
-            artistId = jsonArray[2].asInt,
-            album = jsonArray[3].asString,
-            mp3File = jsonArray[4].asString,
-            coverImage = jsonArray[5].asString,
-            genre = jsonArray[6].asString,
-            playCount = jsonArray[7].asInt,
-            skipCount = jsonArray[8].asInt,
-            duration = jsonArray[9].asString,
-            lastPlayed = jsonArray[10].asString
+            }
         )
+        client.close()
+
+        return when (response.status.value) {
+            201 -> Pair("Comment posted successfully.", "ok")
+            else -> Pair("Failed to post comment.", "")
+        }
+    } catch (e: ClientRequestException) {
+        return Pair("Client request error: ${e.response.status}", "")
+    }catch (e: Exception) {
+        return Pair("Error occurred: ${e.message}", "")
     }
-    return Pair(songs, ok)
+}
+suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
+
+        val ok = if (response.status.value == 200) "ok" else ""
+
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, SongsResponse::class.java)
+        val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
+            Song(
+                id = jsonArray[0].asInt,
+                title = jsonArray[1].asString,
+                artistId = jsonArray[2].asInt,
+                album = jsonArray[3].asString,
+                mp3File = jsonArray[4].asString,
+                coverImage = jsonArray[5].asString,
+                genre = jsonArray[6].asString,
+                playCount = jsonArray[7].asInt,
+                skipCount = jsonArray[8].asInt,
+                duration = jsonArray[9].asString,
+                lastPlayed = jsonArray[10].asString
+            )
+        }
+        return Pair(songs, ok)
+    } catch (e: ClientRequestException) {
+        return Pair(emptyList(), "Client request error: ${e.response.status}")
+    }  catch (e: Exception) {
+        return Pair(emptyList(), "Error occurred: ${e.message}")
+    }
 }
 
 

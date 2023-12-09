@@ -29,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.shibaflow.api.getCommentsForSong
 import com.example.shibaflow.api.postCommentToEndpoint
+import com.example.shibaflow.model.MyInfo
 import kotlinx.coroutines.launch
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
