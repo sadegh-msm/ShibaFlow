@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change makefile rules">
-      <change beforePath="$PROJECT_DIR$/../client/app/src/main/java/com/example/shibaflow/api/handlers.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../client/app/src/main/java/com/example/shibaflow/api/handlers.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/app/src/main/java/com/example/shibaflow/interfaces/HomePage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../client/app/src/main/java/com/example/shibaflow/interfaces/HomePage.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/db/Flow.db" beforeDir="false" afterPath="$PROJECT_DIR$/model/db/Flow.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/music_interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music_interaction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,7 +239,7 @@
       <workItem from="1701360406164" duration="7988000" />
       <workItem from="1702067222922" duration="124000" />
       <workItem from="1702067369917" duration="6930000" />
-      <workItem from="1702120461416" duration="2233000" />
+      <workItem from="1702120461416" duration="2768000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>

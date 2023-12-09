@@ -31,11 +31,6 @@ def register_user():
     user_info = request.form.to_dict()
     logger.info('user requested sign in', user_info)
 
-    infos = ['fname', 'lname', 'artist_name', 'email', 'password']
-    if util.check_for_key(user_info, infos):
-        logger.info('bad request', user_info)
-        return jsonify({'error': 'bad request'}), 400
-
     if user_info['fname'] == '' or user_info['lname'] == '' or user_info['artist_name'] == '' or user_info[
         'email'] == '' or \
             user_info['password'] == '':
@@ -72,11 +67,6 @@ def login_user():
     user_info = request.form.to_dict()
     logger.info('user requested login', user_info)
 
-    infos = ['artist_name', 'password']
-    if util.check_for_key(user_info, infos):
-        logger.info('bad request', user_info)
-        return jsonify({'error': 'bad request'}), 400
-
     if user_info['artist_name'] == '' or user_info['password'] == '':
         logger.info('bad request', user_info)
         return jsonify({'error': 'bad request'}), 400
@@ -95,11 +85,6 @@ def new_song():
     song_info = request.form.to_dict()
     data = request.files.to_dict()
     logger.info('user requested new song', song_info)
-
-    infos = ['title', 'album_name', 'genre', 'artist_name', 'password']
-    if util.check_for_key(song_info, infos):
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
 
     if song_info['title'] == '' or song_info['album_name'] == '' or song_info['genre'] == '' or song_info[
         'artist_name'] == '' or song_info['password'] == '':
@@ -164,11 +149,6 @@ def new_song():
 def get_song_info():
     song_info = request.form.to_dict()
     logger.info('user requested song', song_info)
-
-    infos = ['title', 'artist_name']
-    if util.check_for_key(song_info, infos):
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
 
     if song_info['title'] == '' or song_info['artist_name'] == '':
         logger.info('bad request', song_info)
