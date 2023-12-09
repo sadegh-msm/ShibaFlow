@@ -244,7 +244,7 @@ def like_or_dislike_song():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = util.like_or_dislike_music(song_info['userID'], song_info['songID'], song_info['action'])
+        ok = util.like_or_dislike_music(_user[0], song_info['songID'], song_info['action'])
         if ok:
             logger.info('interaction done', song_info)
             return jsonify({'ok': 'song liked successfully'}), 201
@@ -268,7 +268,7 @@ def check_like():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = music_interaction.check_like_status(song_info['userID'], song_info['songID'])
+        ok = music_interaction.check_like_status(_user[0], song_info['songID'])
         if ok:
             logger.info('user liked song', song_info)
             return jsonify({'ok': 'user liked song'}), 200
@@ -292,7 +292,7 @@ def check_dislike():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = music_interaction.check_dislike_status(song_info['userID'], song_info['songID'])
+        ok = music_interaction.check_dislike_status(_user[0], song_info['songID'])
         if ok:
             logger.info('user disliked song', song_info)
             return jsonify({'ok': 'user disliked song'}), 200
@@ -316,7 +316,7 @@ def report_song():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = music_interaction.report_music(song_info['userID'], song_info['songID'])
+        ok = music_interaction.report_music(_user[0], song_info['songID'])
         if ok:
             logger.info('song reported', song_info)
             return jsonify({'ok': 'song reported successfully'}), 200
@@ -340,7 +340,7 @@ def check_report():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = music_interaction.check_report_status(song_info['userID'], song_info['songID'])
+        ok = music_interaction.check_report_status(_user[0], song_info['songID'])
         if ok:
             logger.info('user reported song', song_info)
             return jsonify({'ok': 'user reported song'}), 200
@@ -364,7 +364,7 @@ def comment_song():
     song = music.check_music_exist_by_id(song_info['songID'])
     _user = user.find_user_by_artist_name(song_info['userID'])
     if song and _user:
-        ok = music_interaction.comment_music(song_info['userID'], song_info['songID'], song_info['comment'])
+        ok = music_interaction.comment_music(_user[0], song_info['songID'], song_info['comment'])
         if ok:
             logger.info('song commented', song_info)
             return jsonify({'ok': 'song commented successfully'}), 201
