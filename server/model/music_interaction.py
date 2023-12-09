@@ -198,6 +198,10 @@ def check_like_status(user_id, music_id):
     Check like status of a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, report_status=True)
+
     cursor.execute('SELECT like_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
     like_status = cursor.fetchone()
     close_connection(conn)
@@ -209,6 +213,10 @@ def check_dislike_status(user_id, music_id):
     Check dislike status of a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, report_status=True)
+
     cursor.execute('SELECT dislike_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
     dislike_status = cursor.fetchone()
     close_connection(conn)
@@ -220,6 +228,10 @@ def check_report_status(user_id, music_id):
     Check report status of a music.
     """
     conn, cursor = connect_to_database()
+
+    if find_music_interactions_by_user_id_and_music_id(user_id, music_id) is None:
+        insert_music_interactions_data(cursor, user_id, music_id, report_status=True)
+
     cursor.execute('SELECT report_status FROM music_interactions WHERE user_id = ? AND music_id = ?', (user_id, music_id))
     report_status = cursor.fetchone()
     close_connection(conn)
