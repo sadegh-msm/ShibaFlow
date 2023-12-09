@@ -4,20 +4,17 @@ from datetime import datetime
 from model.user import find_user_id_by_artist_name
 
 create_musics_table_command = """CREATE TABLE musics ( 
-music_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-title VARCHAR(50), 
-publisher_id INTEGER, 
-album_name VARCHAR(50), 
-file_path VARCHAR(100), 
-cover_path VARCHAR(100), 
-genre VARCHAR(20), 
-likes INTEGER, 
-reports INTEGER, 
-duration INTEGER, 
-release_date DATE, 
-CONSTRAINT fk_users 
-    FOREIGN KEY (publisher_id) 
-    REFERENCES users(user_id) 
+    music_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    title VARCHAR(50), 
+    publisher_id INTEGER, 
+    album_name VARCHAR(50), 
+    file_path VARCHAR(100), 
+    cover_path VARCHAR(100), 
+    genre VARCHAR(20), 
+    release_date DATE, 
+    CONSTRAINT fk_users 
+        FOREIGN KEY (publisher_id) 
+        REFERENCES users(user_id) 
 );"""
 
 
@@ -52,12 +49,10 @@ def insert_musics_data(title, album_name, file_path, cover_path, genre, artist_n
     conn, cursor = connect_to_database()
 
     release_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    reports = 0
-    likes = 0
     publisher_id = find_user_id_by_artist_name(artist_name)
-    music = [title, publisher_id, album_name, file_path, cover_path, genre, likes, reports, '0', release_date]
+    music = [title, publisher_id, album_name, file_path, cover_path, genre, release_date]
     cursor.execute(
-        'INSERT INTO musics (title, publisher_id, album_name, file_path, cover_path, genre, likes, reports, duration, release_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO musics (title, publisher_id, album_name, file_path, cover_path, genre, release_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
         music)
 
     close_connection(conn)
@@ -215,23 +210,29 @@ def get_all_musics():
     return result if result else None
 
 
-def like_song(music_id):
+def check_music_exist_by_id(music_id):
     """
-    Like a song from the musics table by music_id.
-    """
-    conn, cursor = connect_to_database()
-
-    cursor.execute('UPDATE musics SET likes = likes + 1 WHERE music_id = ?', (music_id,))
-
-    close_connection(conn)
-
-
-def report_song(music_id):
-    """
-    Report a song from the musics table by music_id.
+    Check music exist by music_id.
     """
     conn, cursor = connect_to_database()
 
-    cursor.execute('UPDATE musics SET reports = reports + 1 WHERE music_id = ?', (music_id,))
+    cursor.execute('SELECT * FROM musics WHERE music_id = ?', (music_id,))
+    result = cursor.fetchone()
 
     close_connection(conn)
+
+    return result if result else None
+
+
+def get_all_musics_by_user_id(user_id):
+    """
+    Find all music from the musics table.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE publisher_id = ?', (user_id,))
+    result = cursor.fetchall()
+
+    close_connection(conn)
+
+    return result if result else None

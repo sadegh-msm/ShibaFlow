@@ -1,7 +1,7 @@
 import logging.config
 from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
-from model import user, music
+from model import user, music, music_interaction
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 from utils import util
@@ -252,79 +252,91 @@ def get_cover_by_id(cover_filename):
         return jsonify({'error': 'cover not found'}), 404
 
 
-@app.route("/like", methods=['GET'])
-def like_song():
+@app.route("/interact", methods=['POST'])
+def like_or_dislike_song():
     song_info = request.form.to_dict()
     logger.info('user requested like song', song_info)
 
-    infos = ['title', 'artist_name']
-    if util.check_for_key(song_info, infos):
+    if song_info['songID'] == '' or song_info['userID'] == '' or song_info['action'] == '':
         logger.info('bad request', song_info)
         return jsonify({'error': 'bad request'}), 400
 
-    if song_info['title'] == '' or song_info['artist_name'] == '':
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
-
-    song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
-    if song:
-        ok = music.like_song(song[0])
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = util.like_or_dislike_music(song_info['userID'], song_info['songID'], song_info['action'])
         if ok:
-            logger.info('song liked', song_info)
-            return jsonify({'ok': 'song liked successfully'}), 200
+            logger.info('interaction done', song_info)
+            return jsonify({'ok': 'song liked successfully'}), 201
         else:
-            logger.info('song failed to like', song_info)
+            logger.info('interaction failed', song_info)
             return jsonify({'error': 'bad request'}), 400
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
 
 
-@app.route("/likebyid", methods=['GET'])
-def like_by_id():
+@app.route("/checklike", methods=['GET'])
+def check_like():
     song_info = request.form.to_dict()
-    logger.info('user requested like song by id', song_info)
+    logger.info('user requested check like', song_info)
 
-    infos = ['music_id']
-    if util.check_for_key(song_info, infos):
+    if song_info['songID'] == '' or song_info['userID'] == '':
         logger.info('bad request', song_info)
         return jsonify({'error': 'bad request'}), 400
 
-    if song_info['music_id'] == '':
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
-
-    song = music.find_music_by_id(song_info['music_id'])
-    if song:
-        ok = music.like_song(song[0])
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = music_interaction.check_like_status(song_info['userID'], song_info['songID'])
         if ok:
-            logger.info('song liked', song_info)
-            return jsonify({'ok': 'song liked successfully'}), 200
+            logger.info('user liked song', song_info)
+            return jsonify({'ok': 'user liked song'}), 200
         else:
-            logger.info('song failed to like', song_info)
-            return jsonify({'error': 'bad request'}), 400
+            logger.info('user did not like song', song_info)
+            return jsonify({'ok': 'user did not like song'}), 200
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
 
 
-@app.route("/report", methods=['GET'])
+@app.route("/checkdislike", methods=['GET'])
+def check_dislike():
+    song_info = request.form.to_dict()
+    logger.info('user requested check dislike', song_info)
+
+    if song_info['songID'] == '' or song_info['userID'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = music_interaction.check_dislike_status(song_info['userID'], song_info['songID'])
+        if ok:
+            logger.info('user disliked song', song_info)
+            return jsonify({'ok': 'user disliked song'}), 200
+        else:
+            logger.info('user did not dislike song', song_info)
+            return jsonify({'ok': 'user did not dislike song'}), 200
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/report", methods=['POST'])
 def report_song():
     song_info = request.form.to_dict()
     logger.info('user requested report song', song_info)
 
-    infos = ['title', 'artist_name']
-    if util.check_for_key(song_info, infos):
+    if song_info['songID'] == '' or song_info['userID'] == '':
         logger.info('bad request', song_info)
         return jsonify({'error': 'bad request'}), 400
 
-    if song_info['title'] == '' or song_info['artist_name'] == '':
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
-
-    song = music.get_musics_by_title_artist(song_info['title'], song_info['artist_name'])
-    if song:
-        ok = music.report_song(song[0])
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = music_interaction.report_music(song_info['userID'], song_info['songID'])
         if ok:
             logger.info('song reported', song_info)
             return jsonify({'ok': 'song reported successfully'}), 200
@@ -336,32 +348,98 @@ def report_song():
         return jsonify({'error': 'song not found'}), 404
 
 
-@app.route("/reportbyid", methods=['GET'])
-def report_by_id():
+@app.route("/checkreport", methods=['GET'])
+def check_report():
     song_info = request.form.to_dict()
-    logger.info('user requested report song by id', song_info)
+    logger.info('user requested check report', song_info)
 
-    infos = ['music_id']
-    if util.check_for_key(song_info, infos):
+    if song_info['songID'] == '' or song_info['userID'] == '':
         logger.info('bad request', song_info)
         return jsonify({'error': 'bad request'}), 400
 
-    if song_info['music_id'] == '':
-        logger.info('bad request', song_info)
-        return jsonify({'error': 'bad request'}), 400
-
-    song = music.find_music_by_id(song_info['music_id'])
-    if song:
-        ok = music.report_song(song[0])
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = music_interaction.check_report_status(song_info['userID'], song_info['songID'])
         if ok:
-            logger.info('song reported', song_info)
-            return jsonify({'ok': 'song reported successfully'}), 200
+            logger.info('user reported song', song_info)
+            return jsonify({'ok': 'user reported song'}), 200
         else:
-            logger.info('song failed to report', song_info)
+            logger.info('user did not report song', song_info)
+            return jsonify({'ok': 'user did not report song'}), 200
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/comment", methods=['POST'])
+def comment_song():
+    song_info = request.form.to_dict()
+    logger.info('user requested comment song', song_info)
+
+    if song_info['songID'] == '' or song_info['userID'] == '' or song_info['comment'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_artist_name(song_info['userID'])
+    if song and _user:
+        ok = music_interaction.comment_music(song_info['userID'], song_info['songID'], song_info['comment'])
+        if ok:
+            logger.info('song commented', song_info)
+            return jsonify({'ok': 'song commented successfully'}), 201
+        else:
+            logger.info('song failed to comment', song_info)
             return jsonify({'error': 'bad request'}), 400
     else:
         logger.info('song not found', song_info)
         return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/comments", methods=['GET'])
+def get_comments():
+    song_info = request.args.get('songId')
+    print(song_info)
+    logger.info('user requested get comments', song_info)
+
+    if song_info == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    song = music.check_music_exist_by_id(song_info)
+    if song:
+        comments = music_interaction.get_comments(song_info)
+        if comments:
+            logger.info('comments found', song_info)
+            return jsonify({'ok': 'comments found', 'comments': comments}), 200
+        else:
+            logger.info('no comments found', song_info)
+            return jsonify({'ok': 'no comments found'}), 404
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/usersongs/<user_id>", methods=['GET'])
+def get_songs_by_artist(user_id):
+    logger.info('user requested get songs by artist', user_id)
+
+    if user_id == '':
+        logger.info('bad request', user_id)
+        return jsonify({'error': 'bad request'}), 400
+
+    _user = user.find_user_by_artist_name(user_id)
+    if _user:
+        songs = music.find_music_by_publisher_id(_user[0])
+        if songs:
+            logger.info('songs found', user_id)
+            return jsonify({'ok': 'songs found', 'songs': songs}), 200
+        else:
+            logger.info('no songs found', user_id)
+            return jsonify({'ok': 'no songs found'}), 200
+    else:
+        logger.info('artist not found', user_id)
+        return jsonify({'error': 'artist not found'}), 404
 
 
 if __name__ == "__main__":

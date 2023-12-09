@@ -4,15 +4,15 @@ from datetime import datetime
 import sqlite3
 
 create_users_table_command = """CREATE TABLE users ( 
-user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-fname VARCHAR(20), 
-lname VARCHAR(30), 
-artist_name VARCHAR(30) UNIQUE, 
-verified CHAR(1), 
-email VARCHAR(30), 
-password VARCHAR(100), 
-gender CHAR(1), 
-joining_date DATE
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    fname VARCHAR(20), 
+    lname VARCHAR(30), 
+    artist_name VARCHAR(30) UNIQUE, 
+    verified CHAR(1), 
+    email VARCHAR(30), 
+    password VARCHAR(100), 
+    gender CHAR(1), 
+    joining_date DATE
 );"""
 
 
@@ -189,3 +189,17 @@ def find_artist_name_by_id(user_id):
     close_connection(conn)
 
     return user[0] if user else None
+
+
+def find_user_by_id(user_id):
+    """
+    Find a user in the users table by user_id.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM users WHERE user_id = ?', (user_id,))
+    user = cursor.fetchone()
+
+    close_connection(conn)
+
+    return user if user else None
