@@ -3,6 +3,7 @@ package com.example.shibaflow.api
 import android.util.Log
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
+import com.example.shibaflow.model.UserSongsResponse
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.forms.submitForm
@@ -287,10 +288,11 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
 
         val ok = if (response.status.value == 200) "ok" else ""
 
+
         val content: String = response.bodyAsText().toString()
         val gson = Gson()
-        val jsonForm = gson.fromJson(content, SongsResponse::class.java)
-        val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
+        val jsonForm = gson.fromJson(content, UserSongsResponse::class.java)
+        val songs: List<Song> = jsonForm.songs.map { jsonArray ->
             Song(
                 id = jsonArray[0].asInt,
                 title = jsonArray[1].asString,
@@ -299,10 +301,10 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
                 mp3File = jsonArray[4].asString,
                 coverImage = jsonArray[5].asString,
                 genre = jsonArray[6].asString,
-                playCount = jsonArray[7].asInt,
-                skipCount = jsonArray[8].asInt,
-                duration = jsonArray[9].asString,
-                lastPlayed = jsonArray[10].asString
+//                playCount = jsonArray[7].asInt,
+//                skipCount = jsonArray[8].asInt,
+//                duration = jsonArray[9].asString,
+                lastPlayed = jsonArray[7].asString
             )
         }
         return Pair(songs, ok)

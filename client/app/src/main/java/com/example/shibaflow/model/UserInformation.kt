@@ -12,6 +12,10 @@ data class SongsResponse(
     val songs_info: List<JsonArray>
 )
 
+data class UserSongsResponse(
+    val ok: String,
+    val songs: List<JsonArray>
+)
 data class UploadSong(
     var title: String="",
     var album: String = "",
