@@ -148,6 +148,8 @@ def comment_music(user_id, music_id, comment_text):
     cursor.execute('UPDATE music_interactions SET comment_text = ? WHERE user_id = ? AND music_id = ?', (comment_text, user_id, music_id))
     close_connection(conn)
 
+    return True
+
 
 def edit_comment_music(user_id, music_id, comment_text):
     """
