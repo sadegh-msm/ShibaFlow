@@ -219,30 +219,37 @@ suspend fun checkSongLiked(
 }
 
 
-suspend fun getCommentsForSong(songId: Int): List<Comment> {
-    val client = HttpClient(CIO)
-    val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+suspend fun getCommentsForSong(songId: Int): Pair<List<Comment>, String> {
+    try {
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
 
-    val ok = if (response.status.value == 200) "ok" else "error"
+        val ok = response.headers[HttpHeaders.Server] ?: ""
 
-    val content: String = response.bodyAsText().toString()
-    val gson = Gson()
-    val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
-    Log.d("get comments", response.status.value.toString())
+        val content: String = response.bodyAsText().toString()
+        Log.d("get comments", content)
 
-    // Assuming CommentsResponse has a field named 'comments' which is a list of pairs
-    val comments: List<Comment> = commentsResponse.comments.map { pair ->
-        Comment(username = pair.first, comment = pair.second)
+        val gson = Gson()
+        val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
+
+        if (commentsResponse.ok == "comments found") {
+            val comments: List<Comment> = commentsResponse.comments.map { pair ->
+                Comment(username = pair[0], comment = pair[1])
+            }
+            return Pair(comments, "ok")
+        } else {
+            return Pair(emptyList(), "No comments found")
+        }
+    } catch (e: ClientRequestException) {
+        return Pair(emptyList(), "Client request error: ${e.response.status}")
+    } catch (e: Exception) {
+        return Pair(emptyList(), "Error occurred: ${e.message}")
     }
-
-    // Return the list of comments
-    return comments
-
 }
 
 data class Comment(val username: String, val comment: String)
 
-data class CommentsResponse(val comments: List<Pair<String, String>>)
+data class CommentsResponse(val comments: List<List<String>>, val ok: String)
 
 
 suspend fun postCommentToEndpoint(
@@ -262,7 +269,6 @@ suspend fun postCommentToEndpoint(
         )
         client.close()
         Log.d("post comments", response.status.value.toString())
-
         return when (response.status.value) {
             201 -> Pair("Comment posted successfully.", "ok")
             else -> Pair("Failed to post comment.", "")

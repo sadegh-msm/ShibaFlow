@@ -31,93 +31,95 @@ import com.example.shibaflow.api.Comment
 import com.example.shibaflow.api.getCommentsForSong
 import com.example.shibaflow.api.postCommentToEndpoint
 import com.example.shibaflow.model.MyInfo
+import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CommentsPage(songId: Int, navController: NavController) {
-    val (comments, setComments) = remember { mutableStateOf<List<Comment>>(emptyList()) }
-    val (loading, setLoading) = remember { mutableStateOf(true) }
-    val (newComment, setNewComment) = remember { mutableStateOf(TextFieldValue()) }
+    ShibaFlowTheme {
+        val (comments, setComments) = remember { mutableStateOf<List<Comment>>(emptyList()) }
+        val (loading, setLoading) = remember { mutableStateOf(true) }
+        val (newComment, setNewComment) = remember { mutableStateOf(TextFieldValue()) }
 
-    val coroutineScope = rememberCoroutineScope()
-    val keyboardController = LocalSoftwareKeyboardController.current
+        val coroutineScope = rememberCoroutineScope()
 
-    fun postComment() {
-        coroutineScope.launch {
-            try {
-                val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username ,songId, newComment.text)
-                if (ok == "ok") {
-                    val fetchedComments = getCommentsForSong(songId)
-                    setComments(fetchedComments)
-                    setNewComment(TextFieldValue())
-                } else {
-                    // Handle the case where posting a comment was not successful
-                }
-            } catch (e: Exception) {
-                // Handle exceptions
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = songId) {
-        coroutineScope.launch {
-            try {
-                val fetchedComments = getCommentsForSong(songId)
-                setComments(fetchedComments)
-            } catch (e: Exception) {
-                // Handle exceptions
-            } finally {
-                setLoading(false)
-            }
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            ShibaflowTopAppBar(navController = navController)
-        }
-    ) { contentPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-        ) {
-            if (loading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    items(comments) { comment ->
-                        CommentItem(comment = comment)
+        fun postComment() {
+            coroutineScope.launch {
+                try {
+                    val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username, songId, newComment.text)
+                    if (ok == "ok") {
+                        val (fetchedComments, _) = getCommentsForSong(songId)
+                        setComments(fetchedComments)
+                        setNewComment(TextFieldValue())
+                    } else {
+                        // Handle the case where posting a comment was not successful
                     }
+                } catch (e: Exception) {
+                    // Handle exceptions
                 }
+            }
+        }
 
-                OutlinedTextField(
-                    value = newComment,
-                    onValueChange = { setNewComment(it) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(MaterialTheme.colorScheme.background),
-                    label = { Text("Add a comment") },
-                    trailingIcon = {
-                        IconButton(onClick = { postComment() }) {
-                            Icon(imageVector = Icons.Default.Send, contentDescription = "Send")
+        LaunchedEffect(key1 = songId) {
+            coroutineScope.launch {
+                try {
+                    val (fetchedComments, _) = getCommentsForSong(songId)
+                    setComments(fetchedComments)
+                } catch (e: Exception) {
+                    // Handle exceptions
+                } finally {
+                    setLoading(false)
+                }
+            }
+        }
+
+        Scaffold(
+            topBar = {
+                ShibaflowTopAppBar(navController = navController)
+            }
+        ) { contentPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+            ) {
+                if (loading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        items(comments) { comment ->
+                            CommentItem(comment = comment)
                         }
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Send,
-                        keyboardType = KeyboardType.Text
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            postComment()
-                        }
+                    }
+
+                    OutlinedTextField(
+                        value = newComment,
+                        onValueChange = { setNewComment(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .background(MaterialTheme.colorScheme.background),
+                        label = { Text("Add a comment") },
+                        trailingIcon = {
+                            IconButton(onClick = { postComment() }) {
+                                Icon(imageVector = Icons.Default.Send, contentDescription = "Send")
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Send,
+                            keyboardType = KeyboardType.Text
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onSend = {
+                                postComment()
+                            }
+                        )
                     )
-                )
+                }
             }
         }
     }

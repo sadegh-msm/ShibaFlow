@@ -47,8 +47,8 @@ fun PanelPage(navController: NavController) {
         val scope = rememberCoroutineScope()
         LaunchedEffect(key1 = songListState) {
             scope.launch {
-                val (songs, ok) = getAllSongs()
-//                val (songs, ok) = getUserSongs(username = MyInfo.userInformation.username)
+//                val (songs, ok) = getAllSongs()
+                val (songs, ok) = getUserSongs(username = MyInfo.userInformation.username)
                 songListState = songs
                 if (ok == "ok") {
                     isLoad = true
