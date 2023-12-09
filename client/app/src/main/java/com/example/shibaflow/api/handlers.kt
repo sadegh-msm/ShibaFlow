@@ -1,5 +1,6 @@
 package com.example.shibaflow.api
 
+import android.util.Log
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
 import io.ktor.client.*
@@ -159,14 +160,16 @@ suspend fun uploadMusicHandler(
 
 suspend fun likeDislikeSong(
     songID: Int,
+    userID: String,
     action: String
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/endpoint",
+            url = "http://195.248.242.169:8080/interact",
             formData = formData {
                 append("songID", songID)
+                append("userID", userID)
                 append("action", action)
             }
         )
@@ -187,21 +190,18 @@ suspend fun checkSongLiked(
     userID: String
 ): Boolean {
     try {
-//    val client = HttpClient(CIO)
-//    val response: HttpResponse = client.submitFormWithBinaryData(
-//        url = "http://195.248.242.169:8080/    endpoint",
-//        formData = formData {
-//            append("songID", songID)
-//            append("userID", userID)
-//        }
-//    )
-//    client.close()
-//    return if (response.status.value == 201) {
-//        "liked or not"
-//    } else {
-//        ""
-//    }
-        return songID % 2 != 0
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.submitFormWithBinaryData(
+            url = "http://195.248.242.169:8080/checklike",
+            formData = formData {
+                append("songID", songID)
+                append("userID", userID)
+            }
+        )
+        client.close()
+        Log.d("YourTag", response.status.value.toString())
+        return response.status.value == 200
+
     } catch (e: ClientRequestException) {
         // Handle specific client request exception if needed
     } catch (e: Exception) {
@@ -211,35 +211,47 @@ suspend fun checkSongLiked(
 }
 
 
-suspend fun getCommentsForSong(songId: Int): Pair<List<String>, String> {
+suspend fun getCommentsForSong(songId: Int): List<Comment> {
     try {
-//    val client = HttpClient(CIO)
-//    val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
-//
-//    val ok = if (response.status.value == 200) "ok" else "error"
-//
-//    val content: String = response.bodyAsText().toString()
-//    val gson = Gson()
-//    val jsonForm = gson.fromJson(content, CommentsResponse::class.java)
-//    val comments: List<String> = jsonForm.comments
-        val comments: List<String> = listOf("ss", ":fsfsf", "f sf")
-        return Pair(comments, "ok")
+        val client = HttpClient(CIO)
+        val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+
+        val ok = if (response.status.value == 200) "ok" else "error"
+
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val commentsResponse = gson.fromJson(content, CommentsResponse::class.java)
+
+        // Assuming CommentsResponse has a field named 'comments' which is a list of pairs
+        val comments: List<Comment> = commentsResponse.comments.map { pair ->
+            Comment(username = pair.first, comment = pair.second)
+        }
+
+        // Return the list of comments
+        return comments
     } catch (e: ClientRequestException) {
         // Handle specific client request exception if needed
     } catch (e: Exception) {
         // Handle other exceptions if needed
     }
-    return Pair(emptyList(), "Error occurred")
+
+    // Return an empty list if an exception occurs
+    return emptyList()
 }
 
+data class Comment(val username: String, val comment: String)
 
-suspend fun postCommentToEndpoint(songID: Int, comment: String): Pair<String, String> {
+data class CommentsResponse(val comments: List<Pair<String, String>>)
+
+
+suspend fun postCommentToEndpoint(userID: String, songID: Int, comment: String): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/endpoint",
+            url = "http://195.248.242.169:8080/comment",
             formData = formData {
                 append("songID", songID.toString())
+                append("userID", userID)
                 append("comment", comment)
             }
         )

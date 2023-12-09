@@ -206,12 +206,12 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                     scope.launch {
                         firstTime = if (isLiked) {
                             if (firstTime) {
-                                likeDislikeSong( song.id ,"dislike")
+                                likeDislikeSong( song.id ,MyInfo.userInformation.username, "like")
                             }
                             true
                         } else {
                             if (firstTime) {
-                                likeDislikeSong( song.id ,"like")
+                                likeDislikeSong( song.id ,MyInfo.userInformation.username, "dislike")
                             }
                             true
                         }
@@ -249,6 +249,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
+                
                 songListState.clear()
                 songListState.addAll(songs)
                 if (!isFiltering) {

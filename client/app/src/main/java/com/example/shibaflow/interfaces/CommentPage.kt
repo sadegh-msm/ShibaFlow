@@ -27,16 +27,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.shibaflow.api.Comment
 import com.example.shibaflow.api.getCommentsForSong
 import com.example.shibaflow.api.postCommentToEndpoint
 import com.example.shibaflow.model.MyInfo
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CommentsPage(songId: Int, navController: NavController) {
-    val (comments, setComments) = remember { mutableStateOf<List<String>>(emptyList()) }
+    val (comments, setComments) = remember { mutableStateOf<List<Comment>>(emptyList()) }
     val (loading, setLoading) = remember { mutableStateOf(true) }
     val (newComment, setNewComment) = remember { mutableStateOf(TextFieldValue()) }
 
@@ -46,14 +46,16 @@ fun CommentsPage(songId: Int, navController: NavController) {
     fun postComment() {
         coroutineScope.launch {
             try {
-                val (result, ok) = postCommentToEndpoint(songId, newComment.text)
+                val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username ,songId, newComment.text)
                 if (ok == "ok") {
-                    val (fetchedComments, _) = getCommentsForSong(songId)
+                    val fetchedComments = getCommentsForSong(songId)
                     setComments(fetchedComments)
                     setNewComment(TextFieldValue())
                 } else {
+                    // Handle the case where posting a comment was not successful
                 }
             } catch (e: Exception) {
+                // Handle exceptions
             }
         }
     }
@@ -61,12 +63,10 @@ fun CommentsPage(songId: Int, navController: NavController) {
     LaunchedEffect(key1 = songId) {
         coroutineScope.launch {
             try {
-                val (fetchedComments, ok) = getCommentsForSong(songId)
-                if (ok == "ok") {
-                    setComments(fetchedComments)
-                } else {
-                }
+                val fetchedComments = getCommentsForSong(songId)
+                setComments(fetchedComments)
             } catch (e: Exception) {
+                // Handle exceptions
             } finally {
                 setLoading(false)
             }
@@ -124,14 +124,14 @@ fun CommentsPage(songId: Int, navController: NavController) {
 }
 
 @Composable
-fun CommentItem(comment: String) {
+fun CommentItem(comment: Comment) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         Text(
-            text = comment,
+            text = "${comment.username}: ${comment.comment}",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
