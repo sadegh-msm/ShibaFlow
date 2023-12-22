@@ -99,9 +99,9 @@ fun UserInformationSection() {
         }
 
         UserInfoItem(Icons.Default.Person, "Username", MyInfo.userInformation.username)
-        UserInfoItem(Icons.Default.Person, "First Name", MyInfo.userInformation.firstname)
-        UserInfoItem(Icons.Default.Person, "Last Name", MyInfo.userInformation.lasttname)
-        UserInfoItem(Icons.Default.Email, "Email", MyInfo.userInformation.email)
+        UserInfoItem(Icons.Default.Person, "First Name", "lorem ipsum")
+        UserInfoItem(Icons.Default.Person, "Last Name", "lorem ipsum")
+        UserInfoItem(Icons.Default.Email, "Email", "lorem ipsum")
     }
 }
 
