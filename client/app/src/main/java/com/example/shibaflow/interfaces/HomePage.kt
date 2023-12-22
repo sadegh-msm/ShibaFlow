@@ -1,9 +1,11 @@
 package com.example.shibaflow.interfaces
+import android.app.DownloadManager
 import androidx.compose.ui.platform.LocalContext
 
 
 import android.content.Context
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -239,9 +241,29 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                             navController.navigate("comment_page/${song.id}")
                         }
                 )
+                Icon(
+                    painter = painterResource(id = R.drawable.download_icon),
+                    contentDescription = "Download",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            downloadSong(song.mp3File, song.title, context)
+                        }
+                )
             }
         }
     }
+}
+
+fun downloadSong(url: String, title: String, context: Context) {
+    val request = DownloadManager.Request(Uri.parse(url))
+        .setTitle(title)
+        .setDescription("Downloading")
+        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        .setDestinationInExternalPublicDir(Environment.DIRECTORY_MUSIC, title + ".mp3")
+
+    val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    downloadManager.enqueue(request)
 }
 
 
