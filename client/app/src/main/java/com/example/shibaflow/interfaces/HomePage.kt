@@ -151,7 +151,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
         modifier = modifier
             .padding(all = 8.dp)
             .clickable {
-                playSong(song.mp3File, context)
+                navController.navigate("song_detail/${song.id}")
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(size = 16.dp)

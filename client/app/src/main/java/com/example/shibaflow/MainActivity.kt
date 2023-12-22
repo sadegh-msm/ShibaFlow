@@ -18,6 +18,7 @@ import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import com.example.shibaflow.interfaces.LoginForm
 import com.example.shibaflow.interfaces.PanelPage
 import com.example.shibaflow.interfaces.SignupForm
+import com.example.shibaflow.interfaces.SongDetailScreen
 import com.example.shibaflow.interfaces.SongListApp
 import com.example.shibaflow.interfaces.UploadForm
 
@@ -65,6 +66,10 @@ fun UsersApplication() {
 
         composable(route = "panel_page") {
             PanelPage(navController)
+        }
+        composable(route = "song_detail/{songId}") { backStackEntry ->
+            val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull() ?: return@composable
+            SongDetailScreen(songId, navController)
         }
 
 
