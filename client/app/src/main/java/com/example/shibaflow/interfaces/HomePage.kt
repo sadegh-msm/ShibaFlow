@@ -70,7 +70,7 @@ import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
 
 
-private var exoPlayer: ExoPlayer? = null
+var exoPlayer: ExoPlayer? = null
 fun playSong(url: String, context: Context) {
     releasePlayer()
     val mediaItem = MediaItem.fromUri(Uri.parse(url))

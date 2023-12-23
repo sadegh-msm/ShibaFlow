@@ -30,6 +30,26 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.shibaflow.R
+
+import kotlinx.coroutines.launch
 
 @Composable
 fun SongDetailScreen(songId: Int, navController: NavController) {
@@ -52,7 +72,6 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
         }
     }
 
-    // Listener for ExoPlayer
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
@@ -73,44 +92,132 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
         }
     }
 
-    // UI Layout
-    Column {
-        song?.let {
-            AsyncImage(
-                model = it.coverImage,
-                contentDescription = "Song Cover",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            song?.let { songData ->
+                Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Now Playing",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
 
-            Slider(
-                value = progress,
-                onValueChange = { newValue ->
-                    exoPlayer.seekTo((exoPlayer.duration * newValue).toLong())
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Card(
+                    modifier = Modifier
+                        .size(240.dp)
+                        .clip(CircleShape),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    AsyncImage(
+                        model = songData.coverImage,
+                        contentDescription = "Song Cover",
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
-            )
 
-            Row {
-                Button(onClick = {
-                    isPlaying = !isPlaying
-                    exoPlayer.playWhenReady = isPlaying
-                }) {
-                    Text(if (isPlaying) "Pause" else "Play")
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = songData.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Text(
+                    text = "from ${songData.album}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Slider(
+                    value = progress,
+                    onValueChange = { newValue ->
+                        exoPlayer.seekTo((exoPlayer.duration * newValue).toLong())
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    IconButton(onClick = {
+                        val newPosition = (exoPlayer.currentPosition - 10_000).coerceAtLeast(0)
+                        exoPlayer.seekTo(newPosition)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.backward10s),
+                            contentDescription = "Rewind",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        isPlaying = !isPlaying
+                        exoPlayer.playWhenReady = isPlaying
+                    }) {
+                        Icon(
+                            painter = if (isPlaying) painterResource(id = R.drawable.pause) else painterResource(id = R.drawable.play),
+                            contentDescription = if (isPlaying) "Pause" else "Play",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        val newPosition = (exoPlayer.currentPosition + 10_000).coerceAtMost(exoPlayer.duration)
+                        exoPlayer.seekTo(newPosition)
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.forward10s),
+                            contentDescription = "Fast Forward",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                Button(onClick = { navController.popBackStack() }) {
-                    Text("Back")
+                Button(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = "Back to Library",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
 }
+
+
+
 
 
 
@@ -122,3 +229,4 @@ suspend fun fetchAllSongs(): List<Song> {
 fun findSongById(songs: List<Song>, songId: Int): Song? {
     return songs.find { it.id == songId }
 }
+
