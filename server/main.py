@@ -1,7 +1,7 @@
 import logging.config
 from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
-from model import user, music, music_interaction
+from model import user, music, music_interaction, playlist
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 from utils import util
@@ -87,6 +87,7 @@ def get_user_info():
     else:
         logger.info('user not found', user_info)
         return jsonify({'error': 'user not found'}), 404
+
 
 @app.route("/user", methods=['DELETE'])
 def delete_user():

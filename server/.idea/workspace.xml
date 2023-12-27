@@ -7,6 +7,8 @@
     <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change makefile rules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/db/Flow.db" beforeDir="false" afterPath="$PROJECT_DIR$/model/db/Flow.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/playlist.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/playlist.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,7 +248,7 @@
       <workItem from="1702139729010" duration="1852000" />
       <workItem from="1702450370754" duration="195000" />
       <workItem from="1703661865876" duration="96000" />
-      <workItem from="1703661973899" duration="12697000" />
+      <workItem from="1703661973899" duration="14900000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>
@@ -427,6 +429,6 @@
     <settings-migrated>true</settings-migrated>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1703680084909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/server$main.coverage" NAME="main Coverage Results" MODIFIED="1703688159260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
