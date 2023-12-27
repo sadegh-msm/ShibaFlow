@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -41,10 +43,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import com.example.shibaflow.interfaces.LoginForm
@@ -67,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                    UsersApplication()
-                    AppWithDrawer()
+                    ShibaApp()
                 }
             }
         }
@@ -87,32 +93,48 @@ fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
     )
 }
 @Composable
-fun DrawerListItem(label: String, icon: ImageVector, onClick: () -> Unit) {
+fun DrawerListItem(label: String, icon: ImageVector?,iconID:Int?,color:Color, onClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .width(200.dp)
+            .width(200.dp).background(color = color)
             .clickable(onClick = onClick)
             .padding(16.dp),
         horizontalArrangement = Arrangement.Start
     ) {
-        Icon(imageVector = icon, contentDescription = label, modifier = Modifier.size(24.dp))
+        if (iconID!= null){
+            Icon(
+                painter = painterResource(id = iconID),
+                modifier = Modifier.width(25.dp),
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.primary)
+        }
+        else if(icon!=null){
+            Icon(imageVector = icon,  modifier = Modifier.width(25.dp),
+                contentDescription = "",
+                tint = MaterialTheme.colorScheme.primary)
+        }
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
             color = Color.Black,
-            lineHeight = TextUnit.Unspecified // Updated line
+            lineHeight = TextUnit.Unspecified
         )
 
 
     }
 }
-
+@Composable
+fun ShibaApp(){
+    val navController = rememberNavController()
+    AppWithoutDrawer(navController = navController)
+}
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppWithDrawer() {
     val navController = rememberNavController()
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     ModalNavigationDrawer(
@@ -126,21 +148,38 @@ fun AppWithDrawer() {
             ){
                 Column {
                     IconButton(onClick = { coroutineScope.launch { drawerState.close() } }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Menu")
                     }
-                    DrawerListItem(label = "Home Page", icon = Icons.Default.Home) {
-                        navController.navigate("music_page")
-                        coroutineScope.launch { drawerState.close() }
+                    if (currentRoute == "music_page"){
+                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color.Yellow) {}
                     }
-                    DrawerListItem(label = "Profile", icon = Icons.Default.Person) {
-                        navController.navigate("panel_page")
-                        coroutineScope.launch { drawerState.close() }
+                    else{
+                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color.Red) {
+                            navController.navigate("music_page")
+                            coroutineScope.launch { drawerState.close() }
+                        }
                     }
-                    DrawerListItem(label = "Upload Page", icon = Icons.Default.Send) {
-                        navController.navigate("upload_page")
-                        coroutineScope.launch { drawerState.close() }
+                    if (currentRoute == "panel_page"){
+                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color.Yellow) {
+                        }
+                    } else{
+                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color.Red) {
+                            navController.navigate("panel_page")
+                            coroutineScope.launch { drawerState.close() }
+                        }
                     }
-                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp) {
+                    if (currentRoute == "upload_page"){
+                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color.Yellow) {
+                        }
+                    } else{
+                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color.Red) {
+                            navController.navigate("upload_page")
+                            coroutineScope.launch { drawerState.close() }
+
+                        }
+                    }
+
+                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color.Red) {
                         coroutineScope.launch { drawerState.close() }
                     }
 
@@ -154,13 +193,13 @@ fun AppWithDrawer() {
         Scaffold(
             topBar = { MyAppTopBar(drawerState, coroutineScope) }
         ) {
-            NavHost(navController = navController, startDestination = "login_page",Modifier.padding(top = 60.dp)) {
-                composable(route = "login_page") {
-                    LoginForm(navController)
-                }
-                composable(route = "signup_page") {
-                    SignupForm(navController)
-                }
+            NavHost(navController = navController, startDestination = "music_page",Modifier.padding(top = 60.dp)) {
+//                composable(route = "login_page") {
+//                    LoginForm(navController)
+//                }
+//                composable(route = "signup_page") {
+//                    SignupForm(navController)
+//                }
                 composable(route = "music_page") {
                     SongListApp(navController)
                 }
@@ -186,6 +225,23 @@ fun AppWithDrawer() {
 
 
             }
+        }
+    }
+}
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppWithoutDrawer(navController: NavHostController) {
+//    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "login_page") {
+        composable(route = "login_page") {
+            LoginForm(navController)
+        }
+        composable(route = "signup_page") {
+            SignupForm(navController)
+        }
+        composable(route = "music_page") {
+            AppWithDrawer()
         }
     }
 }
