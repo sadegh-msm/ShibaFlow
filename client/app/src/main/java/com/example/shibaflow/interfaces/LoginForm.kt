@@ -131,6 +131,7 @@ fun LoginForm(navHostController: NavHostController) {
                             val result = checkLogin(info)
                             if (
                                 result.first) {
+                                navHostController.popBackStack()
                                 navHostController.navigate("music_page")
                             } else {
                                 isLogin = false
@@ -151,6 +152,7 @@ fun LoginForm(navHostController: NavHostController) {
                 text = "Sign up",
                 onClick = {},
                 onClickEnable = {
+                    navHostController.popBackStack()
                     navHostController.navigate("signup_page")
                 },
                 enabled = true,

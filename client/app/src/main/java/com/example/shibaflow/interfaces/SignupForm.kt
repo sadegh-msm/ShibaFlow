@@ -157,6 +157,7 @@ fun SignupForm(navController: NavHostController) {
                         scope.launch {
                             val result = checkSignup(information)
                             if (result.first) {
+                                navController.popBackStack()
                                 navController.navigate("music_page")
                             } else {
                                 isSigningUp = false
@@ -174,7 +175,9 @@ fun SignupForm(navController: NavHostController) {
             ShibaFlowButton(
                 text = "Login",
                 onClick = {},
-                onClickEnable = { navController.navigate("login_page") },
+                onClickEnable = {
+                    navController.popBackStack()
+                    navController.navigate("login_page") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
