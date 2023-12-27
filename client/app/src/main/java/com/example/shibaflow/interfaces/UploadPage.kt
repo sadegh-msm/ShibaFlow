@@ -104,7 +104,8 @@ fun UploadForm(navController: NavController) {
 
         ShibaFlowButton(
             text = audioUri.value?.toString() ?: "Upload music",
-            onClick = {
+            onClick = {},
+            onClickEnable = {
                 audioLauncher.launch("audio/*")
             },
             enabled = true,
@@ -116,7 +117,8 @@ fun UploadForm(navController: NavController) {
 
         ShibaFlowButton(
             text = imageUri.value?.toString() ?: "Upload cover",
-            onClick = {
+            onClick = {},
+            onClickEnable = {
                 imageLauncher.launch("image/*")
             },
             enabled = true,
@@ -128,7 +130,8 @@ fun UploadForm(navController: NavController) {
         var isUpload by remember { mutableStateOf(false) }
         val context = LocalContext.current
         ShibaFlowButton(
-            onClick = {
+            onClick = {},
+            onClickEnable = {
                 isUpload = true
             },
             modifier = Modifier
