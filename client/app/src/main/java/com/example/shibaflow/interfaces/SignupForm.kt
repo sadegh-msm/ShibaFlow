@@ -54,6 +54,8 @@ fun SignupForm(navController: NavHostController) {
         var information by remember { mutableStateOf(UserInformation()) }
         MyInfo.userInformation = information
         var isSigningUp by remember { mutableStateOf(false) }
+        var showError by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf("") }
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -62,6 +64,9 @@ fun SignupForm(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)
         ) {
+            if (showError) {
+                ErrorDialog(onDismiss = { showError = false }, text = errorMessage)
+            }
             Image(
                 painter = painterResource(id = R.drawable.shibainu),
                 contentDescription = null,
@@ -72,6 +77,7 @@ fun SignupForm(navController: NavHostController) {
                     .aspectRatio(1f)
                     .fillMaxHeight(),
             )
+
             UsernameField(
                 value = information.username,
                 onChange = { data -> information = information.copy(username = data) },
@@ -124,12 +130,13 @@ fun SignupForm(navController: NavHostController) {
                     val context = LocalContext.current
                     LaunchedEffect(key1 = information) {
                         scope.launch {
-                            if (checkSignup(information)) {
+                            val result = checkSignup(information)
+                            if (result.first) {
                                 navController.navigate("music_page")
                             } else {
                                 isSigningUp = false
-                                val toast = Toast.makeText(context, "Wrong information", Toast.LENGTH_SHORT)
-                                toast.show()
+                                errorMessage = result.second
+                                showError = true
                             }
                         }
                     }
@@ -297,18 +304,15 @@ fun GenderField(
     )
 }
 
-suspend fun checkSignup(userInfo: UserInformation): Boolean {
-    if (userInfo.isSignupNotEmpty()) {
-        val (message, ok) = SignupHandler(
-            userInfo.firstname,
-            userInfo.lasttname,
-            userInfo.email,
-            userInfo.password,
-            userInfo.gender,
-            userInfo.username
-        )
-        return ok == "ok"
-    }
-    return false
+suspend fun checkSignup(userInfo: UserInformation): Pair<Boolean,String> {
+    val (message, ok) = SignupHandler(
+        userInfo.firstname,
+        userInfo.lasttname,
+        userInfo.email,
+        userInfo.password,
+        userInfo.gender,
+        userInfo.username
+    )
+    return Pair(ok == "ok",message)
 }
 

@@ -66,6 +66,8 @@ fun LoginForm(navHostController: NavHostController) {
         color = MaterialTheme.colorScheme.onSecondaryContainer
     ) {
         var info by remember { mutableStateOf(UserInformation()) }
+        var showError by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf("") }
         MyInfo.userInformation = info
 
         var isLogin by remember { mutableStateOf(false) }
@@ -77,6 +79,9 @@ fun LoginForm(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)
         ) {
+            if (showError) {
+                ErrorDialog(onDismiss = { showError = false }, text = errorMessage)
+            }
             Image(
                 painter = painterResource(id = R.drawable.shibainu),
                 contentDescription = null,
@@ -105,6 +110,7 @@ fun LoginForm(navHostController: NavHostController) {
             )
             val context = LocalContext.current
 
+
             ShibaFlowButton(
                 onClick = {
                     isLogin = true
@@ -121,13 +127,16 @@ fun LoginForm(navHostController: NavHostController) {
 
                     LaunchedEffect(key1 = info) {
                         scope.launch {
+                            val result = checkLogin(info)
                             if (
-                                checkLogin(info)) {
+                                result.first) {
                                 navHostController.navigate("music_page")
                             } else {
                                 isLogin = false
-                                val toast = Toast.makeText(context, "Wrong username or password", Toast.LENGTH_SHORT)
-                                toast.show()
+                                errorMessage = result.second
+                                showError = true
+//                                val toast = Toast.makeText(context, "Wrong username or password", Toast.LENGTH_SHORT)
+//                                toast.show()
                             }
                         }
                     }
@@ -292,13 +301,10 @@ fun PasswordField(
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
     )
 }
-suspend fun checkLogin(userInfo: UserInformation): Boolean {
-    if (userInfo.isLoginNotEmpty()) {
-        val (message,ok) = LoginHandler(
-            userInfo.username,
-            userInfo.password,
-        )
-        return ok == "ok"
-    }
-    return false
+suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
+    val (message,ok) = LoginHandler(
+        userInfo.username,
+        userInfo.password,
+    )
+    return Pair(ok == "ok",message)
 }

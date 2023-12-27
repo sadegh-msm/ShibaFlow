@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,8 +21,6 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,19 +41,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.shibaflow.interfaces.ErrorDialog
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import com.example.shibaflow.interfaces.LoginForm
 import com.example.shibaflow.interfaces.PanelPage
 import com.example.shibaflow.interfaces.SignupForm
 import com.example.shibaflow.interfaces.SongDetailScreen
 import com.example.shibaflow.interfaces.SongListApp
-import com.example.shibaflow.interfaces.TopAppBar
 import com.example.shibaflow.interfaces.UploadForm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -72,6 +66,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+//                    ErrorScreen()
 //                    UsersApplication()
                     ShibaApp()
                 }
@@ -96,7 +91,8 @@ fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
 fun DrawerListItem(label: String, icon: ImageVector?,iconID:Int?,color:Color, onClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .width(200.dp).background(color = color)
+            .width(200.dp)
+            .background(color = color)
             .clickable(onClick = onClick)
             .padding(16.dp),
         horizontalArrangement = Arrangement.Start
