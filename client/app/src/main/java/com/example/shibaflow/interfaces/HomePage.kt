@@ -187,16 +187,30 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                     textAlign = TextAlign.Center
                 )
             }
+            if (song.coverImage == ""){
+                Image(
+                    painter = painterResource(id = R.drawable.default_cover),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(size = 16.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            else{
+                AsyncImage(
+                    model = song.coverImage,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(size = 16.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-            AsyncImage(
-                model = song.coverImage,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(size = 16.dp)),
-                contentScale = ContentScale.Crop
-            )
+
 
             Row(
                 modifier = Modifier
