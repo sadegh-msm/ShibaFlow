@@ -338,46 +338,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             TopAppBar()
         },
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        floatingActionButton = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate("upload_page")
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.upload),
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp),
-                        contentDescription = "",
-                        tint = Color.Black
-                    )
-                }
-
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate("panel_page")
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.user),
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp),
-                        contentDescription = "",
-                        tint = Color.Black
-                    )
-                }
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End,
     )
     { it ->
         LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
