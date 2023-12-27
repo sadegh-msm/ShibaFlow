@@ -236,3 +236,17 @@ def get_all_musics_by_user_id(user_id):
     close_connection(conn)
 
     return result if result else None
+
+
+def check_song_belong_to_user(user_id, music_id):
+    """
+    Find all music from the musics table.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM musics WHERE publisher_id = ? AND music_id = ?', (user_id, music_id))
+    result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None

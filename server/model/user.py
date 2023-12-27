@@ -1,5 +1,4 @@
-import hashlib
-import re
+from utils import util
 from datetime import datetime
 import sqlite3
 
@@ -40,23 +39,6 @@ def close_connection(conn):
     conn.close()
 
 
-def hash_password(password):
-    """
-    Hash a password using SHA-256.
-    """
-    sha256 = hashlib.sha256()
-    sha256.update(password.encode('utf-8'))
-    return sha256.hexdigest()
-
-
-def is_valid_email(email):
-    """
-    Check if the provided string is a valid email address.
-    """
-    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    return re.match(email_regex, email)
-
-
 def insert_users_data(fname, lname, artist_name, email, password):
     """
     Insert data into the users table.
@@ -64,14 +46,13 @@ def insert_users_data(fname, lname, artist_name, email, password):
     conn, cursor = connect_to_database()
 
     current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    password = hash_password(password)
+    password = util.hash_password(password)
     verified = 'N'
     gender = 'U'
 
-    ok = is_valid_email(email)
+    ok = util.is_valid_email(email)
     if ok:
         user = [fname, lname, artist_name, verified, email, password, gender, current_datetime]
-        print(user)
         cursor.execute(
             'INSERT INTO users (fname, lname, artist_name, verified, email, password, gender, joining_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             user)
@@ -114,7 +95,7 @@ def check_user(artist_name, password):
 
     close_connection(conn)
 
-    password = hash_password(password)
+    password = util.hash_password(password)
     if user and user[0] == password:  # Replace 5 with the index of the password column in your table
         return True
     else:
@@ -203,3 +184,27 @@ def find_user_by_id(user_id):
     close_connection(conn)
 
     return user if user else None
+
+
+def update_user_data(fname, lname, email, userID):
+    """
+    Update a user's data in the users table.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('UPDATE users SET fname = ?, lname = ?, email = ? WHERE user_id = ?',
+                   (fname, lname, email, userID))
+
+    close_connection(conn)
+
+
+def update_user_password(artist_name, password):
+    """
+    Update a user's data in the users table.
+    """
+    conn, cursor = connect_to_database()
+
+    password = util.hash_password(password)
+    cursor.execute('UPDATE users SET password = ? WHERE artist_name = ?', (password, artist_name))
+
+    close_connection(conn)
