@@ -5,6 +5,7 @@ from model import user, music, music_interaction
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 from utils import util
+import random
 import os
 
 app = Flask(__name__)
@@ -31,8 +32,7 @@ def register_user():
     user_info = request.form.to_dict()
     logger.info('user requested sign in', user_info)
 
-    if user_info['fname'] == '' or user_info['lname'] == '' or user_info['artist_name'] == '' or user_info[
-        'email'] == '' or \
+    if user_info['fname'] == '' or user_info['lname'] == '' or user_info['artist_name'] == '' or user_info['email'] == '' or \
             user_info['password'] == '':
         logger.info('bad request', user_info)
         return jsonify({'error': 'bad request'}), 400
@@ -60,6 +60,55 @@ def register_user():
     else:
         logger.info('user failed to create', user_info)
         return jsonify({'error': "bad request"}), 400
+
+
+@app.route("/user", methods=['DELETE'])
+def delete_user():
+    user_info = request.form.to_dict()
+    logger.info('user requested update user', user_info)
+
+    if user_info['artist_name'] == '' and user_info['password'] == '':
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    ok = user.check_user(user_info['artist_name'], user_info['password'])
+
+    if ok:
+        userID = user.find_user_id_by_artist_name(user_info['artist_name'])
+        user.delete_user_by_id(userID)
+        logger.info('user deleted', user_info)
+        return jsonify({'ok': 'user deleted successfully'}), 200
+    else:
+        logger.info('user not found', user_info)
+        return jsonify({'error': 'user not found'}), 404
+
+
+@app.route("/user", methods=['PATCH'])
+def update_user():
+    user_info = request.form.to_dict()
+    logger.info('user requested update user', user_info)
+
+    if user_info['artist_name'] == '' and user_info['password'] == '':
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    ok = user.check_user(user_info['artist_name'], user_info['password'])
+
+    if ok:
+        _user = user.find_user_by_artist_name(user_info['artist_name'])
+
+        user_info_new = util.check_for_key_user(user_info, ['fname', 'lname', 'email'], _user)
+        user.update_user_data(user_info_new['fname'], user_info_new['lname'], user_info_new['email'], _user[0])
+
+        if 'new_password' in user_info.keys():
+            if user_info['new_password'] != '':
+                user.update_user_password(user_info['artist_name'], user_info['new_password'])
+
+        logger.info('user updated', user_info)
+        return jsonify({'ok': 'user updated successfully'}), 200
+    else:
+        logger.info('user not found', user_info)
+        return jsonify({'error': 'user not found'}), 404
 
 
 @app.route("/login", methods=['POST'])
@@ -99,10 +148,10 @@ def new_song():
         logger.info('file format is not correct', song_info)
         return jsonify({'error': 'music file format is not correct'}), 400
 
-    if data['cover'].filename.split('.')[-1] != 'jpg' and data['cover'].filename.split('.')[-1] != 'jpeg' and \
-            data['cover'].filename.split('.')[-1] != 'png':
-        logger.info('file format is not correct', song_info)
-        return jsonify({'error': 'cover file format is not correct'}), 400
+    if 'cover' in data.keys():
+        if data['cover'].filename.split('.')[-1] != 'jpg' and data['cover'].filename.split('.')[-1] != 'jpeg' and data['cover'].filename.split('.')[-1] != 'png':
+            logger.info('file format is not correct', song_info)
+            return jsonify({'error': 'cover file format is not correct'}), 400
 
     ok = user.check_user(song_info['artist_name'], song_info['password'])
     if ok:
@@ -113,7 +162,7 @@ def new_song():
                        music_name)
         logger.info('finished uploading music to s3')
 
-        if 'cover' in data.keys() or data['cover'].filename != '':
+        if 'cover' in data.keys():
             logger.info('uploading cover to s3')
             arvan_uploader(config.s3_url, config.access_key, config.secret_key, config.cover_bucket, data['cover'],
                            cover_name)
@@ -174,6 +223,58 @@ def get_song_info():
         return jsonify({'error': 'song not found'}), 404
 
 
+@app.route("/song", methods=['DELETE'])
+def delete_song():
+    song_info = request.form.to_dict()
+    logger.info('user requested delete song', song_info)
+
+    if song_info['songID'] == '' and song_info['userID'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_id(song_info['userID'])
+
+    belongs = music.check_song_belong_to_user(song_info['userID'], song_info['songID'])
+    if belongs is None:
+        logger.info('user is not authorized to do this action', song_info)
+        return jsonify({'error': 'user is not authorized to do this action'}), 401
+    if song and _user:
+        music.delete_music_by_id(song_info['songID'])
+        logger.info('song deleted', song_info)
+        return jsonify({'ok': 'song deleted successfully'}), 200
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
+@app.route("/song", methods=['PATCH'])
+def update_song():
+    song_info = request.form.to_dict()
+    logger.info('user requested update song', song_info)
+
+    if song_info['songID'] == '' and song_info['userID'] == '':
+        logger.info('bad request', song_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    song = music.check_music_exist_by_id(song_info['songID'])
+    _user = user.find_user_by_id(song_info['userID'])
+
+    song_info = util.check_for_key_song(song_info, ['songID', 'userID', 'title', 'album_name', 'genre'], song)
+
+    belongs = music.check_song_belong_to_user(song_info['userID'], song_info['songID'])
+    if belongs is None:
+        logger.info('user is not authorized to do this action', song_info)
+        return jsonify({'error': 'user is not authorized to do this action'}), 401
+    if song and _user:
+        music.update_music_data(song_info['title'], song_info['album_name'], song_info['genre'], song_info['songID'])
+        logger.info('song updated', song_info)
+        return jsonify({'ok': 'song updated successfully'}), 200
+    else:
+        logger.info('song not found', song_info)
+        return jsonify({'error': 'song not found'}), 404
+
+
 @app.route("/allsongs", methods=['GET'])
 def get_all_songs():
     logger.info('user requested all songs')
@@ -184,6 +285,7 @@ def get_all_songs():
         songs[i][4] = 'http://195.248.242.169:8080/songbyid/' + songs[i][4]
         if songs[i][5] != '':
             songs[i][5] = 'http://195.248.242.169:8080/coverbyid/' + songs[i][5]
+    random.shuffle(songs)
     if songs:
         response_data = {
             'message': 'songs found',
@@ -379,7 +481,6 @@ def comment_song():
 @app.route("/comments", methods=['GET'])
 def get_comments():
     song_info = request.args.get('songId')
-    print(song_info)
     logger.info('user requested get comments', song_info)
 
     if song_info == '':
