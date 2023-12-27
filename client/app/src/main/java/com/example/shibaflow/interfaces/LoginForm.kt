@@ -112,7 +112,8 @@ fun LoginForm(navHostController: NavHostController) {
 
 
             ShibaFlowButton(
-                onClick = {
+                onClick = {},
+                onClickEnable = {
                     isLogin = true
                           },
                 modifier = Modifier
@@ -130,6 +131,7 @@ fun LoginForm(navHostController: NavHostController) {
                             val result = checkLogin(info)
                             if (
                                 result.first) {
+                                navHostController.popBackStack()
                                 navHostController.navigate("music_page")
                             } else {
                                 isLogin = false
@@ -148,7 +150,9 @@ fun LoginForm(navHostController: NavHostController) {
 
             ShibaFlowButton(
                 text = "Sign up",
-                onClick = {
+                onClick = {},
+                onClickEnable = {
+                    navHostController.popBackStack()
                     navHostController.navigate("signup_page")
                 },
                 enabled = true,
@@ -164,6 +168,7 @@ fun LoginForm(navHostController: NavHostController) {
 
 @Composable
 fun ShibaFlowButton(
+    onClickEnable: () -> Unit,
     onClick: () -> Unit,
     enabled: Boolean,
     color: Color,
@@ -180,8 +185,9 @@ fun ShibaFlowButton(
             .fillMaxWidth()
             .background(color = color, shape = RoundedCornerShape(50.dp))
             .clickable(onClick = {
+                onClick()
                 if (enabled) {
-                    onClick()
+                    onClickEnable()
                 }
             })
             .padding(12.dp)

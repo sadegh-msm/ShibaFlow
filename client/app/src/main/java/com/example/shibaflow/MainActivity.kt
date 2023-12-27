@@ -151,6 +151,7 @@ fun AppWithDrawer() {
                     }
                     else{
                         DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color.Red) {
+                            navController.popBackStack()
                             navController.navigate("music_page")
                             coroutineScope.launch { drawerState.close() }
                         }
@@ -160,6 +161,7 @@ fun AppWithDrawer() {
                         }
                     } else{
                         DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color.Red) {
+                            navController.popBackStack()
                             navController.navigate("panel_page")
                             coroutineScope.launch { drawerState.close() }
                         }
@@ -169,6 +171,7 @@ fun AppWithDrawer() {
                         }
                     } else{
                         DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color.Red) {
+                            navController.popBackStack()
                             navController.navigate("upload_page")
                             coroutineScope.launch { drawerState.close() }
 
