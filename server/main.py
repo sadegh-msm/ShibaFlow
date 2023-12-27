@@ -62,6 +62,32 @@ def register_user():
         return jsonify({'error': "bad request"}), 400
 
 
+@app.route("/user", methods=['GET'])
+def get_user_info():
+    user_info = request.form.to_dict()
+    logger.info('user requested user', user_info)
+
+    if user_info['artist_name'] == '':
+        logger.info('bad request', user_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    _user = user.find_user_by_artist_name(user_info['artist_name'])
+    if _user:
+        response_data = {
+            'message': 'user found',
+            'user_info': {
+                'fname': _user[1],
+                'lname': _user[2],
+                'artist_name': _user[3],
+                'email': _user[5],
+            }
+        }
+        logger.info('user found', user_info)
+        return jsonify(response_data), 200
+    else:
+        logger.info('user not found', user_info)
+        return jsonify({'error': 'user not found'}), 404
+
 @app.route("/user", methods=['DELETE'])
 def delete_user():
     user_info = request.form.to_dict()
