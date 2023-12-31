@@ -213,10 +213,10 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
 
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Icon(
                     painter = painterResource(

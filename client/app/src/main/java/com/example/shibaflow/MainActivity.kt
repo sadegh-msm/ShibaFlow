@@ -78,13 +78,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
     SmallTopAppBar(
-        title = { Text("App Title") },
+        title = { Text("Shibaflow") },
         navigationIcon = {
             IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
                 Icon(Icons.Filled.Menu, contentDescription = "Menu")
             }
         }
-        // ... other parameters if needed
     )
 }
 @Composable

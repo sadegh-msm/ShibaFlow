@@ -71,6 +71,10 @@ fun SignupForm(navController: NavHostController) {
         var showError by remember { mutableStateOf(false) }
         var errorMessage by remember { mutableStateOf("") }
         var isEmailValid by remember { mutableStateOf(true) }
+        var isLastnameEmpty by remember { mutableStateOf(false) }
+        var isFirstnameEmpty by remember { mutableStateOf(false) }
+        var isUsernameEmpty by remember { mutableStateOf(false) }
+        var isPasswordEmpty by remember { mutableStateOf(false) }
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,6 +99,7 @@ fun SignupForm(navController: NavHostController) {
             UsernameField(
                 value = information.username,
                 onChange = { data -> information = information.copy(username = data) },
+                isEmpty= isUsernameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding()
@@ -102,6 +107,7 @@ fun SignupForm(navController: NavHostController) {
             FirstnameField(
                 value = information.firstname,
                 onChange = { data -> information = information.copy(firstname = data) },
+                isEmpty= isFirstnameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
@@ -109,18 +115,11 @@ fun SignupForm(navController: NavHostController) {
             LastnameField(
                 value = information.lasttname,
                 onChange = { data -> information = information.copy(lasttname = data) },
+                isEmpty= isLastnameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
-//            EmailField(
-//                value = information.email,
-//                onChange = { data -> information = information.copy(email = data) },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(top = 12.dp)
-//            )
-//            val isEmailValid by derivedStateOf { isValidEmail(information.email) }
 
             EmailField( information.email,{ data -> information = information.copy(email = data) }
                 , isEmailValid = isEmailValid, modifier = Modifier
@@ -140,13 +139,17 @@ fun SignupForm(navController: NavHostController) {
             ShibaFlowButton(
                 onClick = {
                     isEmailValid = isValidEmail(information.email)
+                    isLastnameEmpty = information.lasttname == ""
+                    isFirstnameEmpty = information.firstname == ""
+                    isUsernameEmpty = information.username == ""
+                    isPasswordEmpty = information.password == ""
                 },
                 onClickEnable = {
 
                     isSigningUp = true},
                 modifier = Modifier
                     .fillMaxWidth(),
-                enabled = information.isSignupNotEmpty(),
+                enabled = information.isSignupNotEmpty() && isValidEmail(information.email),
                 color = MaterialTheme.colorScheme.surfaceTint,
             ){
                 if (isSigningUp) {
@@ -189,24 +192,40 @@ fun SignupForm(navController: NavHostController) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FirstnameField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Firstname",
-    placeholder: String = "Enter your firstname"
+    placeholder: String = "Enter your firstname",
+    isEmpty: Boolean = false
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val tint:Color
+    if (isEmpty){
+        tint = MaterialTheme.colorScheme.error
+
+    }
+    else{
+        tint = MaterialTheme.colorScheme.primary
+    }
+
     val leadingIcon = @Composable {
         Icon(
             painter = painterResource(id = R.drawable.f),
-            contentDescription = "",
             modifier = Modifier.width(25.dp),
-            tint = MaterialTheme.colorScheme.primary
+            contentDescription = "",
+            tint = tint
         )
+    }
+
+    val errorIcon = @Composable {
+        if (isEmpty) {
+            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
+        }
     }
 
     TextField(
@@ -214,35 +233,55 @@ fun FirstnameField(
         onValueChange = onChange,
         modifier = modifier,
         leadingIcon = leadingIcon,
+        trailingIcon = errorIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.hide()
+            }
         ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        isError = isEmpty,
     )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LastnameField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Lastname",
-    placeholder: String = "Enter your lastname"
+    placeholder: String = "Enter your lastname",
+    isEmpty: Boolean = false
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val tint:Color
+    if (isEmpty){
+        tint = MaterialTheme.colorScheme.error
+
+    }
+    else{
+        tint = MaterialTheme.colorScheme.primary
+    }
+
     val leadingIcon = @Composable {
-        Icon(
+                Icon(
             painter = painterResource(id = R.drawable.l),
             modifier = Modifier.width(25.dp),
             contentDescription = "",
-            tint = MaterialTheme.colorScheme.primary
+            tint = tint
         )
+    }
+
+    val errorIcon = @Composable {
+        if (isEmpty) {
+            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
+        }
     }
 
     TextField(
@@ -250,14 +289,19 @@ fun LastnameField(
         onValueChange = onChange,
         modifier = modifier,
         leadingIcon = leadingIcon,
+        trailingIcon = errorIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.hide()
+            }
         ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        isError = isEmpty,
     )
 }
 
@@ -285,12 +329,7 @@ fun EmailField(
 
     val errorIcon = @Composable {
         if (!isEmailValid) {
-            Icon(
-                painter = painterResource(id = R.drawable.error_icon)
-                ,contentDescription = "Error",
-                tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.width(25.dp)
-            )
+            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
         }
     }
 
@@ -304,56 +343,20 @@ fun EmailField(
         keyboardActions = KeyboardActions(
             onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
-                keyboardController?.hide() // Hide the keyboard on Next
+                keyboardController?.hide()
             }
         ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
         visualTransformation = VisualTransformation.None,
-        isError = !isEmailValid, // Pass the validation state
+        isError = !isEmailValid,
 //        colors = TextFieldDefaults.textFieldColors(
 //            containerColor = if (!isEmailValid) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else MaterialTheme.colorScheme.background
 //        )
     )
 }
 
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun EmailField(
-//    value: String,
-//    onChange: (String) -> Unit,
-//    modifier: Modifier = Modifier,
-//    label: String = "Email",
-//    placeholder: String = "Enter your Email"
-//) {
-//
-//    val focusManager = LocalFocusManager.current
-//    val leadingIcon = @Composable {
-//        Icon(
-//            painter = painterResource(id = R.drawable.email),
-//            modifier = Modifier.width(25.dp),
-//            contentDescription = "",
-//            tint = MaterialTheme.colorScheme.primary
-//        )
-//    }
-//
-//    TextField(
-//        value = value,
-//        onValueChange = onChange,
-//        modifier = modifier,
-//        leadingIcon = leadingIcon,
-//        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-//        keyboardActions = KeyboardActions(
-//            onNext = { focusManager.moveFocus(FocusDirection.Down) }
-//        ),
-//        placeholder = { Text(placeholder) },
-//        label = { Text(label) },
-//        singleLine = true,
-//        visualTransformation = VisualTransformation.None
-//    )
-//}
 
 
 suspend fun checkSignup(userInfo: UserInformation): Pair<Boolean,String> {
