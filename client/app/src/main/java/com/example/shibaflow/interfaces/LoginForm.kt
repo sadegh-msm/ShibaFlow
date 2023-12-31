@@ -269,62 +269,6 @@ fun UsernameField(
     )
 }
 
-//@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
-//@Composable
-//fun PasswordField(
-//    value: String,
-//    onChange: (String) -> Unit,
-//    modifier: Modifier = Modifier,
-//    label: String = "Username",
-//    placeholder: String = "Enter your username",
-//    isEmpty: Boolean = false
-//) {
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//    val focusManager = LocalFocusManager.current
-//    val tint:Color
-//    if (isEmpty){
-//        tint = MaterialTheme.colorScheme.error
-//
-//    }
-//    else{
-//        tint = MaterialTheme.colorScheme.primary
-//    }
-//
-//    val leadingIcon = @Composable {
-//        Icon(
-//            Icons.Default.Person,
-//            contentDescription = "",
-//            tint = tint
-//        )
-//    }
-//
-//    val errorIcon = @Composable {
-//        if (isEmpty) {
-//            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
-//        }
-//    }
-//
-//    TextField(
-//        value = value,
-//        onValueChange = onChange,
-//        modifier = modifier,
-//        leadingIcon = leadingIcon,
-//        trailingIcon = errorIcon,
-//        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-//        keyboardActions = KeyboardActions(
-//            onNext = {
-//                focusManager.moveFocus(FocusDirection.Down)
-//                keyboardController?.hide()
-//            }
-//        ),
-//        placeholder = { Text(placeholder) },
-//        label = { Text(label) },
-//        singleLine = true,
-//        visualTransformation = VisualTransformation.None,
-//        isError = isEmpty,
-//    )
-//}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordField(

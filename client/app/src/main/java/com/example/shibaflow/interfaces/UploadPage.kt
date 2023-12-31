@@ -46,6 +46,10 @@ import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import java.io.InputStream
 
 fun getByteArrayFromUri(context: Context, uri: Uri?): ByteArray? {
@@ -62,6 +66,7 @@ fun getByteArrayFromUri(context: Context, uri: Uri?): ByteArray? {
 
 @Composable
 fun UploadForm(navController: NavController) {
+    var isTitleEmpty by remember { mutableStateOf(false) }
     var uploadSong by remember { mutableStateOf(UploadSong()) }
     val audioUri = remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
@@ -83,6 +88,7 @@ fun UploadForm(navController: NavController) {
         SongTitleField(
             value = uploadSong.title,
             onChange = { data -> uploadSong = uploadSong.copy(title = data) },
+            isEmpty = isTitleEmpty,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding()
@@ -130,7 +136,9 @@ fun UploadForm(navController: NavController) {
         var isUpload by remember { mutableStateOf(false) }
         val context = LocalContext.current
         ShibaFlowButton(
-            onClick = {},
+            onClick = {
+                isTitleEmpty = uploadSong.title == ""
+            },
             onClickEnable = {
                 isUpload = true
             },
@@ -161,42 +169,95 @@ fun UploadForm(navController: NavController) {
         }
 
     }
-
-
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongTitleField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Title",
-    placeholder: String = "Enter title of song"
+    placeholder: String = "Enter title of song",
+    isEmpty: Boolean = false
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val tint: Color
+    if (isEmpty){
+        tint = MaterialTheme.colorScheme.error
+
+    }
+    else{
+        tint = MaterialTheme.colorScheme.primary
+    }
+
     val leadingIcon = @Composable {
         Icon(
-            Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colorScheme.primary
+            Icons.Default.Person,
+            contentDescription = "",
+            tint = tint
         )
+    }
+
+    val errorIcon = @Composable {
+        if (isEmpty) {
+            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
+        }
     }
 
     TextField(
         value = value,
         onValueChange = onChange,
-        modifier = modifier.background(
-            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
-        ),
+        modifier = modifier,
         leadingIcon = leadingIcon,
+        trailingIcon = errorIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.hide()
+            }
+        ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        isError = isEmpty,
     )
 }
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun SongTitleField(
+//    value: String,
+//    onChange: (String) -> Unit,
+//    modifier: Modifier = Modifier,
+//    label: String = "Title",
+//    placeholder: String = "Enter title of song"
+//) {
+//
+//    val focusManager = LocalFocusManager.current
+//    val leadingIcon = @Composable {
+//        Icon(
+//            Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colorScheme.primary
+//        )
+//    }
+//
+//    TextField(
+//        value = value,
+//        onValueChange = onChange,
+//        modifier = modifier.background(
+//            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
+//        ),
+//        leadingIcon = leadingIcon,
+//        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+//        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+//        placeholder = { Text(placeholder) },
+//        label = { Text(label) },
+//        singleLine = true,
+//        visualTransformation = VisualTransformation.None
+//    )
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
