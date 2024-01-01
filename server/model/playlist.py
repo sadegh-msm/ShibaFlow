@@ -116,3 +116,16 @@ def drop_playlist_table():
 
     close_connection(conn)
 
+
+def check_playlist_belong_to_user(user_id, playlist_id):
+    """
+    Check if playlist belongs to user.
+    """
+    conn, cursor = connect_to_database()
+
+    cursor.execute('SELECT * FROM Playlists WHERE playlist_id = ? AND user_id = ?', (playlist_id, user_id))
+    result = cursor.fetchone()
+
+    close_connection(conn)
+
+    return result if result else None
