@@ -70,7 +70,7 @@ fun PanelPage(navController: NavController) {
                 .padding(top = 16.dp)
         ) {
             items(songListState) { song ->
-                SongCard(song = song, modifier = Modifier.padding(8.dp), navController = navController)
+                SongCard(song = song, modifier = Modifier.padding(8.dp), navController = navController,enableDelete = true)
             }
         }
     }
