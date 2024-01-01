@@ -82,3 +82,11 @@ def find_all_songs_by_playlist_id(playlist_id):
 
     return playlist_musics
 
+
+def delete_playlist_musics_by_playlist_id_and_music_id(playlist_id, music_id):
+    conn, cursor = connect_to_database()
+
+    cursor.execute('DELETE FROM PlaylistMusic WHERE playlist_id = ? AND music_id = ?', (playlist_id, music_id))
+
+    close_connection(conn)
+

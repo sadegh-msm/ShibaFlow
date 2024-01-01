@@ -665,6 +665,58 @@ def delete_playlist():
         return jsonify({'error': 'playlist not found'}), 404
 
 
+@app.route("/addplaylist", methods=['POST'])
+def add_music_to_playlist():
+    playlist_info = request.form.to_dict()
+    logger.info('user requested add music to playlist', playlist_info)
+
+    if playlist_info['playlistID'] == '' or playlist_info['songID'] == '' or playlist_info['userID'] == '':
+        logger.info('bad request', playlist_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    plist = playlist.find_playlist_by_id(playlist_info['playlistID'])
+    _user = user.find_user_by_id(playlist_info['userID'])
+    song = music.check_music_exist_by_id(playlist_info['songID'])
+
+    belongs = playlist.check_playlist_belong_to_user(playlist_info['userID'], playlist_info['playlistID'])
+    if belongs is None:
+        logger.info('user is not authorized to do this action', playlist_info)
+        return jsonify({'error': 'user is not authorized to do this action'}), 401
+    if plist and _user and song:
+        playlist_musics.insert_playlist_musics_data(playlist_info['playlistID'], playlist_info['songID'])
+        logger.info('music added to playlist', playlist_info)
+        return jsonify({'ok': 'music added to playlist successfully'}), 200
+    else:
+        logger.info('playlist not found', playlist_info)
+        return jsonify({'error': 'playlist not found'}), 404
+
+
+@app.route("/removeplaylist", methods=['DELETE'])
+def remove_music_from_playlist():
+    playlist_info = request.form.to_dict()
+    logger.info('user requested remove music from playlist', playlist_info)
+
+    if playlist_info['playlistID'] == '' or playlist_info['songID'] == '' or playlist_info['userID'] == '':
+        logger.info('bad request', playlist_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    plist = playlist.find_playlist_by_id(playlist_info['playlistID'])
+    _user = user.find_user_by_id(playlist_info['userID'])
+    song = music.check_music_exist_by_id(playlist_info['songID'])
+
+    belongs = playlist.check_playlist_belong_to_user(playlist_info['userID'], playlist_info['playlistID'])
+    if belongs is None:
+        logger.info('user is not authorized to do this action', playlist_info)
+        return jsonify({'error': 'user is not authorized to do this action'}), 401
+    if plist and _user and song:
+        playlist_musics.delete_playlist_musics_by_playlist_id_and_music_id(playlist_info['playlistID'], playlist_info['songID'])
+        logger.info('music removed from playlist', playlist_info)
+        return jsonify({'ok': 'music removed from playlist successfully'}), 200
+    else:
+        logger.info('playlist not found', playlist_info)
+        return jsonify({'error': 'playlist not found'}), 404
+
+
 if __name__ == "__main__":
     logger.info("starting server")
     logger.info("server is started on port:" + config.port)
