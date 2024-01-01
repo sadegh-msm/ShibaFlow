@@ -60,6 +60,7 @@ import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
@@ -133,7 +134,7 @@ fun SearchView(
 
 
 @Composable
-fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController) {
+fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController,enableDelete :Boolean = false) {
     val s = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -211,7 +212,6 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
             }
 
 
-
             Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -264,6 +264,13 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                             downloadSong(song.mp3File, song.title, context)
                         }
                 )
+                if (enableDelete){
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
+                    ,modifier = Modifier
+                            .size(24.dp)
+                            .clickable {})
+
+                }
             }
         }
     }
