@@ -1,7 +1,7 @@
 import logging.config
 from flask import Flask, request, jsonify, send_from_directory
 from waitress import serve
-from model import user, music, music_interaction, playlist
+from model import user, music, music_interaction, playlist, playlist_musics
 from configs import config
 from objectStorage.s3 import arvan_uploader, arvan_downloader
 from utils import util
@@ -76,6 +76,7 @@ def get_user_info():
         response_data = {
             'message': 'user found',
             'user_info': {
+                'userID': _user[0],
                 'fname': _user[1],
                 'lname': _user[2],
                 'artist_name': _user[3],
@@ -548,6 +549,98 @@ def get_songs_by_artist(user_id):
     else:
         logger.info('artist not found', user_id)
         return jsonify({'error': 'artist not found'}), 404
+
+
+@app.route("/playlist", methods=['POST'])
+def new_playlist():
+    playlist_info = request.form.to_dict()
+    logger.info('user requested new playlist', playlist_info)
+
+    if playlist_info['name'] == '' or playlist_info['userID'] == '':
+        logger.info('bad request', playlist_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    _user = user.find_user_by_artist_name(playlist_info['userID'])
+    if _user:
+        desc = ''
+        if 'description' in playlist_info.keys():
+            desc = playlist_info['description']
+
+        playlist_id = playlist.insert_playlist_data(playlist_info['name'], _user[0], desc, "N")
+        if playlist_id:
+            response_data = {
+                'message': 'playlist created successfully',
+                'playlist_info': {
+                    'playlist_id': playlist_id,
+                    'name': playlist_info['name'],
+                    'userID': _user[0],
+                    'description': desc,
+                    'is_public': False,
+                }
+            }
+            logger.info('new playlist added', playlist_info)
+            return jsonify(response_data), 201
+        else:
+            return jsonify({'error': 'cant add playlist'}), 400
+    else:
+        logger.info('artist not found', playlist_info)
+        return jsonify({'error': 'artist not found'}), 404
+
+
+@app.route("/playlist", methods=['GET'])
+def get_playlist_info():
+    playlist_info = request.form.to_dict()
+    logger.info('user requested playlist', playlist_info)
+
+    if playlist_info['playlistID'] == '':
+        logger.info('bad request', playlist_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    playlist_info = playlist.find_playlist_by_id(playlist_info['playlistID'])
+    if playlist_info:
+        musics = playlist_musics.find_all_songs_by_playlist_id(playlist_info[0])
+        response_data = {
+            'message': 'playlist found',
+            'playlist_info': {
+                'playlist_id': playlist_info[0],
+                'name': playlist_info[1],
+                'musics': musics,
+                'creation_date': playlist_info[2],
+                'userID': playlist_info[3],
+                'description': playlist_info[4],
+                'is_public': playlist_info[5],
+            }
+        }
+        logger.info('playlist found', playlist_info)
+        return jsonify(response_data), 200
+    else:
+        logger.info('playlist not found', playlist_info)
+        return jsonify({'error': 'playlist not found'}), 404
+
+
+@app.route("/playlist", methods=['DELETE'])
+def delete_playlist():
+    playlist_info = request.form.to_dict()
+    logger.info('user requested delete playlist', playlist_info)
+
+    if playlist_info['playlistID'] == '' and playlist_info['userID'] == '':
+        logger.info('bad request', playlist_info)
+        return jsonify({'error': 'bad request'}), 400
+
+    plist = playlist.find_playlist_by_id(playlist_info['playlistID'])
+    _user = user.find_user_by_artist_name(playlist_info['userID'])
+
+    belongs = playlist.check_playlist_belong_to_user(playlist_info['userID'], playlist_info['playlistID'])
+    if belongs is None:
+        logger.info('user is not authorized to do this action', playlist_info)
+        return jsonify({'error': 'user is not authorized to do this action'}), 401
+    if plist and _user:
+        playlist.delete_playlist_by_id(playlist_info['playlistID'])
+        logger.info('playlist deleted', playlist_info)
+        return jsonify({'ok': 'playlist deleted successfully'}), 200
+    else:
+        logger.info('playlist not found', playlist_info)
+        return jsonify({'error': 'playlist not found'}), 404
 
 
 if __name__ == "__main__":
