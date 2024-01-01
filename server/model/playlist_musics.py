@@ -47,7 +47,7 @@ def insert_playlist_musics_data(playlist_id, music_id):
 
     playlist_musics = [playlist_id, creation_date, music_id]
     cursor.execute(
-        'INSERT INTO Playlists (playlist_id, creation_date, music_id) VALUES (?, ?, ?)',
+        'INSERT INTO PlaylistMusic (playlist_id, creation_date, music_id) VALUES (?, ?, ?)',
         playlist_musics)
 
     close_connection(conn)
@@ -56,7 +56,7 @@ def insert_playlist_musics_data(playlist_id, music_id):
 def find_playlist_musics_by_id(playlist_id):
     conn, cursor = connect_to_database()
 
-    cursor.execute('SELECT * FROM Playlists WHERE playlist_id = ?', (playlist_id,))
+    cursor.execute('SELECT * FROM PlaylistMusic WHERE playlist_id = ?', (playlist_id,))
     playlist_musics = cursor.fetchall()
 
     close_connection(conn)
@@ -67,7 +67,7 @@ def find_playlist_musics_by_id(playlist_id):
 def delete_playlist_musics(playlist_id, music_id):
     conn, cursor = connect_to_database()
 
-    cursor.execute('DELETE FROM Playlists WHERE playlist_id = ? AND music_id = ?', (playlist_id, music_id))
+    cursor.execute('DELETE FROM PlaylistMusic WHERE playlist_id = ? AND music_id = ?', (playlist_id, music_id))
 
     close_connection(conn)
 
@@ -75,11 +75,10 @@ def delete_playlist_musics(playlist_id, music_id):
 def find_all_songs_by_playlist_id(playlist_id):
     conn, cursor = connect_to_database()
 
-    cursor.execute('SELECT music_id FROM Playlists WHERE playlist_id = ?', (playlist_id,))
+    cursor.execute('SELECT music_id FROM PlaylistMusic WHERE playlist_id = ?', (playlist_id[0],))
     playlist_musics = cursor.fetchall()
 
     close_connection(conn)
 
     return playlist_musics
-
 

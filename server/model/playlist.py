@@ -93,7 +93,7 @@ def find_playlist_by_user_id(user_id):
 
     close_connection(conn)
 
-    return playlist
+    return playlist if playlist else None
 
 
 def delete_playlist_by_id(playlist_id):
