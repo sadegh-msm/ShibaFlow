@@ -67,6 +67,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.RectangleShape
 import com.example.shibaflow.api.checkSongLiked
+import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
 
@@ -137,6 +138,7 @@ fun SearchView(
 fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController,enableDelete :Boolean = false) {
     val s = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(false) }
+    var isDeleted by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         s.launch {
             isLiked = checkSongLiked(song.id, MyInfo.userInformation.artist_name)
@@ -268,8 +270,28 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
                     ,modifier = Modifier
                             .size(24.dp)
-                            .clickable {})
+                            .clickable {
+                                isDeleted = true
 
+                            })
+
+                    LaunchedEffect(key1 = isDeleted) {
+                        scope.launch {
+                            val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
+                            Log.d("heb",song.id.toString())
+                            Log.d("heb",MyInfo.userInformation.userID.toString())
+                            if (result == "ok") {
+                                Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
+                            } else {
+                                isDeleted = false
+//                                Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
+//                                errorMessage = result.second
+//                                showError = true
+//                                val toast = Toast.makeText(context, "Wrong username or password", Toast.LENGTH_SHORT)
+//                                toast.show()
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -42,6 +42,18 @@ data class Song(
     var duration: String = "",
     var lastPlayed: String = ""
 )
+data class Playlist(
+    var id: Int = 0,
+    var name: String = "",
+    var date: String = "",
+    var userID: Int = 0,
+    var description :String = "",
+    var nField :String =""
+)
+data class PlaylistResponse(
+    val ok: String,
+    var playlists: List<JsonArray>
+)
 
 data class UserInformation(
     var artist_name: String = "",
