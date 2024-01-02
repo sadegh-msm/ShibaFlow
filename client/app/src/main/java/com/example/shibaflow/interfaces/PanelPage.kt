@@ -102,6 +102,7 @@ fun UserInformationSection() {
         UserInfoItem(Icons.Default.Person, "First Name", MyInfo.userInformation.fname)
         UserInfoItem(Icons.Default.Person, "Last Name", MyInfo.userInformation.lname)
         UserInfoItem(Icons.Default.Email, "Email", MyInfo.userInformation.email)
+        UserInfoItem(Icons.Default.Email, "UserID", MyInfo.userInformation.userID.toString())
     }
 }
 

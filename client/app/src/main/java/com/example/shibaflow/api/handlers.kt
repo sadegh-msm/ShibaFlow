@@ -516,8 +516,8 @@ suspend fun deleteSongFromPlayListHandler(playlistID:Int,songID:Int,userID:Int):
 //}
 
 suspend fun main() {
-////    println(addPlaylistHandler(7,"rap","rap songs"))
-//    println(getPlaylistHandler(7))
+//    println(addPlaylistHandler(8,"rap","rap songs"))
+    println(getPlaylistHandler(8))
 //    println(deletePlaylistHandler(7,8))
 //    println(getPlaylistHandler(7))
 

@@ -50,6 +50,8 @@ import com.example.shibaflow.interfaces.ErrorDialog
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import com.example.shibaflow.interfaces.LoginForm
 import com.example.shibaflow.interfaces.PanelPage
+import com.example.shibaflow.interfaces.PlaylistPage
+import com.example.shibaflow.interfaces.PlaylistSongsPage
 import com.example.shibaflow.interfaces.SignupForm
 import com.example.shibaflow.interfaces.SongDetailScreen
 import com.example.shibaflow.interfaces.SongListApp
@@ -176,6 +178,18 @@ fun AppWithDrawer() {
 
                         }
                     }
+                    if (currentRoute == "playlist_page"){
+                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color.Yellow) {
+                        }
+                    } else{
+                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color.Red) {
+                            navController.popBackStack()
+                            navController.navigate("playlist_page")
+                            coroutineScope.launch { drawerState.close() }
+
+                        }
+                    }
+
 
                     DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color.Red) {
                         coroutineScope.launch { drawerState.close() }
@@ -204,7 +218,12 @@ fun AppWithDrawer() {
                 composable(route = "upload_page") {
                     UploadForm(navController)
                 }
-
+                composable(route = "playlist_page") {
+                    PlaylistPage(navController)
+                }
+                composable(route = "playlist_songs_page") {
+                    PlaylistSongsPage(navController)
+                }
                 composable(route = "comment_page/{songId}") { backStackEntry ->
                     val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull()
                     songId?.let {

@@ -428,6 +428,3 @@ fun TopAppBar(modifier: Modifier = Modifier) {
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
 }
-suspend fun getAllUserInfo(){
-
-}
