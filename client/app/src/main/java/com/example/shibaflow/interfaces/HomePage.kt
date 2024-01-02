@@ -274,24 +274,21 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                                 isDeleted = true
 
                             })
-
-                    LaunchedEffect(key1 = isDeleted) {
-                        scope.launch {
-                            val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
-                            Log.d("heb",song.id.toString())
-                            Log.d("heb",MyInfo.userInformation.userID.toString())
-                            if (result == "ok") {
-                                Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
-                            } else {
-                                isDeleted = false
-//                                Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
-//                                errorMessage = result.second
-//                                showError = true
-//                                val toast = Toast.makeText(context, "Wrong username or password", Toast.LENGTH_SHORT)
-//                                toast.show()
+                    if (isDeleted){
+                        LaunchedEffect(key1 = isDeleted) {
+                            scope.launch {
+                                val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
+                                if (result == "ok") {
+                                    Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    isDeleted = false
+                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
                     }
+
+
                 }
             }
         }

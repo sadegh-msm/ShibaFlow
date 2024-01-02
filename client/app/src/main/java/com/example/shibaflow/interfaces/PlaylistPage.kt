@@ -1,8 +1,10 @@
 package com.example.shibaflow.interfaces
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,6 +55,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.shibaflow.R
 import com.example.shibaflow.api.addPlaylistHandler
+import com.example.shibaflow.api.deletePlaylistHandler
+import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.api.getAllUserInfoHandler
 import com.example.shibaflow.api.getPlaylistHandler
@@ -129,61 +134,6 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
             }
         }
     }
-//    CenterAlignedTopAppBar(
-//        title = {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(8.dp),
-//            ) {
-//                PlaylistField(
-//                    value = playlistName,
-//                    onChange = { data -> playlistName = data },
-//                    isEmpty= isPlaylistNameEmpty,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding()
-//                )
-//                ShibaFlowButton(
-//
-//                    onClick = {
-//                        isPlaylistNameEmpty = playlistName == ""
-//                    },
-//                    onClickEnable = {
-//                        isCreatePlaylist = true
-//                    },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 16.dp),
-//                    enabled = playlistName != "",
-//                    color = MaterialTheme.colorScheme.surfaceTint,
-//                ){
-//                    if (isCreatePlaylist) {
-//                        Text("Create playlist ...")
-//                        val scope = rememberCoroutineScope()
-//                        val context = LocalContext.current
-//
-//                        LaunchedEffect(key1 = newPlaylist) {
-//                            scope.launch {
-//                                val ok = addPlaylist(MyInfo.userInformation.userID,playlistName,"")
-//                                if (ok) {
-//                                    navHostController.navigate("playlist_page")
-//
-//                                }
-//                                else {
-//                                    isCreatePlaylist = false
-//                                    Toast.makeText(context, "Can not create playlist", Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//                        }
-//                    } else {
-//                        Text("Create playlist")
-//
-//                    }
-//                }
-//            }
-//        },
-//        modifier = modifier,
-//        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-//    )
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -228,6 +178,7 @@ fun PlaylistPage(navHostController: NavHostController){
 }
 @Composable
 fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifier: Modifier = Modifier) {
+    var isDeleted by remember { mutableStateOf(false) }
     Card(
         modifier = modifier
             .padding(all = 8.dp)
@@ -262,7 +213,42 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
                 style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center
             )
-
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable {
+                        isDeleted = true
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete song",
+                    modifier = Modifier
+                        .size(24.dp) // Size of the Icon
+                )
+            }
+//            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
+//                ,modifier = Modifier
+//                    .size(24.dp)
+//                    .clickable {
+//                        isDeleted = true
+//                    })
+            val scope = rememberCoroutineScope()
+            val context = LocalContext.current
+            LaunchedEffect(isDeleted) {
+                scope.launch {
+                    if (isDeleted){
+                        val result = deletePlaylistHandler(MyInfo.userInformation.userID,playlist.id)
+                        if (result == "ok") {
+                            Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
+                            navHostController.navigate("playlist_page")
+                        } else {
+                            isDeleted = false
+                            Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
     }
 }
