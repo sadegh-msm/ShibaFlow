@@ -332,7 +332,7 @@ suspend fun checkUpload(song: UploadSong): Boolean {
             song.title,
             song.genre,
             userInformation.password,
-            userInformation.username,
+            userInformation.artist_name,
             song.album,
             song.mp3File!!,
             song.coverImage

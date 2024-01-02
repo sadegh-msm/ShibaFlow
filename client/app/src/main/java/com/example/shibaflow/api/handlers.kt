@@ -1,8 +1,12 @@
 package com.example.shibaflow.api
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import com.example.shibaflow.R
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
+import com.example.shibaflow.model.UserInformation
+import com.example.shibaflow.model.UserResponse
 import com.example.shibaflow.model.UserSongsResponse
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -25,9 +29,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.isSuccess
 
 
-suspend fun main() {
-
-}
+var ip_address="37.32.11.62"
+var port_address="8080"
 
 suspend fun SignupHandler(
     firstname: String,
@@ -39,8 +42,9 @@ suspend fun SignupHandler(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitForm(
-            url = "http://195.248.242.169:8080/register",
+            url = "$url/register",
             formParameters = parameters {
                 append("fname", firstname)
                 append("lname", lastname)
@@ -67,8 +71,9 @@ suspend fun SignupHandler(
 suspend fun LoginHandler(artistName: String, password: String): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitForm(
-            url = "http://195.248.242.169:8080/login",
+            url = "$url/login",
             formParameters = parameters {
                 append("password", password)
                 append("artist_name", artistName)
@@ -91,13 +96,15 @@ suspend fun LoginHandler(artistName: String, password: String): Pair<String, Str
 suspend fun getAllSongs(): Pair<List<Song>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/allsongs")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/allsongs")
 
         val ok = if (response.status.value == 200) "ok" else ""
 
         val content: String = response.bodyAsText().toString()
         val gson = Gson()
         val jsonForm = gson.fromJson(content, SongsResponse::class.java)
+
         val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
             Song(
                 id = jsonArray[0].asInt,
@@ -132,8 +139,9 @@ suspend fun uploadMusicHandler(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/song",
+            url = "$url/song",
             formData = formData {
                 append("artist_name", artistName)
                 append("password", password)
@@ -172,8 +180,9 @@ suspend fun likeDislikeSong(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/interact",
+            url = "$url/interact",
             formData = formData {
                 append("songID", songID)
                 append("userID", userID)
@@ -199,7 +208,8 @@ suspend fun checkSongLiked(
 ): Boolean {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/checklike") {
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/checklike") {
             setBody(MultiPartFormDataContent(parts = formData {
                 append("songID", songID.toString())
                 append("userID", userID)
@@ -225,7 +235,8 @@ suspend fun checkSongLiked(
 suspend fun getCommentsForSong(songId: Int): Pair<List<Comment>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/comments?songId=$songId")
 
         if (response.status.isSuccess()) {
             val content: String = response.bodyAsText().toString()
@@ -263,9 +274,10 @@ suspend fun postCommentToEndpoint(
     comment: String
 ): Pair<String, String> {
     try {
+        val url = "http://$ip_address:$port_address"
         val client = HttpClient(CIO)
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/comment",
+            url = "$url/comment",
             formData = formData {
                 append("songID", songID.toString())
                 append("userID", userID)
@@ -288,7 +300,8 @@ suspend fun postCommentToEndpoint(
 suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/usersongs/$username")
 
         val ok = if (response.status.value == 200) "ok" else ""
 
@@ -305,9 +318,6 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
                 mp3File = jsonArray[4].asString,
                 coverImage = jsonArray[5].asString,
                 genre = jsonArray[6].asString,
-//                playCount = jsonArray[7].asInt,
-//                skipCount = jsonArray[8].asInt,
-//                duration = jsonArray[9].asString,
                 lastPlayed = jsonArray[7].asString
             )
         }
@@ -317,6 +327,36 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
     } catch (e: Exception) {
         return Pair(emptyList(), "Error occurred: ${e.message}")
     }
+}
+suspend fun getAllUserInfoHandler(username: String):Pair<UserInformation?,String>{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/user") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("artist_name", username)
+            }))
+        }
+        val ok = if (response.status.value == 200) "ok" else ""
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, UserResponse::class.java)
+        return Pair(jsonForm.user_info, ok)
+    } catch (e: ClientRequestException) {
+        return Pair(null, "Client request error: ${e.response.status}")
+    } catch (e: Exception) {
+        return Pair(null, "Error occurred: ${e.message}")
+    }
+}
+suspend fun main() {
+//    getAllSongs()
+
+//    val url = "http://" + R.string.ip_address + ":" + R.string.port_address
+//    println(url)
+//    val url = "http://" + requireContext().getString(R.string.ip_address) + ":" + requireContext().getString(R.string.port_address)
+//    println(url)
+
+
 }
 
 //suspend fun deleteUserSong(username: String): Pair<List<Song>, String> {

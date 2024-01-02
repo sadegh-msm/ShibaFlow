@@ -48,7 +48,7 @@ fun PanelPage(navController: NavController) {
         LaunchedEffect(key1 = songListState) {
             scope.launch {
 //                val (songs, ok) = getAllSongs()
-                val (songs, ok) = getUserSongs(username = MyInfo.userInformation.username)
+                val (songs, ok) = getUserSongs(username = MyInfo.userInformation.artist_name)
                 songListState = songs
                 if (ok == "ok") {
                     isLoad = true
@@ -95,13 +95,13 @@ fun UserInformationSection() {
         ) {
             Icon(Icons.Default.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "Welcome, ${MyInfo.userInformation.username}", fontWeight = FontWeight.Bold)
+            Text(text = "Welcome, ${MyInfo.userInformation.artist_name}", fontWeight = FontWeight.Bold)
         }
 
-        UserInfoItem(Icons.Default.Person, "Username", MyInfo.userInformation.username)
-        UserInfoItem(Icons.Default.Person, "First Name", "lorem ipsum")
-        UserInfoItem(Icons.Default.Person, "Last Name", "lorem ipsum")
-        UserInfoItem(Icons.Default.Email, "Email", "lorem ipsum")
+        UserInfoItem(Icons.Default.Person, "Username", MyInfo.userInformation.artist_name)
+        UserInfoItem(Icons.Default.Person, "First Name", MyInfo.userInformation.fname)
+        UserInfoItem(Icons.Default.Person, "Last Name", MyInfo.userInformation.lname)
+        UserInfoItem(Icons.Default.Email, "Email", MyInfo.userInformation.email)
     }
 }
 

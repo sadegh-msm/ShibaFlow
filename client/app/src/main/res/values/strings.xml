@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShibaFlow</string>
+    <string name="ip_address">37.32.11.62</string>
+    <string name="port_address">8080</string>
 </resources>

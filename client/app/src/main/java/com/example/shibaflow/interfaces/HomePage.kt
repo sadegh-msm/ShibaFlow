@@ -139,7 +139,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
     var isLiked by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         s.launch {
-            isLiked = checkSongLiked(song.id, MyInfo.userInformation.username)
+            isLiked = checkSongLiked(song.id, MyInfo.userInformation.artist_name)
             Log.d("myTag", "$isLiked song ID: ${song.id}")
         }
     }
@@ -235,12 +235,12 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                     scope.launch {
                         firstTime = if (isLiked) {
                             if (firstTime) {
-                                likeDislikeSong( song.id ,MyInfo.userInformation.username, "like")
+                                likeDislikeSong( song.id ,MyInfo.userInformation.artist_name, "like")
                             }
                             true
                         } else {
                             if (firstTime) {
-                                likeDislikeSong( song.id ,MyInfo.userInformation.username, "dislike")
+                                likeDislikeSong( song.id ,MyInfo.userInformation.artist_name, "dislike")
                             }
                             true
                         }
@@ -305,7 +305,10 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
-                
+                val (ok2,userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
+                if (userInfo!= null){
+                    MyInfo.userInformation = userInfo
+                }
                 songListState.clear()
                 songListState.addAll(songs)
                 if (!isFiltering) {
@@ -313,7 +316,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                     songFilteredListState.addAll(songListState)
                 }
 
-                if (ok == "ok") {
+                if (ok == "ok" && ok2) {
                     isLoad = true
                     isLoad2 = true
                 }
@@ -402,4 +405,7 @@ fun TopAppBar(modifier: Modifier = Modifier) {
         modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
+}
+suspend fun getAllUserInfo(){
+
 }
