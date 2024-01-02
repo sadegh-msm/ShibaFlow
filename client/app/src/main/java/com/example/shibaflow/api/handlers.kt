@@ -408,7 +408,6 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
         }
         val ok = if (response.status.value == 200) "ok" else ""
         val content: String = response.bodyAsText().toString()
-        println(content)
         val gson = Gson()
         val jsonForm = gson.fromJson(content, PlaylistResponse::class.java)
         val playlists: List<Playlist> = jsonForm.playlists.map { jsonArray ->
@@ -427,6 +426,31 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
         return Pair(null,"Error occurred: ${e.message}")
     }
 }
+suspend fun addSongToPlaylist(playlistID:Int,songID:Int,userID:Int):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.post("$url/addplaylist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("playlistID",playlistID)
+                append("songID", songID)
+            }))
+        }
+        return if (response.status.value == 201){
+            "ok"
+        } else{
+            ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
+
+}
+
+
 suspend fun main() {
 //    println(addPlaylistHandler(7,"rap","rap songs"))
     println(getPlaylistHandler(7))
