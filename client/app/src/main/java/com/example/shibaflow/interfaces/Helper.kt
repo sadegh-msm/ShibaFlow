@@ -81,26 +81,21 @@ fun ErrorMessageCard(onTryAgainClicked: () -> Unit) {
 @Composable
 fun ErrorDialog(onDismiss: () -> Unit,text:String) {
     AlertDialog(
+        modifier=Modifier.height(200.dp),
         onDismissRequest = onDismiss,
         title = {
-            Text(text = text)
+            Text("An error occurred")
         },
         text = {
-            Text("An error occurred, please check your input. #ER401")
+            Text(text = text)
         },
         confirmButton = {
             TextButton(
-                onClick = onDismiss // Closes the dialog when "Try Again" is clicked
+                onClick = onDismiss
             ) {
                 Text("Try Again")
             }
         },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss // Also closes the dialog when "Dismiss" is clicked
-            ) {
-                Text("Dismiss")
-            }
-        }
+
     )
 }

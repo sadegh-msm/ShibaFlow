@@ -335,7 +335,15 @@ suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
         userInfo.artist_name,
         userInfo.password,
     )
-    return Pair(ok == "ok",message)
+    if (ok == "ok"){
+        return Pair(true,message)
+    }
+    else if (ok == "bad connection"){
+        return Pair(false,"Connection error!")
+    }
+    else{
+        return Pair(false,message)
+    }
 }
 suspend fun getAllUserInfo(username:String):Pair<Boolean,UserInformation?>{
     val (userInfo,ok) =  getAllUserInfoHandler(username)

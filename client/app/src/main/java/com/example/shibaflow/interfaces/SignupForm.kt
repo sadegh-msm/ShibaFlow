@@ -368,7 +368,15 @@ suspend fun checkSignup(userInfo: UserInformation): Pair<Boolean,String> {
         userInfo.gender,
         userInfo.artist_name
     )
-    return Pair(ok == "ok",message)
+    if (ok == "ok"){
+        return Pair(true,message)
+    }
+    else if (ok == "bad connection"){
+        return Pair(false,"Connection error!")
+    }
+    else{
+        return Pair(false,message)
+    }
 }
 
 fun isValidEmail(email: String): Boolean {
