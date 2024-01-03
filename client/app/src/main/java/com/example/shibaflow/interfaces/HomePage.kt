@@ -356,7 +356,7 @@ fun SongCard(
 
         }
         if(playlists!= null){
-            CascadingMenu(playlists = playlists)
+            CascadingMenu(playlists = playlists, songID = song.id)
         }
     }
 
