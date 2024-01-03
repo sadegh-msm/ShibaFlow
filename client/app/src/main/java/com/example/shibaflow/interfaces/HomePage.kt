@@ -396,17 +396,18 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 val (songs, ok) = getAllSongs()
 
 
-                val (playlists, ok3) = getPlaylists(MyInfo.userInformation.userID)
-                playlistState.clear()
-                if (playlists != null) {
-                    playlistState.addAll(playlists)
-                }
 
                 val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
                 if (userInfo != null) {
                     userInfo.password = MyInfo.userInformation.password
                     MyInfo.userInformation = userInfo
                 }
+                val (playlists, ok3) = getPlaylists(MyInfo.userInformation.userID)
+                playlistState.clear()
+                if (playlists != null) {
+                    playlistState.addAll(playlists)
+                }
+
                 songListState.clear()
                 songListState.addAll(songs)
                 if (!isFiltering) {
