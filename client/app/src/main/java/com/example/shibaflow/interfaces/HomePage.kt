@@ -388,9 +388,9 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar()
-        },
+//        topBar = {
+//            TopAppBar()
+//        },
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
     { it ->
