@@ -59,6 +59,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
@@ -266,6 +267,12 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                             downloadSong(song.mp3File, song.title, context)
                         }
                 )
+                Icon(imageVector = Icons.Default.AddCircle, contentDescription ="",modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        
+//                        downloadSong(song.mp3File, song.title, context)
+                    } )
                 if (enableDelete){
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
                     ,modifier = Modifier
@@ -280,6 +287,7 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                                 val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
                                 if (result == "ok") {
                                     Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("panel_page")
                                 } else {
                                     isDeleted = false
                                     Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
@@ -326,6 +334,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 val (songs, ok) = getAllSongs()
                 val (ok2,userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
                 if (userInfo!= null){
+                    userInfo.password = MyInfo.userInformation.password
                     MyInfo.userInformation = userInfo
                 }
                 songListState.clear()
