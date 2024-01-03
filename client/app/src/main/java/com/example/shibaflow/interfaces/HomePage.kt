@@ -1,4 +1,5 @@
 package com.example.shibaflow.interfaces
+
 import android.app.DownloadManager
 import androidx.compose.ui.platform.LocalContext
 
@@ -11,17 +12,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -63,10 +70,13 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.shibaflow.api.checkSongLiked
 import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
@@ -95,49 +105,69 @@ fun SearchView(
     modifier: Modifier = Modifier,
     state: MutableState<TextFieldValue>
 ) {
-    TextField(
-        value = state.value,
-        onValueChange = { value ->
-            state.value = value
-        },
-        modifier = modifier.fillMaxWidth(),
-        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
-        leadingIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
-            )
-        },
-        trailingIcon = {
-            if (state.value != TextFieldValue("")) {
-                IconButton(
-                    onClick = {
-                        state.value =
-                            TextFieldValue("")
+    val transparentBlue = Color(56, 119, 191, 75)
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TextField(
+            value = state.value,
+            onValueChange = { value ->
+                state.value = value
+            },
+            modifier = Modifier
+                .width(250.dp)
+                .height(50.dp)
+                .background(transparentBlue, RoundedCornerShape(50)),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.White
+                )
+            },
+            trailingIcon = {
+                if (state.value.text.isNotEmpty()) {
+                    IconButton(
+                        onClick = {
+                            state.value = TextFieldValue("")
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Clear",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
                     }
-                ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
-                    )
                 }
-            }
-        },
-        singleLine = true,
-        shape = RectangleShape
-    )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = transparentBlue,
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                cursorColor = MaterialTheme.colorScheme.onPrimary,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(50)
+        )
+    }
 }
 
 
-
 @Composable
-fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavController,enableDelete :Boolean = false) {
+fun SongCard(
+    song: Song,
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    enableDelete: Boolean = false
+) {
     val s = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(false) }
     var isDeleted by remember { mutableStateOf(false) }
@@ -152,69 +182,64 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
 
 
     Card(
-
         modifier = modifier
             .padding(all = 8.dp)
-            .clickable {
-                navController.navigate("song_detail/${song.id}")
-            },
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .clickable { navController.navigate("song_detail/${song.id}") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(size = 16.dp)
-
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                    .weight(1f)
+                    .padding(end = 16.dp)
             ) {
-                Text(
-                    text = song.title,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = song.album,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = song.duration,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.titleSmall,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.align(Alignment.Center)
+                ) {
+                    Text(
+                        text = song.title,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center
+                    )
+//                    Text(
+//                        text = song.album,
+//                        style = MaterialTheme.typography.titleSmall,
+//                        textAlign = TextAlign.Center
+//                    )
+                }
             }
-            if (song.coverImage == ""){
+
+            if (song.coverImage == "") {
                 Image(
                     painter = painterResource(id = R.drawable.default_cover),
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(size = 16.dp)),
-                    contentScale = ContentScale.Crop
+                        .size(100.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
                 )
-            }
-            else{
+            } else {
                 AsyncImage(
                     model = song.coverImage,
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(size = 16.dp)),
+                        .size(100.dp)
+                        .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
             }
+        }
 
+<<<<<<< HEAD
 
             Row(
                     modifier = Modifier
@@ -297,32 +322,110 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                             .size(24.dp)
                             .clickable {
                                 isDeleted = true
+=======
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                painter = painterResource(
+                    id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
+                ),
+                contentDescription = "Like",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        isLiked = !isLiked
+                    }
+            )
+            val scope = rememberCoroutineScope()
+>>>>>>> 02c4d6d85909bc613fa76f4b12219e6b7b678190
 
-                            })
-                    if (isDeleted){
-                        LaunchedEffect(key1 = isDeleted) {
-                            scope.launch {
-                                val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
-                                if (result == "ok") {
-                                    Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("panel_page")
-                                } else {
-                                    isDeleted = false
-                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
-                                }
+            LaunchedEffect(key1 = isLiked) {
+                scope.launch {
+                    firstTime = if (isLiked) {
+                        if (firstTime) {
+                            likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "like")
+                        }
+                        true
+                    } else {
+                        if (firstTime) {
+                            likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "dislike")
+                        }
+                        true
+                    }
+                }
+            }
+            Icon(
+                painterResource(id = R.drawable.comment),
+                contentDescription = "Comment",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        navController.navigate("comment_page/${song.id}")
+                    }
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.download_icon),
+                contentDescription = "Download",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        downloadSong(song.mp3File, song.title, context)
+                    }
+            )
+            Icon(imageVector = Icons.Default.AddCircle, contentDescription = "", modifier = Modifier
+                .size(24.dp)
+                .clickable {
+
+//                        downloadSong(song.mp3File, song.title, context)
+                })
+            if (enableDelete) {
+                Icon(imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete song",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            isDeleted = true
+
+                        })
+                if (isDeleted) {
+                    LaunchedEffect(key1 = isDeleted) {
+                        scope.launch {
+                            val result = deleteSongHandler(MyInfo.userInformation.userID, song.id)
+                            if (result == "ok") {
+                                Toast.makeText(
+                                    context,
+                                    "Song deleted successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                navController.navigate("panel_page")
+                            } else {
+                                isDeleted = false
+                                Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT)
+                                    .show()
                             }
                         }
                     }
-
-
                 }
+<<<<<<< HEAD
                 if (isLoadMenu) {
                     CascadingMenu(playlists = playlistState)
                 }
+=======
+
+
+>>>>>>> 02c4d6d85909bc613fa76f4b12219e6b7b678190
             }
         }
     }
+
+
+
 }
+
 
 fun downloadSong(url: String, title: String, context: Context) {
     val request = DownloadManager.Request(Uri.parse(url))
@@ -353,8 +456,8 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
-                val (ok2,userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
-                if (userInfo!= null){
+                val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
+                if (userInfo != null) {
                     userInfo.password = MyInfo.userInformation.password
                     MyInfo.userInformation = userInfo
                 }
@@ -393,9 +496,9 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar()
-        },
+//        topBar = {
+//            TopAppBar()
+//        },
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
     { it ->

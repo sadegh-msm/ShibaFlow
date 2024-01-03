@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,12 +81,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
     SmallTopAppBar(
-        title = { Text("Shibaflow") },
+        title = { Text("Shibaflow", color = MaterialTheme.colorScheme.onPrimary) },
         navigationIcon = {
             IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
-                Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                Icon(Icons.Filled.Menu, contentDescription = "Menu",tint = MaterialTheme.colorScheme.onPrimary )
             }
-        }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary, // Ensures the title color is set
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary // Ensures the navigation icon color is set
+        )
     )
 }
 @Composable
@@ -203,7 +209,9 @@ fun AppWithDrawer() {
         }
 ) {
         Scaffold(
-            topBar = { MyAppTopBar(drawerState, coroutineScope) }
+            topBar = {
+                MyAppTopBar(drawerState, coroutineScope)
+            }
         ) {
             NavHost(navController = navController, startDestination = "music_page",Modifier.padding(top = 60.dp)) {
 //                composable(route = "login_page") {
