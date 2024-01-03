@@ -313,9 +313,9 @@ def get_all_songs():
     songs = music.get_all_musics()
     for i in range(len(songs)):
         songs[i] = list(songs[i])
-        songs[i][4] = 'http://195.248.242.169:8080/songbyid/' + songs[i][4]
+        songs[i][4] = 'http://37.32.11.62:8080/songbyid/' + songs[i][4]
         if songs[i][5] != '':
-            songs[i][5] = 'http://195.248.242.169:8080/coverbyid/' + songs[i][5]
+            songs[i][5] = 'http://37.32.11.62:8080/coverbyid/' + songs[i][5]
     random.shuffle(songs)
     if songs:
         response_data = {
@@ -624,13 +624,8 @@ def get_playlist_info():
         response_data = {
             'message': 'playlist found',
             'playlist_info': {
-                'playlist_id': _playlist[0][0],
                 'name': _playlist[0][1],
                 'musics': musics,
-                'creation_date': _playlist[0][2],
-                'userID': _playlist[0][3],
-                'description': _playlist[0][4],
-                'is_public': _playlist[0][5],
             }
         }
         logger.info('playlist found', playlist_info)
