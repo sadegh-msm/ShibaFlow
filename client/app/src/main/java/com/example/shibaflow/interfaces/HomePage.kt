@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,6 +66,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.RectangleShape
 import com.example.shibaflow.api.checkSongLiked
@@ -94,44 +96,58 @@ fun SearchView(
     modifier: Modifier = Modifier,
     state: MutableState<TextFieldValue>
 ) {
+    val transparentBlue = Color(56, 119, 191, 75)
+
     TextField(
         value = state.value,
         onValueChange = { value ->
             state.value = value
         },
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(transparentBlue, RoundedCornerShape(50)),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
         leadingIcon = {
             Icon(
                 Icons.Default.Search,
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
+                contentDescription = "Search",
+                modifier = Modifier.size(24.dp),
+                tint = Color.White
             )
         },
         trailingIcon = {
-            if (state.value != TextFieldValue("")) {
+            if (state.value.text.isNotEmpty()) {
                 IconButton(
                     onClick = {
-                        state.value =
-                            TextFieldValue("")
+                        state.value = TextFieldValue("")
                     }
                 ) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
+                        contentDescription = "Clear",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White
                     )
                 }
             }
         },
         singleLine = true,
-        shape = RectangleShape
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = transparentBlue,
+            textColor = MaterialTheme.colorScheme.onPrimary,
+            cursorColor = MaterialTheme.colorScheme.onPrimary,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(50)
     )
 }
+
+
+
+
+
 
 
 
