@@ -228,7 +228,9 @@ fun AppWithDrawer() {
                     SongListApp(navController)
                 }
                 composable(route = "upload_page") {
-                    UploadForm(navController)
+                    Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                        UploadForm(navController)
+                    }
                 }
                 composable(route = "playlist_page") {
                     PlaylistPage(navController)
@@ -306,7 +308,9 @@ fun UsersApplication() {
             SongListApp(navController)
         }
         composable(route = "upload_page") {
-            UploadForm(navController)
+            Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                UploadForm(navController)
+            }
         }
 
         composable(route = "comment_page/{songId}") { backStackEntry ->
