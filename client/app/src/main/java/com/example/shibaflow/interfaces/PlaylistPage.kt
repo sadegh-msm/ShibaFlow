@@ -119,15 +119,15 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
                     scope.launch {
                         val ok = addPlaylist(MyInfo.userInformation.userID,playlistName,descriptionState)
                         if (ok) {
-                            navHostController.navigate("playlist_page")
+                    navHostController.navigate("playlist_page")
 
-                        }
-                        else {
-                            isCreatePlaylist = false
-                            Toast.makeText(context, "Can not create playlist", Toast.LENGTH_SHORT).show()
-                        }
-                    }
                 }
+                else {
+                    isCreatePlaylist = false
+                    Toast.makeText(context, "Can not create playlist", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
             } else {
                 Text("Create playlist")
 
