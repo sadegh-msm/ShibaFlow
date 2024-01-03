@@ -245,7 +245,11 @@ fun AppWithDrawer() {
                 }
 
                 composable(route = "panel_page") {
-                    PanelPage(navController)
+                    Surface(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        PanelPage(navController)
+                    }
                 }
                 composable(route = "song_detail/{songId}") { backStackEntry ->
                     val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull() ?: return@composable
