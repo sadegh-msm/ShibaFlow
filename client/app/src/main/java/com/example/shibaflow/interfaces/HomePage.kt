@@ -71,6 +71,7 @@ import com.example.shibaflow.api.checkSongLiked
 import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
+import com.example.shibaflow.model.Playlist
 
 
 var exoPlayer: ExoPlayer? = null
@@ -267,12 +268,29 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                             downloadSong(song.mp3File, song.title, context)
                         }
                 )
+                var playlistState = remember { mutableStateListOf<Playlist>() }
+                var isLoadPlaylists by remember { mutableStateOf(false) }
+                var isLoadMenu by remember { mutableStateOf(false) }
                 Icon(imageVector = Icons.Default.AddCircle, contentDescription ="",modifier = Modifier
                     .size(24.dp)
                     .clickable {
-                        
-//                        downloadSong(song.mp3File, song.title, context)
+                        isLoadPlaylists = true
                     } )
+                if (isLoadPlaylists) {
+                    LaunchedEffect(key1 = playlistState) {
+                        scope.launch {
+                            val (playlists, ok) = getPlaylists(MyInfo.userInformation.userID)
+                            playlistState.clear()
+                            if (playlists != null) {
+                                playlistState.addAll(playlists)
+                            }
+                            if (ok) {
+                                isLoadPlaylists = true
+                                isLoadMenu = true
+                            }
+                        }
+                    }
+                }
                 if (enableDelete){
                     Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
                     ,modifier = Modifier
@@ -297,6 +315,9 @@ fun SongCard(song: Song, modifier: Modifier = Modifier, navController: NavContro
                     }
 
 
+                }
+                if (isLoadMenu) {
+                    CascadingMenu(playlists = playlistState)
                 }
             }
         }
