@@ -17,9 +17,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,8 +32,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -52,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -66,21 +61,18 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.style.TextOverflow
 import com.example.shibaflow.api.checkSongLiked
 import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
+import com.example.shibaflow.model.Playlist
 
 
 var exoPlayer: ExoPlayer? = null
@@ -164,6 +156,7 @@ fun SearchView(
 fun SongCard(
     song: Song,
     modifier: Modifier = Modifier,
+    playlists: List<Playlist>?,
     navController: NavController,
     enableDelete: Boolean = false
 ) {
@@ -237,96 +230,133 @@ fun SongCard(
                 )
             }
         }
-
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                painter = painterResource(
-                    id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
-                ),
-                contentDescription = "Like",
+            Row(
                 modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        isLiked = !isLiked
-                    }
-            )
-            val scope = rememberCoroutineScope()
-
-            LaunchedEffect(key1 = isLiked) {
-                scope.launch {
-                    firstTime = if (isLiked) {
-                        if (firstTime) {
-                            likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "like")
-                        }
-                        true
-                    } else {
-                        if (firstTime) {
-                            likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "dislike")
-                        }
-                        true
-                    }
-                }
-            }
-            Icon(
-                painterResource(id = R.drawable.comment),
-                contentDescription = "Comment",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        navController.navigate("comment_page/${song.id}")
-                    }
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.download_icon),
-                contentDescription = "Download",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        downloadSong(song.mp3File, song.title, context)
-                    }
-            )
-            Icon(imageVector = Icons.Default.AddCircle, contentDescription = "", modifier = Modifier
-                .size(24.dp)
-                .clickable {
-
-//                        downloadSong(song.mp3File, song.title, context)
-                })
-            if (enableDelete) {
-                Icon(imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete song",
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
+                    ),
+                    contentDescription = "Like",
                     modifier = Modifier
                         .size(24.dp)
                         .clickable {
-                            isDeleted = true
+                            isLiked = !isLiked
+                        }
+                )
+                val scope = rememberCoroutineScope()
 
-                        })
-                if (isDeleted) {
-                    LaunchedEffect(key1 = isDeleted) {
-                        scope.launch {
-                            val result = deleteSongHandler(MyInfo.userInformation.userID, song.id)
-                            if (result == "ok") {
-                                Toast.makeText(
-                                    context,
-                                    "Song deleted successfully",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                navController.navigate("panel_page")
-                            } else {
-                                isDeleted = false
-                                Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT)
-                                    .show()
+                LaunchedEffect(key1 = isLiked) {
+                    scope.launch {
+                        firstTime = if (isLiked) {
+                            if (firstTime) {
+                                likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "like")
                             }
+                            true
+                        } else {
+                            if (firstTime) {
+                                likeDislikeSong(song.id, MyInfo.userInformation.artist_name, "dislike")
+                            }
+                            true
                         }
                     }
                 }
+                Icon(
+                    painterResource(id = R.drawable.comment),
+                    contentDescription = "Comment",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            navController.navigate("comment_page/${song.id}")
+                        }
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.download_icon),
+                    contentDescription = "Download",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            downloadSong(song.mp3File, song.title, context)
+                        }
+                )
 
 
-            }
+
+                if (enableDelete){
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
+                        ,modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                isDeleted = true
+
+                            })
+                    if (isDeleted){
+                        LaunchedEffect(key1 = isDeleted) {
+                            scope.launch {
+                                val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
+                                if (result == "ok") {
+                                    Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("panel_page")
+                                } else {
+                                    isDeleted = false
+                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+
+                if (enableDelete) {
+                    Icon(imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete song",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                isDeleted = true
+
+                            })
+                    if (isDeleted) {
+                        LaunchedEffect(key1 = isDeleted) {
+                            scope.launch {
+                                val result = deleteSongHandler(MyInfo.userInformation.userID, song.id)
+                                if (result == "ok") {
+                                    Toast.makeText(
+                                        context,
+                                        "Song deleted successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.navigate("panel_page")
+                                } else {
+                                    isDeleted = false
+                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+
+        }
+
+
+        }
+        if(playlists!= null){
+            CascadingMenu(playlists = playlists)
         }
     }
 
@@ -340,7 +370,7 @@ fun downloadSong(url: String, title: String, context: Context) {
         .setTitle(title)
         .setDescription("Downloading")
         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        .setDestinationInExternalPublicDir(Environment.DIRECTORY_MUSIC, title + ".mp3")
+        .setDestinationInExternalPublicDir(Environment.DIRECTORY_MUSIC, "$title.mp3")
 
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     downloadManager.enqueue(request)
@@ -358,12 +388,20 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     var textState = remember { mutableStateOf(TextFieldValue("")) }
     val scope = rememberCoroutineScope()
-
+    val playlistState = remember { mutableStateListOf<Playlist>() }
     if (!isLoad) {
-        LaunchedEffect(key1 = songListState) {
+        LaunchedEffect(key1 = songListState,key2 = playlistState) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
+
+
+                val (playlists, ok3) = getPlaylists(MyInfo.userInformation.userID)
+                playlistState.clear()
+                if (playlists != null) {
+                    playlistState.addAll(playlists)
+                }
+
                 val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
                 if (userInfo != null) {
                     userInfo.password = MyInfo.userInformation.password
@@ -376,7 +414,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                     songFilteredListState.addAll(songListState)
                 }
 
-                if (ok == "ok" && ok2) {
+                if (ok == "ok" && ok2 && ok3) {
                     isLoad = true
                     isLoad2 = true
                 }
@@ -404,9 +442,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar()
-//        },
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
     { it ->
@@ -418,6 +453,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 items(songFilteredListState) { song ->
                     SongCard(
                         song = song,
+                        playlists = playlistState,
                         modifier = Modifier.padding(1.dp),
                         navController = navController
                     )

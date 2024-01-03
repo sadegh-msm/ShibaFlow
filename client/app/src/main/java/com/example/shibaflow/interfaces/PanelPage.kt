@@ -2,7 +2,6 @@ package com.example.shibaflow.interfaces
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +31,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.api.getUserSongs
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.Song
@@ -70,7 +68,9 @@ fun PanelPage(navController: NavController) {
                 .padding(top = 16.dp)
         ) {
             items(songListState) { song ->
-                SongCard(song = song, modifier = Modifier.padding(8.dp), navController = navController,enableDelete = true)
+                SongCard(
+                    song = song, playlists = null, modifier = Modifier.padding(8.dp), navController = navController,
+                    enableDelete = true)
             }
         }
     }

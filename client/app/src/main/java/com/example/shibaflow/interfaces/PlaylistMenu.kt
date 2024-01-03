@@ -24,18 +24,17 @@ import com.example.shibaflow.model.Playlist
 fun CascadingMenu(playlists:List<Playlist>) {
     var selectedPlaylist by remember { mutableStateOf<Playlist?>(null) }
 
-    Column {
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         CascadingDropdown(
             items = playlists,
             selectedItem = selectedPlaylist,
             onItemSelected = { playlist -> selectedPlaylist = playlist
             },
-            label = "Select State",
+            label = "Add song to playlist",
             onClick = {
 
             }
         )
-        val context = LocalContext.current
 
     }
 }
@@ -49,66 +48,66 @@ fun CascadingDropdown(
     onClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
-        Text(text = label)
-        Spacer(modifier = Modifier.height(10.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(1.dp, Color.Gray, MaterialTheme.shapes.small),
-            contentAlignment = Alignment.CenterStart
+    Box(
+        contentAlignment = Alignment.Center, // Aligns content in the center
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            onClick()
+            // Your clickable Text and other content
             Text(
-                text = selectedItem?.name ?: "Select an item",
+                text = selectedItem?.name ?: "Select a playlist",
                 modifier = Modifier
                     .clickable { expanded = true }
                     .padding(16.dp),
                 color = MaterialTheme.colorScheme.background
             )
+
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.tertiaryContainer)
-                    .heightIn(max = 200.dp) // Set a maximum height for the dropdown
+                modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
             ) {
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    items.forEach { item ->
-                        DropdownMenuItem(
-                            onClick = {
-                                onItemSelected(item)
-                                expanded = false
-                            },
-                            text = { Text(text = item.name) }
-                        )
-                    }
+                items.forEach { item ->
+                    DropdownMenuItem(
+                        onClick = {
+                            onItemSelected(item)
+                            expanded = false
+                        },
+                        text = { Text(text = item.name) }
+                    )
                 }
             }
+        }
+    }
 
-//
 //            DropdownMenu(
 //                expanded = expanded,
 //                onDismissRequest = { expanded = false },
-//                modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+//                modifier = Modifier
+//                    .background(MaterialTheme.colorScheme.tertiaryContainer)
+//                    .heightIn(max = 200.dp) // Set a maximum height for the dropdown
 //            ) {
-//
-//                items.forEach { item ->
-//                    DropdownMenuItem(
-//
-//                        onClick = {
-//                            onItemSelected(item)
-//                            expanded = false
-//                        },
-//                        text = {Text(text = item.name)}
-//                    )
+//                Column(
+//                    modifier = Modifier
+//                        .verticalScroll(rememberScrollState())
+//                ) {
+//                    items.forEach { item ->
+//                        DropdownMenuItem(
+//                            onClick = {
+//                                onItemSelected(item)
+//                                expanded = false
+//                            },
+//                            text = { Text(text = item.name) }
+//                        )
+//                    }
 //                }
 //            }
-        }
-    }
+
+//
+
+    
 }
 
 
