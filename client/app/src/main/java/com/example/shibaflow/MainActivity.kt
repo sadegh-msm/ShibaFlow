@@ -89,8 +89,8 @@ fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary, // Ensures the title color is set
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary // Ensures the navigation icon color is set
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
         )
     )
 }
@@ -109,18 +109,18 @@ fun DrawerListItem(label: String, icon: ImageVector?,iconID:Int?,color:Color, on
                 painter = painterResource(id = iconID),
                 modifier = Modifier.width(25.dp),
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.primary)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         else if(icon!=null){
             Icon(imageVector = icon,  modifier = Modifier.width(25.dp),
                 contentDescription = "",
-                tint = MaterialTheme.colorScheme.primary)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.Black,
+            color = Color(205,215,223),
             lineHeight = TextUnit.Unspecified
         )
 
@@ -144,7 +144,7 @@ fun AppWithDrawer() {
         drawerState = drawerState,
         drawerContent = {
             Surface(
-                color = Color.Red,
+                color = Color(7,55,99),
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(200.dp)
@@ -154,30 +154,30 @@ fun AppWithDrawer() {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Menu")
                     }
                     if (currentRoute == "music_page"){
-                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color.Yellow) {}
+                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color(106,135,161)) {}
                     }
                     else{
-                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color.Red) {
+                        DrawerListItem(label = "Home Page", icon = Icons.Default.Home,null,Color(56,94,130)) {
                             navController.popBackStack()
                             navController.navigate("music_page")
                             coroutineScope.launch { drawerState.close() }
                         }
                     }
                     if (currentRoute == "panel_page"){
-                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color.Yellow) {
+                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color(106,135,161)) {
                         }
                     } else{
-                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color.Red) {
+                        DrawerListItem(label = "Profile", icon = Icons.Default.Person,null,Color(56,94,130)) {
                             navController.popBackStack()
                             navController.navigate("panel_page")
                             coroutineScope.launch { drawerState.close() }
                         }
                     }
                     if (currentRoute == "upload_page"){
-                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color.Yellow) {
+                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color(106,135,161)) {
                         }
                     } else{
-                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color.Red) {
+                        DrawerListItem(label = "Upload Page",null, iconID = R.drawable.upload,Color(56,94,130)) {
                             navController.popBackStack()
                             navController.navigate("upload_page")
                             coroutineScope.launch { drawerState.close() }
@@ -185,10 +185,10 @@ fun AppWithDrawer() {
                         }
                     }
                     if (currentRoute == "playlist_page"){
-                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color.Yellow) {
+                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color(106,135,161)) {
                         }
                     } else{
-                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color.Red) {
+                        DrawerListItem(label = "Playlist Page",null, iconID = R.drawable.shibainu,Color(56,94,130)) {
                             navController.popBackStack()
                             navController.navigate("playlist_page")
                             coroutineScope.launch { drawerState.close() }
@@ -197,7 +197,7 @@ fun AppWithDrawer() {
                     }
 
 
-                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color.Red) {
+                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(106,135,161)) {
                         coroutineScope.launch { drawerState.close() }
                     }
 
