@@ -66,9 +66,9 @@ suspend fun SignupHandler(
             else -> Pair("Incorrect Information", "")
         }
     } catch (e: ClientRequestException) {
-        return Pair("Client request error: ${e.response.status}", "")
+        return Pair("Client request error: ${e.response.status}", "bad connection")
     } catch (e: Exception) {
-        return Pair("Error occurred: ${e.message}", "")
+        return Pair("Error occurred: ${e.message}", "bad connection")
     }
 }
 
@@ -86,13 +86,13 @@ suspend fun LoginHandler(artistName: String, password: String): Pair<String, Str
         client.close()
 
         return when (response.status.value) {
-            200 -> Pair("Your username or password is incorrect.", "ok")
+            200 -> Pair("", "ok")
             else -> Pair("Your username or password is incorrect.", "")
         }
     } catch (e: ClientRequestException) {
-        return Pair("Client request error: ${e.response.status}", "")
+        return Pair("Client request error: ${e.response.status}", "bad connection")
     } catch (e: Exception) {
-        return Pair("Error occurred: ${e.message}", "")
+        return Pair("Error occurred: ${e.message}", "bad connection")
     }
 }
 
@@ -126,9 +126,9 @@ suspend fun getAllSongs(): Pair<List<Song>, String> {
         }
         return Pair(songs, ok)
     } catch (e: ClientRequestException) {
-        return Pair(emptyList(), "Client request error: ${e.response.status}")
+        return Pair(emptyList(), "bad connection")
     } catch (e: Exception) {
-        return Pair(emptyList(), "Error occurred: ${e.message}")
+        return Pair(emptyList(), "bad connection")
     }
 }
 
@@ -171,9 +171,9 @@ suspend fun uploadMusicHandler(
             else -> Pair("Your information is incorrect.", "")
         }
     } catch (e: ClientRequestException) {
-        return Pair("Client request error: ${e.response.status}", "")
+        return Pair("Client request error: ${e.response.status}", "bad connection")
     } catch (e: Exception) {
-        return Pair("Error occurred: ${e.message}", "")
+        return Pair("Error occurred: ${e.message}", "bad connection")
     }
 }
 
@@ -200,9 +200,9 @@ suspend fun likeDislikeSong(
             else -> Pair("Something went wrong", "")
         }
     } catch (e: ClientRequestException) {
-        return Pair("Client request error: ${e.response.status}", "")
+        return Pair("Client request error: ${e.response.status}", "bad connection")
     } catch (e: Exception) {
-        return Pair("Error occurred: ${e.message}", "")
+        return Pair("Error occurred: ${e.message}", "bad connection")
     }
 }
 
@@ -261,9 +261,9 @@ suspend fun getCommentsForSong(songId: Int): Pair<List<Comment>, String> {
             return Pair(emptyList(), "Server returned non-successful status code: ${response.status}")
         }
     } catch (e: ClientRequestException) {
-        return Pair(emptyList(), "Client request error: ${e.response.status}")
+        return Pair(emptyList(), "bad connection")
     } catch (e: Exception) {
-        return Pair(emptyList(), "Error occurred: ${e.message}")
+        return Pair(emptyList(), "bad connection")
     }
 }
 
@@ -295,9 +295,9 @@ suspend fun postCommentToEndpoint(
             else -> Pair("Failed to post comment.", "")
         }
     } catch (e: ClientRequestException) {
-        return Pair("Client request error: ${e.response.status}", "")
+        return Pair("Client request error: ${e.response.status}", "bad connection")
     } catch (e: Exception) {
-        return Pair("Error occurred: ${e.message}", "")
+        return Pair("Error occurred: ${e.message}", "bad connection")
     }
 }
 
@@ -327,9 +327,9 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
         }
         return Pair(songs, ok)
     } catch (e: ClientRequestException) {
-        return Pair(emptyList(), "Client request error: ${e.response.status}")
+        return Pair(emptyList(), "bad connection")
     } catch (e: Exception) {
-        return Pair(emptyList(), "Error occurred: ${e.message}")
+        return Pair(emptyList(), "bad connection")
     }
 }
 suspend fun getAllUserInfoHandler(username: String):Pair<UserInformation?,String>{
@@ -347,9 +347,9 @@ suspend fun getAllUserInfoHandler(username: String):Pair<UserInformation?,String
         val jsonForm = gson.fromJson(content, UserResponse::class.java)
         return Pair(jsonForm.user_info, ok)
     } catch (e: ClientRequestException) {
-        return Pair(null, "Client request error: ${e.response.status}")
+        return Pair(null, "bad connection")
     } catch (e: Exception) {
-        return Pair(null, "Error occurred: ${e.message}")
+        return Pair(null, "bad connection")
     }
 }
 suspend fun deleteSongHandler(userID: Int,songID:Int):String{
@@ -369,9 +369,9 @@ suspend fun deleteSongHandler(userID: Int,songID:Int):String{
             return ""
         }
     } catch (e: ClientRequestException) {
-        return "Client request error: ${e.response.status}"
+        return "bad connection"
     } catch (e: Exception) {
-        return "Error occurred: ${e.message}"
+        return "bad connection"
     }
 }
 suspend fun addPlaylistHandler(userID: Int,playlistName:String,description:String):String{
@@ -392,9 +392,9 @@ suspend fun addPlaylistHandler(userID: Int,playlistName:String,description:Strin
             ""
         }
     } catch (e: ClientRequestException) {
-        return "Client request error: ${e.response.status}"
+        return "bad connection"
     } catch (e: Exception) {
-        return "Error occurred: ${e.message}"
+        return "bad connection"
     }
 }
 suspend fun deletePlaylistHandler(userID: Int,playlistID:Int):String{
@@ -414,9 +414,9 @@ suspend fun deletePlaylistHandler(userID: Int,playlistID:Int):String{
             ""
         }
     } catch (e: ClientRequestException) {
-        return "Client request error: ${e.response.status}"
+        return "bad connection"
     } catch (e: Exception) {
-        return "Error occurred: ${e.message}"
+        return "bad connection"
     }
 }
 suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
@@ -443,9 +443,9 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
         }
         return Pair(playlists,ok)
     } catch (e: ClientRequestException) {
-        return Pair(null,"Client request error: ${e.response.status}")
+        return Pair(null,"bad connection")
     } catch (e: Exception) {
-        return Pair(null,"Error occurred: ${e.message}")
+        return Pair(null,"bad connection")
     }
 }
 suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):String{
@@ -466,9 +466,9 @@ suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):Strin
             ""
         }
     } catch (e: ClientRequestException) {
-        return "Client request error: ${e.response.status}"
+        return "bad connection"
     } catch (e: Exception) {
-        return "Error occurred: ${e.message}"
+        return "bad connection"
     }
 
 }
@@ -489,9 +489,9 @@ suspend fun deleteSongFromPlayListHandler(playlistID:Int,songID:Int,userID:Int):
             ""
         }
     } catch (e: ClientRequestException) {
-        return "Client request error: ${e.response.status}"
+        return "bad connection"
     } catch (e: Exception) {
-        return "Error occurred: ${e.message}"
+        return "bad connection"
     }
 }
 //suspend fun getPlaylistSongs(playlistID:Int,songID:Int,userID:Int):String{
