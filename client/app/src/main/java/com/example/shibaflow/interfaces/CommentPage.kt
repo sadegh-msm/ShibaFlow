@@ -3,12 +3,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
+import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -50,14 +53,23 @@ fun CommentsPage(songId: Int, navController: NavController) {
                 try {
                     // Filter out empty comments
                     if (newComment.text.isNotBlank()) {
-                        val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.artist_name, songId, newComment.text)
+                        val (result, ok) = postCommentToEndpoint(
+                            userID = MyInfo.userInformation.artist_name,
+                            songId,
+                            newComment.text
+                        )
                         if (ok == "ok") {
                             // Fetch the updated comments, including all comments for the song
                             val (fetchedComments, _) = getCommentsForSong(songId)
 
                             // Append the new comment to the existing comments
                             val updatedComments = comments.toMutableList().apply {
-                                add(Comment(username = MyInfo.userInformation.artist_name, comment = newComment.text))
+                                add(
+                                    Comment(
+                                        username = MyInfo.userInformation.artist_name,
+                                        comment = newComment.text
+                                    )
+                                )
                             }
 
                             // Set the updated comments state
@@ -98,14 +110,15 @@ fun CommentsPage(songId: Int, navController: NavController) {
 
 
         Scaffold(
-            topBar = {
-                ShibaflowTopAppBar(navController = navController)
-            }
+
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) { contentPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(contentPadding)
+                    .padding(16.dp)
+
             ) {
                 if (loading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -124,12 +137,15 @@ fun CommentsPage(songId: Int, navController: NavController) {
                         onValueChange = { setNewComment(it) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .background(MaterialTheme.colorScheme.background),
-                        label = { Text("Add a comment") },
+                            .padding(16.dp),
+                        label = { Text("Add a comment", color = MaterialTheme.colorScheme.primary) },
                         trailingIcon = {
                             IconButton(onClick = { postComment() }) {
-                                Icon(imageVector = Icons.Default.Send, contentDescription = "Send")
+                                Icon(
+                                    imageVector = Icons.Default.Send,
+                                    contentDescription = "Send",
+                                    tint = MaterialTheme.colorScheme.primary // Set the color of the icon to primary
+                                )
                             }
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
@@ -137,11 +153,16 @@ fun CommentsPage(songId: Int, navController: NavController) {
                             keyboardType = KeyboardType.Text
                         ),
                         keyboardActions = KeyboardActions(
-                            onSend = {
-                                postComment()
-                            }
+                            onSend = { postComment() }
+                        ),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            textColor = MaterialTheme.colorScheme.onPrimary,
                         )
                     )
+
                 }
             }
         }
@@ -156,6 +177,9 @@ fun CommentItem(comment: Comment) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            shape = RoundedCornerShape(50),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         ) {
             Text(
                 text = "${comment.username}: ${comment.comment}",
@@ -166,6 +190,7 @@ fun CommentItem(comment: Comment) {
         }
     }
 }
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
