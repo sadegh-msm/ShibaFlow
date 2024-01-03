@@ -394,9 +394,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
-
-
-
                 val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
                 if (userInfo != null) {
                     userInfo.password = MyInfo.userInformation.password
