@@ -183,8 +183,8 @@ fun SongCard(
     Card(
         modifier = modifier
             .padding(all = 8.dp)
-            .fillMaxWidth() // 80% of the parent's max width
-            .wrapContentWidth(Alignment.CenterHorizontally) // Center card horizontally
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
             .clickable { navController.navigate("song_detail/${song.id}") },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(size = 16.dp)
@@ -197,16 +197,16 @@ fun SongCard(
         ) {
             Box(
                 modifier = Modifier
-                    .weight(1f) // Take up all available space minus the space for the cover
-                    .padding(end = 16.dp) // Add some padding between the text and the cover
+                    .weight(1f)
+                    .padding(end = 16.dp)
             ) {
                 Column(
-                    modifier = Modifier.align(Alignment.Center) // Center the text in the box
+                    modifier = Modifier.align(Alignment.Center)
                 ) {
                     Text(
                         text = song.title,
                         style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center
                     )
 //                    Text(
