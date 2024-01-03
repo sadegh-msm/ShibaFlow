@@ -81,7 +81,6 @@ import com.example.shibaflow.api.checkSongLiked
 import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
-import com.example.shibaflow.model.Playlist
 
 
 var exoPlayer: ExoPlayer? = null
@@ -239,90 +238,6 @@ fun SongCard(
             }
         }
 
-<<<<<<< HEAD
-
-            Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = if (isLiked) R.drawable.heart_filled else R.drawable.heart_unfilled
-                    ),
-                    contentDescription = "Like",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            isLiked = !isLiked
-                        }
-                )
-                val scope = rememberCoroutineScope()
-
-                LaunchedEffect(key1 = isLiked) {
-                    scope.launch {
-                        firstTime = if (isLiked) {
-                            if (firstTime) {
-                                likeDislikeSong( song.id ,MyInfo.userInformation.artist_name, "like")
-                            }
-                            true
-                        } else {
-                            if (firstTime) {
-                                likeDislikeSong( song.id ,MyInfo.userInformation.artist_name, "dislike")
-                            }
-                            true
-                        }
-                    }
-                }
-                Icon(
-                    painterResource(id = R.drawable.comment),
-                    contentDescription = "Comment",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            navController.navigate("comment_page/${song.id}")
-                        }
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.download_icon),
-                    contentDescription = "Download",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            downloadSong(song.mp3File, song.title, context)
-                        }
-                )
-                var playlistState = remember { mutableStateListOf<Playlist>() }
-                var isLoadPlaylists by remember { mutableStateOf(false) }
-                var isLoadMenu by remember { mutableStateOf(false) }
-                Icon(imageVector = Icons.Default.AddCircle, contentDescription ="",modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        isLoadPlaylists = true
-                    } )
-                if (isLoadPlaylists) {
-                    LaunchedEffect(key1 = playlistState) {
-                        scope.launch {
-                            val (playlists, ok) = getPlaylists(MyInfo.userInformation.userID)
-                            playlistState.clear()
-                            if (playlists != null) {
-                                playlistState.addAll(playlists)
-                            }
-                            if (ok) {
-                                isLoadPlaylists = true
-                                isLoadMenu = true
-                            }
-                        }
-                    }
-                }
-                if (enableDelete){
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
-                    ,modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                isDeleted = true
-=======
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -341,7 +256,6 @@ fun SongCard(
                     }
             )
             val scope = rememberCoroutineScope()
->>>>>>> 02c4d6d85909bc613fa76f4b12219e6b7b678190
 
             LaunchedEffect(key1 = isLiked) {
                 scope.launch {
@@ -410,14 +324,8 @@ fun SongCard(
                         }
                     }
                 }
-<<<<<<< HEAD
-                if (isLoadMenu) {
-                    CascadingMenu(playlists = playlistState)
-                }
-=======
 
 
->>>>>>> 02c4d6d85909bc613fa76f4b12219e6b7b678190
             }
         }
     }
