@@ -89,6 +89,8 @@ fun MyAppTopBar(drawerState: DrawerState, coroutineScope: CoroutineScope) {
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary, // Ensures the title color is set
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary // Ensures the navigation icon color is set
         )
     )
 }
