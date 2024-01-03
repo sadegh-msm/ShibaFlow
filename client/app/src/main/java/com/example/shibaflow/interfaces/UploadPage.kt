@@ -46,6 +46,7 @@ import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.launch
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
@@ -328,11 +329,12 @@ fun SongAlbumField(
 
 suspend fun checkUpload(song: UploadSong): Boolean {
     if (song.mp3File != null){
+        Log.d("title",song.title)
         val (message, ok) = uploadMusicHandler(
             song.title,
             song.genre,
             userInformation.password,
-            userInformation.username,
+            userInformation.artist_name,
             song.album,
             song.mp3File!!,
             song.coverImage

@@ -42,22 +42,41 @@ data class Song(
     var duration: String = "",
     var lastPlayed: String = ""
 )
+data class Playlist(
+    var id: Int = 0,
+    var name: String = "",
+    var date: String = "",
+    var userID: Int = 0,
+    var description :String = "",
+    var nField :String =""
+)
+data class PlaylistResponse(
+    val ok: String,
+    var playlists: List<JsonArray>
+)
 
 data class UserInformation(
-    var username: String = "",
+    var artist_name: String = "",
     var password: String = "",
-    var firstname: String = "",
-    var lasttname: String = "",
+    var fname: String = "",
+    var lname: String = "",
     var email: String = "",
     var gender: String = "",
+    var userID: Int = 0,
 ) {
     fun isLoginNotEmpty(): Boolean {
-        return username.isNotEmpty() && password.isNotEmpty()
+        return artist_name.isNotEmpty() && password.isNotEmpty()
     }
 
     fun isSignupNotEmpty(): Boolean {
-        return username.isNotEmpty() && password.isNotEmpty()
+        return artist_name.isNotEmpty() && password.isNotEmpty()
     }
 }
+data class UserResponse(
+    val message: String = "",
+    val user_info: UserInformation
+)
+
+
 data class CommentsResponse(val comments: List<String>)
 

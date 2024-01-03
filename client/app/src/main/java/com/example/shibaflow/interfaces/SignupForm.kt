@@ -97,24 +97,24 @@ fun SignupForm(navController: NavHostController) {
             )
 
             UsernameField(
-                value = information.username,
-                onChange = { data -> information = information.copy(username = data) },
+                value = information.artist_name,
+                onChange = { data -> information = information.copy(artist_name = data) },
                 isEmpty= isUsernameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding()
             )
             FirstnameField(
-                value = information.firstname,
-                onChange = { data -> information = information.copy(firstname = data) },
+                value = information.fname,
+                onChange = { data -> information = information.copy(fname = data) },
                 isEmpty= isFirstnameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
             LastnameField(
-                value = information.lasttname,
-                onChange = { data -> information = information.copy(lasttname = data) },
+                value = information.lname,
+                onChange = { data -> information = information.copy(lname = data) },
                 isEmpty= isLastnameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,9 +139,9 @@ fun SignupForm(navController: NavHostController) {
             ShibaFlowButton(
                 onClick = {
                     isEmailValid = isValidEmail(information.email)
-                    isLastnameEmpty = information.lasttname == ""
-                    isFirstnameEmpty = information.firstname == ""
-                    isUsernameEmpty = information.username == ""
+                    isLastnameEmpty = information.lname == ""
+                    isFirstnameEmpty = information.fname == ""
+                    isUsernameEmpty = information.artist_name == ""
                     isPasswordEmpty = information.password == ""
                 },
                 onClickEnable = {
@@ -361,12 +361,12 @@ fun EmailField(
 
 suspend fun checkSignup(userInfo: UserInformation): Pair<Boolean,String> {
     val (message, ok) = SignupHandler(
-        userInfo.firstname,
-        userInfo.lasttname,
+        userInfo.fname,
+        userInfo.lname,
         userInfo.email,
         userInfo.password,
         userInfo.gender,
-        userInfo.username
+        userInfo.artist_name
     )
     return Pair(ok == "ok",message)
 }

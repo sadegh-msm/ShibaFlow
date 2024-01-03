@@ -50,14 +50,14 @@ fun CommentsPage(songId: Int, navController: NavController) {
                 try {
                     // Filter out empty comments
                     if (newComment.text.isNotBlank()) {
-                        val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.username, songId, newComment.text)
+                        val (result, ok) = postCommentToEndpoint(userID = MyInfo.userInformation.artist_name, songId, newComment.text)
                         if (ok == "ok") {
                             // Fetch the updated comments, including all comments for the song
                             val (fetchedComments, _) = getCommentsForSong(songId)
 
                             // Append the new comment to the existing comments
                             val updatedComments = comments.toMutableList().apply {
-                                add(Comment(username = MyInfo.userInformation.username, comment = newComment.text))
+                                add(Comment(username = MyInfo.userInformation.artist_name, comment = newComment.text))
                             }
 
                             // Set the updated comments state

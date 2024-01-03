@@ -58,6 +58,7 @@ import androidx.navigation.NavHostController
 
 import com.example.shibaflow.R
 import com.example.shibaflow.api.LoginHandler
+import com.example.shibaflow.api.getAllUserInfoHandler
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.launch
@@ -96,8 +97,8 @@ fun LoginForm(navHostController: NavHostController) {
             )
 
             UsernameField(
-                value = info.username,
-                onChange = { data -> info = info.copy(username = data) },
+                value = info.artist_name,
+                onChange = { data -> info = info.copy(artist_name = data) },
                 isEmpty= isUsernameEmpty,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,7 +118,7 @@ fun LoginForm(navHostController: NavHostController) {
 
             ShibaFlowButton(
                 onClick = {
-                    isUsernameEmpty = info.username == ""
+                    isUsernameEmpty = info.artist_name == ""
                 },
                 onClickEnable = {
                     isLogin = true
@@ -331,8 +332,12 @@ fun PasswordField(
 }
 suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
     val (message,ok) = LoginHandler(
-        userInfo.username,
+        userInfo.artist_name,
         userInfo.password,
     )
     return Pair(ok == "ok",message)
+}
+suspend fun getAllUserInfo(username:String):Pair<Boolean,UserInformation?>{
+    val (userInfo,ok) =  getAllUserInfoHandler(username)
+    return Pair(ok == "ok",userInfo)
 }

@@ -1,8 +1,14 @@
 package com.example.shibaflow.api
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import com.example.shibaflow.R
+import com.example.shibaflow.model.Playlist
+import com.example.shibaflow.model.PlaylistResponse
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
+import com.example.shibaflow.model.UserInformation
+import com.example.shibaflow.model.UserResponse
 import com.example.shibaflow.model.UserSongsResponse
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -13,10 +19,12 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.parameters
 import com.google.gson.Gson
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.http.Headers
@@ -25,9 +33,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.isSuccess
 
 
-suspend fun main() {
-
-}
+var ip_address="37.32.11.62"
+var port_address="8080"
 
 suspend fun SignupHandler(
     firstname: String,
@@ -39,8 +46,9 @@ suspend fun SignupHandler(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitForm(
-            url = "http://195.248.242.169:8080/register",
+            url = "$url/register",
             formParameters = parameters {
                 append("fname", firstname)
                 append("lname", lastname)
@@ -67,8 +75,9 @@ suspend fun SignupHandler(
 suspend fun LoginHandler(artistName: String, password: String): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitForm(
-            url = "http://195.248.242.169:8080/login",
+            url = "$url/login",
             formParameters = parameters {
                 append("password", password)
                 append("artist_name", artistName)
@@ -91,13 +100,15 @@ suspend fun LoginHandler(artistName: String, password: String): Pair<String, Str
 suspend fun getAllSongs(): Pair<List<Song>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/allsongs")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/allsongs")
 
         val ok = if (response.status.value == 200) "ok" else ""
 
         val content: String = response.bodyAsText().toString()
         val gson = Gson()
         val jsonForm = gson.fromJson(content, SongsResponse::class.java)
+
         val songs: List<Song> = jsonForm.songs_info.map { jsonArray ->
             Song(
                 id = jsonArray[0].asInt,
@@ -132,8 +143,9 @@ suspend fun uploadMusicHandler(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/song",
+            url = "$url/song",
             formData = formData {
                 append("artist_name", artistName)
                 append("password", password)
@@ -172,8 +184,9 @@ suspend fun likeDislikeSong(
 ): Pair<String, String> {
     try {
         val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/interact",
+            url = "$url/interact",
             formData = formData {
                 append("songID", songID)
                 append("userID", userID)
@@ -199,7 +212,8 @@ suspend fun checkSongLiked(
 ): Boolean {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/checklike") {
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/checklike") {
             setBody(MultiPartFormDataContent(parts = formData {
                 append("songID", songID.toString())
                 append("userID", userID)
@@ -225,7 +239,8 @@ suspend fun checkSongLiked(
 suspend fun getCommentsForSong(songId: Int): Pair<List<Comment>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/comments?songId=$songId")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/comments?songId=$songId")
 
         if (response.status.isSuccess()) {
             val content: String = response.bodyAsText().toString()
@@ -263,9 +278,10 @@ suspend fun postCommentToEndpoint(
     comment: String
 ): Pair<String, String> {
     try {
+        val url = "http://$ip_address:$port_address"
         val client = HttpClient(CIO)
         val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "http://195.248.242.169:8080/comment",
+            url = "$url/comment",
             formData = formData {
                 append("songID", songID.toString())
                 append("userID", userID)
@@ -288,7 +304,8 @@ suspend fun postCommentToEndpoint(
 suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
     try {
         val client = HttpClient(CIO)
-        val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/usersongs/$username")
 
         val ok = if (response.status.value == 200) "ok" else ""
 
@@ -305,9 +322,6 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
                 mp3File = jsonArray[4].asString,
                 coverImage = jsonArray[5].asString,
                 genre = jsonArray[6].asString,
-//                playCount = jsonArray[7].asInt,
-//                skipCount = jsonArray[8].asInt,
-//                duration = jsonArray[9].asString,
                 lastPlayed = jsonArray[7].asString
             )
         }
@@ -318,38 +332,194 @@ suspend fun getUserSongs(username: String): Pair<List<Song>, String> {
         return Pair(emptyList(), "Error occurred: ${e.message}")
     }
 }
+suspend fun getAllUserInfoHandler(username: String):Pair<UserInformation?,String>{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/user") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("artist_name", username)
+            }))
+        }
+        val ok = if (response.status.value == 200) "ok" else ""
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, UserResponse::class.java)
+        return Pair(jsonForm.user_info, ok)
+    } catch (e: ClientRequestException) {
+        return Pair(null, "Client request error: ${e.response.status}")
+    } catch (e: Exception) {
+        return Pair(null, "Error occurred: ${e.message}")
+    }
+}
+suspend fun deleteSongHandler(userID: Int,songID:Int):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.delete("$url/song") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("songID", songID)
+            }))
+        }
+        if (response.status.value == 200){
+            return "ok"
+        }
+        else{
+            return ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
+}
+suspend fun addPlaylistHandler(userID: Int,playlistName:String,description:String):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.post("$url/playlist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("name", playlistName)
+                append("description", description)
+            }))
+        }
+        println(response)
+        return if (response.status.value == 201){
+            "ok"
+        } else{
+            ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
+}
+suspend fun deletePlaylistHandler(userID: Int,playlistID:Int):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.delete("$url/playlist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("playlistID", playlistID)
+            }))
+        }
+        println(response)
+        return if (response.status.value == 200){
+            "ok"
+        } else{
+            ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
+}
+suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/playlist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID", userID)
+            }))
+        }
+        val ok = if (response.status.value == 200) "ok" else ""
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, PlaylistResponse::class.java)
+        val playlists: List<Playlist> = jsonForm.playlists.map { jsonArray ->
+            Playlist(
+                id = jsonArray[0].asInt,
+                name = jsonArray[1].asString,
+                date= jsonArray[2].asString,
+                userID = jsonArray[3].asInt,
+                description = jsonArray[4].asString,
+                nField = jsonArray[5].asString,)
+        }
+        return Pair(playlists,ok)
+    } catch (e: ClientRequestException) {
+        return Pair(null,"Client request error: ${e.response.status}")
+    } catch (e: Exception) {
+        return Pair(null,"Error occurred: ${e.message}")
+    }
+}
+suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.post("$url/addplaylist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("playlistID",playlistID)
+                append("songID", songID)
+            }))
+        }
+        return if (response.status.value == 200){
+            "ok"
+        } else{
+            ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
 
-//suspend fun deleteUserSong(username: String): Pair<List<Song>, String> {
+}
+suspend fun deleteSongFromPlayListHandler(playlistID:Int,songID:Int,userID:Int):String{
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.delete("$url/removeplaylist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("userID",userID)
+                append("playlistID",playlistID)
+                append("songID", songID)
+            }))
+        }
+        return if (response.status.value == 200){
+            "ok"
+        } else{
+            ""
+        }
+    } catch (e: ClientRequestException) {
+        return "Client request error: ${e.response.status}"
+    } catch (e: Exception) {
+        return "Error occurred: ${e.message}"
+    }
+}
+//suspend fun getPlaylistSongs(playlistID:Int,songID:Int,userID:Int):String{
 //    try {
 //        val client = HttpClient(CIO)
-//        val response: HttpResponse = client.get("http://195.248.242.169:8080/usersongs/$username")
-//
-//        val ok = if (response.status.value == 200) "ok" else ""
-//
-//
-//        val content: String = response.bodyAsText().toString()
-//        val gson = Gson()
-//        val jsonForm = gson.fromJson(content, UserSongsResponse::class.java)
-//        val songs: List<Song> = jsonForm.songs.map { jsonArray ->
-//            Song(
-//                id = jsonArray[0].asInt,
-//                title = jsonArray[1].asString,
-//                artistId = jsonArray[2].asInt,
-//                album = jsonArray[3].asString,
-//                mp3File = jsonArray[4].asString,
-//                coverImage = jsonArray[5].asString,
-//                genre = jsonArray[6].asString,
-////                playCount = jsonArray[7].asInt,
-////                skipCount = jsonArray[8].asInt,
-////                duration = jsonArray[9].asString,
-//                lastPlayed = jsonArray[7].asString
-//            )
+//        val url = "http://$ip_address:$port_address"
+//        val response: HttpResponse = client.post("$url/addplaylist") {
+//            setBody(MultiPartFormDataContent(parts = formData {
+//                append("playlistID",playlistID)
+//            }))
 //        }
-//        return Pair(songs, ok)
+//        return if (response.status.value == 200){
+//            "ok"
+//        } else{
+//            ""
+//        }
 //    } catch (e: ClientRequestException) {
-//        return Pair(emptyList(), "Client request error: ${e.response.status}")
+//        return "Client request error: ${e.response.status}"
 //    } catch (e: Exception) {
-//        return Pair(emptyList(), "Error occurred: ${e.message}")
+//        return "Error occurred: ${e.message}"
 //    }
+//
 //}
+
+suspend fun main() {
+//    println(addPlaylistHandler(8,"rap","rap songs"))
+    println(getPlaylistHandler(8))
+//    println(deletePlaylistHandler(7,8))
+//    println(getPlaylistHandler(7))
+
+}
 
