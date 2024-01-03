@@ -92,7 +92,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
         }
     }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.onPrimaryContainer) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -105,7 +105,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                 Text(
                     text = "Now Playing",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -128,13 +128,13 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                 Text(
                     text = songData.title,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
                     text = "from ${songData.album}",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +160,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                         Icon(
                             painter = painterResource(id = R.drawable.backward10s),
                             contentDescription = "Rewind",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color(47,137,102)
                         )
                     }
 
@@ -171,7 +171,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                         Icon(
                             painter = if (isPlaying) painterResource(id = R.drawable.pause) else painterResource(id = R.drawable.play),
                             contentDescription = if (isPlaying) "Pause" else "Play",
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = Color(47,137,102),
                             modifier = Modifier.size(48.dp)
                         )
                     }
@@ -183,7 +183,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                         Icon(
                             painter = painterResource(id = R.drawable.forward10s),
                             contentDescription = "Fast Forward",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color(47,137,102)
                         )
                     }
                 }
@@ -193,10 +193,10 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                 Button(
                     onClick = { navController.popBackStack() },
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(.6f)
                         .padding(8.dp),
                     shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(47,137,102))
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
