@@ -198,7 +198,7 @@ fun AppWithDrawer() {
                     }
 
 
-                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(56,94,130)) {
+                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(255,124,76)) {
                         coroutineScope.launch {
                             drawerState.close()
                             exitProcess(0)
