@@ -127,7 +127,6 @@ fun CommentsPage(songId: Int, navController: NavController) {
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        // Display all comments without filtering
                         items(comments) { comment ->
                             CommentItem(comment = comment)
                         }
@@ -144,7 +143,7 @@ fun CommentsPage(songId: Int, navController: NavController) {
                                 Icon(
                                     imageVector = Icons.Default.Send,
                                     contentDescription = "Send",
-                                    tint = MaterialTheme.colorScheme.primary // Set the color of the icon to primary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                         },
