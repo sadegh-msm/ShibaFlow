@@ -98,50 +98,57 @@ fun SearchView(
 ) {
     val transparentBlue = Color(56, 119, 191, 75)
 
-    TextField(
-        value = state.value,
-        onValueChange = { value ->
-            state.value = value
-        },
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp)
-            .background(transparentBlue, RoundedCornerShape(50)),
-        textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
-        leadingIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search",
-                modifier = Modifier.size(24.dp),
-                tint = Color.White
-            )
-        },
-        trailingIcon = {
-            if (state.value.text.isNotEmpty()) {
-                IconButton(
-                    onClick = {
-                        state.value = TextFieldValue("")
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        TextField(
+            value = state.value,
+            onValueChange = { value ->
+                state.value = value
+            },
+            modifier = Modifier
+                .width(250.dp)
+                .height(50.dp)
+                .background(transparentBlue, RoundedCornerShape(50)),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onPrimary),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.White
+                )
+            },
+            trailingIcon = {
+                if (state.value.text.isNotEmpty()) {
+                    IconButton(
+                        onClick = {
+                            state.value = TextFieldValue("")
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Clear",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
                     }
-                ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Clear",
-                        modifier = Modifier.size(24.dp),
-                        tint = Color.White
-                    )
                 }
-            }
-        },
-        singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = transparentBlue,
-            textColor = MaterialTheme.colorScheme.onPrimary,
-            cursorColor = MaterialTheme.colorScheme.onPrimary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(50)
-    )
+            },
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = transparentBlue,
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                cursorColor = MaterialTheme.colorScheme.onPrimary,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(50)
+        )
+    }
 }
 
 
