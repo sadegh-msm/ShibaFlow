@@ -186,7 +186,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
 //                navController.navigate("song_detail/${song.id}")
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(size = 16.dp)
+        shape = RoundedCornerShape(100)
 
     ) {
         Column(
@@ -219,6 +219,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
                     .clickable {
                         isDeleted = true
                     }
+                    .align(alignment = Alignment.CenterHorizontally)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
