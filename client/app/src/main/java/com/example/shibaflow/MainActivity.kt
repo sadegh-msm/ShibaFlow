@@ -59,6 +59,7 @@ import com.example.shibaflow.interfaces.SongListApp
 import com.example.shibaflow.interfaces.UploadForm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,7 +199,10 @@ fun AppWithDrawer() {
 
 
                     DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(106,135,161)) {
-                        coroutineScope.launch { drawerState.close() }
+                        coroutineScope.launch {
+                            drawerState.close()
+                            exitProcess(0)
+                        }
                     }
 
 
