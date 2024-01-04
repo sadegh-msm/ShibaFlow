@@ -7,6 +7,7 @@ import com.example.shibaflow.model.Playlist
 import com.example.shibaflow.model.PlaylistResponse
 import com.example.shibaflow.model.Song
 import com.example.shibaflow.model.SongsResponse
+import com.example.shibaflow.model.SongsResponseWithoutMessage
 import com.example.shibaflow.model.UserInformation
 import com.example.shibaflow.model.UserResponse
 import com.example.shibaflow.model.UserSongsResponse
@@ -494,33 +495,49 @@ suspend fun deleteSongFromPlayListHandler(playlistID:Int,songID:Int,userID:Int):
         return "bad connection"
     }
 }
-//suspend fun getPlaylistSongs(playlistID:Int,songID:Int,userID:Int):String{
-//    try {
-//        val client = HttpClient(CIO)
-//        val url = "http://$ip_address:$port_address"
-//        val response: HttpResponse = client.post("$url/addplaylist") {
-//            setBody(MultiPartFormDataContent(parts = formData {
-//                append("playlistID",playlistID)
-//            }))
-//        }
-//        return if (response.status.value == 200){
-//            "ok"
-//        } else{
-//            ""
-//        }
-//    } catch (e: ClientRequestException) {
-//        return "Client request error: ${e.response.status}"
-//    } catch (e: Exception) {
-//        return "Error occurred: ${e.message}"
-//    }
-//
-//}
+suspend fun getPlaylistSongsHandler(playlistID:Int):Pair<List<Song>, String> {
+    try {
+        val client = HttpClient(CIO)
+        val url = "http://$ip_address:$port_address"
+        val response: HttpResponse = client.get("$url/getplaylist") {
+            setBody(MultiPartFormDataContent(parts = formData {
+                append("playlistID",playlistID)
+            }))
+        }
+        val ok = if (response.status.value == 200) "ok" else ""
+        val content: String = response.bodyAsText().toString()
+        val gson = Gson()
+        val jsonForm = gson.fromJson(content, SongsResponseWithoutMessage::class.java)
+        val songs: List<Song> = jsonForm.musics.map { jsonArray ->
+            Song(
+                id = jsonArray[0].asInt,
+                title = jsonArray[1].asString,
+                artistId = jsonArray[2].asInt,
+                album = jsonArray[3].asString,
+                mp3File = jsonArray[4].asString,
+                coverImage = jsonArray[5].asString,
+                genre = jsonArray[6].asString,
+//                playCount = jsonArray[7].asInt,
+//                skipCount = jsonArray[8].asInt,
+//                duration = jsonArray[9].asString,
+                lastPlayed = jsonArray[7].asString
+            )
+        }
+        return Pair(songs, ok)
+    } catch (e: ClientRequestException) {
+        return Pair(emptyList(),"bad connection")
+    } catch (e: Exception) {
+        return Pair(emptyList(),"bad connection")
+    }
+
+}
 
 suspend fun main() {
 //    println(addPlaylistHandler(8,"rap","rap songs"))
-    println(getPlaylistHandler(8))
+//    println(getPlaylistHandler(8))
 //    println(deletePlaylistHandler(7,8))
 //    println(getPlaylistHandler(7))
+
 
 }
 

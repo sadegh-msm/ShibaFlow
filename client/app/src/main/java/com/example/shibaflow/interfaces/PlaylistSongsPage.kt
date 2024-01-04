@@ -39,8 +39,69 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistSongsPage(navHostController: NavHostController){
+fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
+    var songListState = remember { mutableStateListOf<Song>() }
+    var isLoad by remember { mutableStateOf(false) }
+    var isLoad2 by remember { mutableStateOf(false) }
+    var isFiltering by remember { mutableStateOf(false) }
+    var songFilteredListState = remember { mutableStateListOf<Song>() }
+    val context = LocalContext.current
+    var textState = remember { mutableStateOf(TextFieldValue("")) }
+    val scope = rememberCoroutineScope()
+    if (!isLoad) {
+        LaunchedEffect(key1 = songListState) {
+            Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
+            scope.launch {
+                val (ok,songs) = getPlaylistSongs(playlistID = playlistID)
+                songListState.clear()
+                songListState.addAll(songs)
+                if (!isFiltering) {
+                    songFilteredListState.clear()
+                    songFilteredListState.addAll(songListState)
+                }
+                if (ok == "ok") {
+                    isLoad = true
+                    isLoad2 = true
+                }
+            }
+        }
+    }
+    if (textState.value.text.trim().length > 2 && isLoad2) {
+        LaunchedEffect(key1 = textState.value.text) {
+            scope.launch {
+                songFilteredListState.clear()
+                songFilteredListState.addAll(songListState.filter { song ->
+                    song.title.contains(textState.value.text, ignoreCase = true)
+                })
+                if (songFilteredListState.isEmpty()) {
+                    Toast.makeText(context, "No results found.", Toast.LENGTH_SHORT).show()
+                }
+                isFiltering = true
+            }
+        }
+    } else {
+        isFiltering = false
+        songFilteredListState.clear()
+        songFilteredListState.addAll(songListState)
+    }
 
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    )
+    { it ->
+        LazyColumn(modifier = Modifier.padding(all = 10.dp), contentPadding = it) {
+            if (isLoad2) {
+                items(songFilteredListState) { song ->
+                    SongCard(
+                        song = song,
+                        playlists = null,
+                        modifier = Modifier.padding(1.dp),
+                        navController = navHostController
+                    )
+                }
+            }
+        }
+    }
 }
 
 

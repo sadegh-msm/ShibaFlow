@@ -11,7 +11,9 @@ data class SongsResponse(
     val message: String,
     val songs_info: List<JsonArray>
 )
-
+data class SongsResponseWithoutMessage(
+    val musics: List<JsonArray>
+)
 data class UserSongsResponse(
     val ok: String,
     val songs: List<JsonArray>

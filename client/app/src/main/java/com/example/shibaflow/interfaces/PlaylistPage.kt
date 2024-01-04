@@ -60,6 +60,7 @@ import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.getAllSongs
 import com.example.shibaflow.api.getAllUserInfoHandler
 import com.example.shibaflow.api.getPlaylistHandler
+import com.example.shibaflow.api.getPlaylistSongsHandler
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.Playlist
 import com.example.shibaflow.model.Song
@@ -79,7 +80,9 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth().padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
     ) {
         PlaylistField(
             value = playlistName,
@@ -160,7 +163,9 @@ fun PlaylistPage(navHostController: NavHostController){
     }
     Scaffold(
         topBar = {
-            PlaylistTopAppBar(navHostController = navHostController, modifier = Modifier.padding(50.dp).fillMaxWidth())
+            PlaylistTopAppBar(navHostController = navHostController, modifier = Modifier
+                .padding(50.dp)
+                .fillMaxWidth())
         },
         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
@@ -183,7 +188,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
         modifier = modifier
             .padding(all = 8.dp)
             .clickable {
-//                navController.navigate("song_detail/${song.id}")
+                navHostController.navigate( "playlist_songs_page/${playlist.id}")
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(size = 16.dp)
@@ -375,4 +380,14 @@ fun DescriptionField(
 suspend fun addPlaylist(userID: Int,playlistName:String,description:String):Boolean{
     val ok = addPlaylistHandler(userID, playlistName = playlistName, description = description)
     return ok == "ok"
+}
+suspend fun getPlaylistSongs(playlistID:Int):Pair<String,List<Song>>{
+    val(songs,ok) = getPlaylistSongsHandler(playlistID = playlistID)
+    if (ok == "ok"){
+        return Pair(ok,songs)
+    }
+    else if(ok == "bad connection"){
+        return Pair("Connection error!", emptyList())
+    }
+    return Pair("", emptyList())
 }

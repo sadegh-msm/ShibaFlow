@@ -233,8 +233,12 @@ fun AppWithDrawer() {
                 composable(route = "playlist_page") {
                     PlaylistPage(navController)
                 }
-                composable(route = "playlist_songs_page") {
-                    PlaylistSongsPage(navController)
+                composable(route = "playlist_songs_page/{playlistID}") { backStackEntry ->
+                    val playlistID = backStackEntry.arguments?.getString("playlistID")?.toIntOrNull()
+                    playlistID?.let {
+                        PlaylistSongsPage(playlistID = it, navHostController = navController)
+                    } ?: run {
+                    }
                 }
                 composable(route = "comment_page/{songId}") { backStackEntry ->
                     val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull()
