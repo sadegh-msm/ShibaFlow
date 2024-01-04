@@ -83,7 +83,7 @@ fun SignupForm(navController: NavHostController) {
                 .padding(horizontal = 30.dp)
         ) {
             if (showError) {
-                ErrorDialog(onDismiss = { showError = false }, text = errorMessage)
+                ErrorDialog(onDismiss = { showError = false }, text = errorMessage,navController = navController)
             }
             Image(
                 painter = painterResource(id = R.drawable.shibainu),

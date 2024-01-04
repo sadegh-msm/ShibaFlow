@@ -76,7 +76,7 @@ fun CascadingDropdown(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(color = MaterialTheme.colorScheme.tertiary)
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.primary)
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(

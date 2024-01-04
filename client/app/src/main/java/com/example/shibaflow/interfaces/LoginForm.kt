@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import android.os.Message
 import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -84,7 +85,7 @@ fun LoginForm(navHostController: NavHostController) {
                 .padding(horizontal = 30.dp)
         ) {
             if (showError) {
-                ErrorDialog(onDismiss = { showError = false }, text = errorMessage)
+                ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navHostController)
             }
             Image(
                 painter = painterResource(id = R.drawable.shibainu),
@@ -348,7 +349,16 @@ suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
         return Pair(false,message)
     }
 }
-suspend fun getAllUserInfo(username:String):Pair<Boolean,UserInformation?>{
+suspend fun getAllUserInfo(username:String):Pair<String,UserInformation?>{
     val (userInfo,ok) =  getAllUserInfoHandler(username)
-    return Pair(ok == "ok",userInfo)
+    if (ok == "ok"){
+        return Pair("ok",userInfo)
+    }
+    else if( ok == "bad connection"){
+        return Pair("Connection error!",userInfo)
+    }
+    else{
+        return Pair("",userInfo)
+    }
+
 }

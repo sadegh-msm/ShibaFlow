@@ -40,6 +40,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
     var songListState = remember { mutableStateListOf<Song>() }
     var isLoad by remember { mutableStateOf(false) }
     var isLoad2 by remember { mutableStateOf(false) }
@@ -48,6 +50,9 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
     val context = LocalContext.current
     var textState = remember { mutableStateOf(TextFieldValue("")) }
     val scope = rememberCoroutineScope()
+    if (showError) {
+        ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navHostController)
+    }
     if (!isLoad) {
         LaunchedEffect(key1 = songListState) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
@@ -62,6 +67,10 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
                 if (ok == "ok") {
                     isLoad = true
                     isLoad2 = true
+                }
+                else{
+                    errorMessage = ok
+                    showError = true
                 }
             }
         }

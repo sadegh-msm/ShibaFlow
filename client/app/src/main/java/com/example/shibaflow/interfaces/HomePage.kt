@@ -386,6 +386,11 @@ fun downloadSong(url: String, title: String, context: Context) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SongList(navController: NavController, modifier: Modifier = Modifier) {
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    if (showError) {
+        ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navController)
+    }
     var songListState = remember { mutableStateListOf<Song>() }
     var isLoad by remember { mutableStateOf(false) }
     var isLoad2 by remember { mutableStateOf(false) }
@@ -400,6 +405,10 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
+                if(ok == "bad connection"){
+                    errorMessage  = "Connection error!"
+                    showError = true
+                }
                 val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
                 if (userInfo != null) {
                     userInfo.password = MyInfo.userInformation.password
@@ -418,7 +427,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                     songFilteredListState.addAll(songListState)
                 }
 
-                if (ok == "ok" && ok2 && ok3) {
+                if (ok == "ok" && ok2 == "ok" && ok3 == "ok") {
                     isLoad = true
                     isLoad2 = true
                 }

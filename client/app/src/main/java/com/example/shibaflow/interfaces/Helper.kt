@@ -16,6 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 
 @Composable
@@ -79,7 +82,8 @@ fun ErrorMessageCard(onTryAgainClicked: () -> Unit) {
     }
 }
 @Composable
-fun ErrorDialog(onDismiss: () -> Unit,text:String) {
+fun ErrorDialog(onDismiss: () -> Unit,text:String,navController: NavController) {
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     AlertDialog(
         modifier=Modifier.height(200.dp),
         onDismissRequest = onDismiss,
@@ -91,7 +95,12 @@ fun ErrorDialog(onDismiss: () -> Unit,text:String) {
         },
         confirmButton = {
             TextButton(
-                onClick = onDismiss
+                onClick = {
+                    onDismiss() // Invoke onDismiss as a function
+                    if (currentRoute != null) {
+                        navController.navigate(currentRoute)
+                    }
+                }
             ) {
                 Text("Try Again")
             }

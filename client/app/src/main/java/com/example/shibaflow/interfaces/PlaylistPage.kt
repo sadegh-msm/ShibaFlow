@@ -142,6 +142,11 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
 @Composable
 fun PlaylistPage(navHostController: NavHostController){
     val playlistsState = remember { mutableStateListOf<Playlist>() }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    if (showError) {
+        ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navHostController)
+    }
     var isLoad by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -155,8 +160,12 @@ fun PlaylistPage(navHostController: NavHostController){
                 if (playlists != null) {
                     playlistsState.addAll(playlists)
                 }
-                if (ok) {
+                if (ok == "ok") {
                     isLoad = true
+                }
+                else{
+                    errorMessage = ok
+                    showError = true
                 }
             }
         }
@@ -188,7 +197,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
         modifier = modifier
             .padding(all = 8.dp)
             .clickable {
-                navHostController.navigate( "playlist_songs_page/${playlist.id}")
+                navHostController.navigate("playlist_songs_page/${playlist.id}")
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
         shape = RoundedCornerShape(100)
@@ -259,9 +268,18 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
     }
 }
 
-suspend fun getPlaylists(userID: Int):Pair<List<Playlist>?, Boolean>{
+suspend fun getPlaylists(userID: Int):Pair<List<Playlist>?, String>{
     val(playlists,ok) = getPlaylistHandler(userID)
-    return Pair(playlists,ok=="ok")
+    if (ok == "ok"){
+        Pair(playlists,"ok")
+    }
+    else if(ok == "bad connection") {
+        return Pair(playlists,"Connection error!")
+    }
+    return Pair(playlists,"")
+
+
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
