@@ -186,6 +186,7 @@ fun SignupForm(navController: NavHostController) {
                     .padding(top = 16.dp),
                 enabled = true,
                 color = MaterialTheme.colorScheme.surfaceTint,
+
             )
         }
     }
@@ -246,6 +247,8 @@ fun FirstnameField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
+
     )
 }
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -302,6 +305,8 @@ fun LastnameField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
+
     )
 }
 
@@ -354,6 +359,8 @@ fun EmailField(
 //        colors = TextFieldDefaults.textFieldColors(
 //            containerColor = if (!isEmailValid) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else MaterialTheme.colorScheme.background
 //        )
+        shape = RoundedCornerShape(100)
+
     )
 }
 

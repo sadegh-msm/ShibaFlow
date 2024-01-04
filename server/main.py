@@ -542,10 +542,15 @@ def get_songs_by_artist(user_id):
 
     _user = user.find_user_by_artist_name(user_id)
     if _user:
-        songs = music.find_music_by_publisher_id(_user[0])
-        if songs:
+        musics = music.find_music_by_publisher_id(_user[0])
+        for i in range(len(musics)):
+            musics[i] = list(musics[i])
+            musics[i][4] = 'http://37.32.11.62:8080/songbyid/' + musics[i][4]
+            if musics[i][5] != '':
+                musics[i][5] = 'http://37.32.11.62:8080/coverbyid/' + musics[i][5]
+        if musics:
             logger.info('songs found', user_id)
-            return jsonify({'ok': 'songs found', 'songs': songs}), 200
+            return jsonify({'ok': 'songs found', 'songs': musics}), 200
         else:
             logger.info('no songs found', user_id)
             return jsonify({'ok': 'no songs found'}), 200
@@ -620,13 +625,16 @@ def get_playlist_info():
 
     _playlist = playlist.find_playlist_by_id(playlist_info['playlistID'])
     if _playlist is not None:
-        musics = playlist_musics.find_all_songs_by_playlist_id(_playlist[0])
+        # musics = playlist_musics.find_all_songs_by_playlist_id(_playlist[0])
+        musics = playlist_musics.find_all_songs_with_full_info_by_playlist_id(_playlist[0])
+        for i in range(len(musics)):
+            musics[i] = list(musics[i])
+            musics[i][4] = 'http://37.32.11.62:8080/songbyid/' + musics[i][4]
+            if musics[i][5] != '':
+                musics[i][5] = 'http://37.32.11.62:8080/coverbyid/' + musics[i][5]
+
         response_data = {
-            'message': 'playlist found',
-            'playlist_info': {
-                'name': _playlist[0][1],
-                'musics': musics,
-            }
+            'musics': musics,
         }
         logger.info('playlist found', playlist_info)
         return jsonify(response_data), 200

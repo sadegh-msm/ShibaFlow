@@ -198,7 +198,7 @@ fun AppWithDrawer() {
                     }
 
 
-                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(56,94,130)) {
+                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(255,124,76)) {
                         coroutineScope.launch {
                             drawerState.close()
                             exitProcess(0)
@@ -228,7 +228,9 @@ fun AppWithDrawer() {
                     SongListApp(navController)
                 }
                 composable(route = "upload_page") {
-                    UploadForm(navController)
+                    Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                        UploadForm(navController)
+                    }
                 }
                 composable(route = "playlist_page") {
                     PlaylistPage(navController)
@@ -310,7 +312,9 @@ fun UsersApplication() {
             SongListApp(navController)
         }
         composable(route = "upload_page") {
-            UploadForm(navController)
+            Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                UploadForm(navController)
+            }
         }
 
         composable(route = "comment_page/{songId}") { backStackEntry ->

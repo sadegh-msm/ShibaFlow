@@ -108,7 +108,7 @@ fun UserInformationSection() {
         UserInfoItem(icon = painterResource(id = R.drawable.f), "First Name", MyInfo.userInformation.fname)
         UserInfoItem(icon = painterResource(id = R.drawable.l), "Last Name", MyInfo.userInformation.lname)
         UserInfoItem(Icons.Default.Email, "Email", MyInfo.userInformation.email)
-        UserInfoItem(icon = painterResource(id = R.drawable.id), "UserID", MyInfo.userInformation.userID.toString())
+//        UserInfoItem(icon = painterResource(id = R.drawable.id), "UserID", MyInfo.userInformation.userID.toString())
     }
 }
 
