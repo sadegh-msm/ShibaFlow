@@ -65,7 +65,6 @@ fun CascadingDropdown(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Your clickable Text and other content
             Text(
                 text = "Add to playlist",
                 modifier = Modifier
@@ -77,7 +76,7 @@ fun CascadingDropdown(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.tertiary)
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(
