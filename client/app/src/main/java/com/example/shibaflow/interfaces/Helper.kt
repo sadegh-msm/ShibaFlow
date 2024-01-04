@@ -85,7 +85,6 @@ fun ErrorMessageCard(onTryAgainClicked: () -> Unit) {
 @Composable
 fun ErrorDialog(onDismiss: () -> Unit,text:String,navController: NavController) {
     var currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    Log.d("route",currentRoute.toString())
     AlertDialog(
         modifier=Modifier.height(200.dp),
         onDismissRequest = onDismiss,
@@ -102,6 +101,9 @@ fun ErrorDialog(onDismiss: () -> Unit,text:String,navController: NavController) 
                     if (currentRoute != null) {
                         if (currentRoute?.contains("playlist_songs_page") == true){
                             currentRoute = "playlist_page"
+                        }
+                        if (currentRoute?.contains("comment_page") == true){
+                            currentRoute = "music_page"
                         }
                         navController.navigate(currentRoute!!)
                     }

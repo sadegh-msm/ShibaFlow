@@ -13,9 +13,11 @@ import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.shibaflow.api.Comment
 import com.example.shibaflow.api.getCommentsForSong
 import com.example.shibaflow.api.postCommentToEndpoint
+import com.example.shibaflow.interfaces.ErrorDialog
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.ui.theme.ShibaFlowTheme
 import kotlinx.coroutines.launch
@@ -41,6 +44,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommentsPage(songId: Int, navController: NavController) {
     ShibaFlowTheme {
+        var showError by remember { mutableStateOf(false) }
+        var errorMessage by remember { mutableStateOf("") }
+        if (showError) {
+            ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navController)
+        }
         val (comments, setComments) = remember { mutableStateOf<List<Comment>>(emptyList()) }
         val (loading, setLoading) = remember { mutableStateOf(true) }
         val (newComment, setNewComment) = remember { mutableStateOf(TextFieldValue()) }
@@ -92,14 +100,22 @@ fun CommentsPage(songId: Int, navController: NavController) {
         LaunchedEffect(key1 = songId) {
             coroutineScope.launch {
                 try {
-                    val (fetchedComments, _) = getCommentsForSong(songId)
+                    val (fetchedComments, ok) = getCommentsForSong(songId)
+                    if (ok == "bad connection"){
+                        errorMessage = "Connection error!"
+                        showError = true
+                    }
+                    else{
+                        // Append the fetched comments to the existing list
+                        val updatedComments = comments.toMutableList().apply {
+                            addAll(fetchedComments)
+                        }
 
-                    // Append the fetched comments to the existing list
-                    val updatedComments = comments.toMutableList().apply {
-                        addAll(fetchedComments)
+                        setComments(updatedComments)
                     }
 
-                    setComments(updatedComments)
+
+
                 } catch (e: Exception) {
                     // Handle exceptions, e.g., log an error
                 } finally {
