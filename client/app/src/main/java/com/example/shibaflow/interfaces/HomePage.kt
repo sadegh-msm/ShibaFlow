@@ -69,6 +69,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.mutableStateListOf
 import com.example.shibaflow.api.checkSongLiked
+import com.example.shibaflow.api.deleteSongFromPlayListHandler
 import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
@@ -158,7 +159,9 @@ fun SongCard(
     modifier: Modifier = Modifier,
     playlists: List<Playlist>?,
     navController: NavController,
-    enableDelete: Boolean = false
+    enableDelete: Boolean = false,
+    enableDeleteFromPlaylist : Boolean = false,
+    selectedPlaylistID : Int? = null
 ) {
     val s = rememberCoroutineScope()
     var isLiked by remember { mutableStateOf(false) }
@@ -309,6 +312,38 @@ fun SongCard(
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     navController.navigate("panel_page")
+                                } else {
+                                    isDeleted = false
+                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+                if (enableDeleteFromPlaylist) {
+                    Icon(imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete song",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                isDeleted = true
+
+                            })
+                    if (isDeleted && selectedPlaylistID != null) {
+                        LaunchedEffect(key1 = isDeleted) {
+                            scope.launch {
+                                val result = deleteSongFromPlayListHandler(playlistID = selectedPlaylistID, song.id,MyInfo.userInformation.userID)
+                                if (result == "ok") {
+                                    Toast.makeText(
+                                        context,
+                                        "Song deleted successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.navigate("playlist_songs_page/${selectedPlaylistID}")
                                 } else {
                                     isDeleted = false
                                     Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT)

@@ -96,7 +96,9 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
                         song = song,
                         playlists = null,
                         modifier = Modifier.padding(1.dp),
-                        navController = navHostController
+                        navController = navHostController,
+                        enableDeleteFromPlaylist = true,
+                        selectedPlaylistID = playlistID
                     )
                 }
             }
