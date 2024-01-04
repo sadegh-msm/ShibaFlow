@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import ShowLoadPage
 import android.app.DownloadManager
 import androidx.compose.ui.platform.LocalContext
 
@@ -16,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,6 +66,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -74,7 +77,6 @@ import com.example.shibaflow.api.deleteSongHandler
 import com.example.shibaflow.api.likeDislikeSong
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.Playlist
-
 
 var exoPlayer: ExoPlayer? = null
 fun playSong(url: String, context: Context) {
@@ -400,9 +402,9 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     var textState = remember { mutableStateOf(TextFieldValue("")) }
     val scope = rememberCoroutineScope()
     val playlistState = remember { mutableStateListOf<Playlist>() }
+
     if (!isLoad) {
         LaunchedEffect(key1 = songListState,key2 = playlistState) {
-            Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
                 if(ok == "bad connection"){
@@ -459,8 +461,12 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
     )
     { it ->
         LazyColumn(modifier = modifier.padding(all = 10.dp), contentPadding = it) {
+
             item {
                 SearchView(modifier, textState)
+                if (!isLoad){
+                    ShowLoadPage()
+                }
             }
             if (isLoad2) {
                 items(songFilteredListState) { song ->

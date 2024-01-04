@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import ShowLoadPage
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -55,7 +56,6 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
     }
     if (!isLoad) {
         LaunchedEffect(key1 = songListState) {
-            Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (ok,songs) = getPlaylistSongs(playlistID = playlistID)
                 songListState.clear()
@@ -99,6 +99,11 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
     )
     { it ->
         LazyColumn(modifier = Modifier.padding(all = 10.dp), contentPadding = it) {
+            item {
+                if (!isLoad){
+                    ShowLoadPage()
+                }
+            }
             if (isLoad2) {
                 items(songFilteredListState) { song ->
                     SongCard(

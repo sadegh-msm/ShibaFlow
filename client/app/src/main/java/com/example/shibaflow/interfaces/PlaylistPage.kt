@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import ShowLoadPage
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -176,6 +177,11 @@ fun PlaylistPage(navHostController: NavHostController){
     )
     { it ->
         LazyColumn(modifier = Modifier.padding(all = 10.dp), contentPadding = it) {
+            item {
+                if (!isLoad){
+                    ShowLoadPage()
+                }
+            }
             if (isLoad) {
                 items(playlistsState) { playlist ->
                     PlaylistCard(playlist = playlist, navHostController = navHostController,modifier = Modifier.padding(1.dp))

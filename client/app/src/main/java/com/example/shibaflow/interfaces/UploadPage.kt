@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import ShowLoadPage
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -105,6 +106,12 @@ fun UploadForm(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         )  {
+            var isUpload by remember { mutableStateOf(false) }
+            val context = LocalContext.current
+            if(isUpload){
+                ShowLoadPage()
+            }
+
             SongTitleField(
                 value = uploadSong.title,
                 onChange = { data -> uploadSong = uploadSong.copy(title = data) },
@@ -153,8 +160,7 @@ fun UploadForm(navController: NavController) {
                     .padding(top = 16.dp),
                 color = MaterialTheme.colorScheme.surfaceTint
             )
-            var isUpload by remember { mutableStateOf(false) }
-            val context = LocalContext.current
+
             ShibaFlowButton(
                 onClick = {
                     isTitleEmpty = uploadSong.title == ""

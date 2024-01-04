@@ -222,3 +222,14 @@ fun ShibaflowTopAppBar(navController: NavController) {
         },
     )
 }
+@Composable
+fun ShowLoadPage(){
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+
+    ) {
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+    }
+}
