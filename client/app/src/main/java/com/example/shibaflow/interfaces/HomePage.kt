@@ -289,35 +289,6 @@ fun SongCard(
                         }
                 )
 
-
-
-                if (enableDelete){
-                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete song"
-                        ,modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                isDeleted = true
-
-                            })
-                    if (isDeleted){
-                        LaunchedEffect(key1 = isDeleted) {
-                            scope.launch {
-                                val result = deleteSongHandler(MyInfo.userInformation.userID,song.id)
-                                if (result == "ok") {
-                                    Toast.makeText(context, "Song deleted successfully", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("panel_page")
-                                } else {
-                                    isDeleted = false
-                                    Toast.makeText(context, "Can not delete song", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-
-
                 if (enableDelete) {
                     Icon(imageVector = Icons.Default.Delete,
                         contentDescription = "Delete song",
