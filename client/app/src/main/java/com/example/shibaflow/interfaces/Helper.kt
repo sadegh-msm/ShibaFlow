@@ -1,5 +1,6 @@
 package com.example.shibaflow.interfaces
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -83,7 +84,8 @@ fun ErrorMessageCard(onTryAgainClicked: () -> Unit) {
 }
 @Composable
 fun ErrorDialog(onDismiss: () -> Unit,text:String,navController: NavController) {
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    var currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    Log.d("route",currentRoute.toString())
     AlertDialog(
         modifier=Modifier.height(200.dp),
         onDismissRequest = onDismiss,
@@ -96,9 +98,12 @@ fun ErrorDialog(onDismiss: () -> Unit,text:String,navController: NavController) 
         confirmButton = {
             TextButton(
                 onClick = {
-                    onDismiss() // Invoke onDismiss as a function
+                    onDismiss()
                     if (currentRoute != null) {
-                        navController.navigate(currentRoute)
+                        if (currentRoute?.contains("playlist_songs_page") == true){
+                            currentRoute = "playlist_page"
+                        }
+                        navController.navigate(currentRoute!!)
                     }
                 }
             ) {

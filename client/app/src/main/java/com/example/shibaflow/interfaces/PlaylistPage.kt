@@ -77,8 +77,6 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
     var isCreatePlaylist by remember { mutableStateOf(false) }
     var newPlaylist by remember { mutableStateOf(Playlist()) }
 
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
             .fillMaxWidth()
@@ -157,13 +155,11 @@ fun PlaylistPage(navHostController: NavHostController){
             scope.launch {
                 val (playlists, ok) = getPlaylists(MyInfo.userInformation.userID)
                 playlistsState.clear()
-                if (playlists != null) {
-                    playlistsState.addAll(playlists)
-                }
+                playlistsState.addAll(playlists)
                 if (ok == "ok") {
                     isLoad = true
                 }
-                else{
+                else if (ok == "Connection error!"){
                     errorMessage = ok
                     showError = true
                 }
@@ -268,15 +264,17 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
     }
 }
 
-suspend fun getPlaylists(userID: Int):Pair<List<Playlist>?, String>{
+suspend fun getPlaylists(userID: Int):Pair<List<Playlist>, String>{
     val(playlists,ok) = getPlaylistHandler(userID)
     if (ok == "ok"){
-        Pair(playlists,"ok")
+        if (playlists != null){
+            return Pair(playlists,ok)
+        }
     }
     else if(ok == "bad connection") {
-        return Pair(playlists,"Connection error!")
+        return Pair(emptyList(),"Connection error!")
     }
-    return Pair(playlists,"")
+    return Pair(emptyList(),"")
 
 
 

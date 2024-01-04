@@ -533,6 +533,7 @@ suspend fun getPlaylistSongsHandler(playlistID:Int):Pair<List<Song>, String> {
 }
 
 suspend fun main() {
+    println(getPlaylistHandler(8))
 //    println(addPlaylistHandler(8,"rap","rap songs"))
 //    println(getPlaylistHandler(8))
 //    println(deletePlaylistHandler(7,8))

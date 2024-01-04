@@ -416,7 +416,7 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 }
                 val (playlists, ok3) = getPlaylists(MyInfo.userInformation.userID)
                 playlistState.clear()
-                if (playlists != null) {
+                if (playlists.isNotEmpty()) {
                     playlistState.addAll(playlists)
                 }
 
