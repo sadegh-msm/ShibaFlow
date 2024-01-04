@@ -267,6 +267,7 @@ fun UsernameField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
     )
 }
 
@@ -310,11 +311,11 @@ fun PasswordField(
         value = value,
         onValueChange = onChange,
         modifier = modifier
-            .padding(top = 16.dp)
-            .background(
-                color = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(16.dp)
-            ),
+            .padding(top = 16.dp),
+//            .background(
+//                color = MaterialTheme.colorScheme.secondary,
+//                shape = RoundedCornerShape(16.dp)
+//            ),
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         keyboardOptions = KeyboardOptions(
@@ -327,7 +328,9 @@ fun PasswordField(
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        shape = RoundedCornerShape(100)
+
     )
 }
 suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
@@ -335,7 +338,15 @@ suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
         userInfo.artist_name,
         userInfo.password,
     )
-    return Pair(ok == "ok",message)
+    if (ok == "ok"){
+        return Pair(true,message)
+    }
+    else if (ok == "bad connection"){
+        return Pair(false,"Connection error!")
+    }
+    else{
+        return Pair(false,message)
+    }
 }
 suspend fun getAllUserInfo(username:String):Pair<Boolean,UserInformation?>{
     val (userInfo,ok) =  getAllUserInfoHandler(username)

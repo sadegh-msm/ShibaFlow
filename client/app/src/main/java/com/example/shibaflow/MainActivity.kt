@@ -59,6 +59,7 @@ import com.example.shibaflow.interfaces.SongListApp
 import com.example.shibaflow.interfaces.UploadForm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -197,8 +198,11 @@ fun AppWithDrawer() {
                     }
 
 
-                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(106,135,161)) {
-                        coroutineScope.launch { drawerState.close() }
+                    DrawerListItem(label = "Exit", icon = Icons.Default.ExitToApp,null,Color(255,124,76)) {
+                        coroutineScope.launch {
+                            drawerState.close()
+                            exitProcess(0)
+                        }
                     }
 
 
@@ -224,7 +228,9 @@ fun AppWithDrawer() {
                     SongListApp(navController)
                 }
                 composable(route = "upload_page") {
-                    UploadForm(navController)
+                    Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                        UploadForm(navController)
+                    }
                 }
                 composable(route = "playlist_page") {
                     PlaylistPage(navController)
@@ -241,7 +247,11 @@ fun AppWithDrawer() {
                 }
 
                 composable(route = "panel_page") {
-                    PanelPage(navController)
+                    Surface(
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) {
+                        PanelPage(navController)
+                    }
                 }
                 composable(route = "song_detail/{songId}") { backStackEntry ->
                     val songId = backStackEntry.arguments?.getString("songId")?.toIntOrNull() ?: return@composable
@@ -298,7 +308,9 @@ fun UsersApplication() {
             SongListApp(navController)
         }
         composable(route = "upload_page") {
-            UploadForm(navController)
+            Surface(color = MaterialTheme.colorScheme.onPrimaryContainer) {
+                UploadForm(navController)
+            }
         }
 
         composable(route = "comment_page/{songId}") { backStackEntry ->

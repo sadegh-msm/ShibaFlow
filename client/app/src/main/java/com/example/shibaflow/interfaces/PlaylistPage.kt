@@ -86,15 +86,15 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
             onChange = { data -> playlistName = data },
             isEmpty= isPlaylistNameEmpty,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding()
+                .fillMaxWidth(0.8f)
+                .padding(all = 16.dp)
         )
         DescriptionField(
             value = descriptionState,
             onChange = { data -> descriptionState = data },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding()
+                .fillMaxWidth(.8f)
+                .padding(all = 8.dp)
         )
         ShibaFlowButton(
 
@@ -105,10 +105,10 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
                 isCreatePlaylist = true
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
+                .fillMaxWidth(.5f)
+                .padding(top = 8.dp),
             enabled = playlistName != "",
-            color = MaterialTheme.colorScheme.surfaceTint,
+            color = Color(255,124,76),
         ){
             if (isCreatePlaylist) {
                 Text("Create playlist ...")
@@ -186,7 +186,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
 //                navController.navigate("song_detail/${song.id}")
             },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(size = 16.dp)
+        shape = RoundedCornerShape(100)
 
     ) {
         Column(
@@ -219,6 +219,7 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
                     .clickable {
                         isDeleted = true
                     }
+                    .align(alignment = Alignment.CenterHorizontally)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -314,6 +315,7 @@ fun PlaylistField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
     )
 }
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -369,6 +371,7 @@ fun DescriptionField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
     )
 }
 

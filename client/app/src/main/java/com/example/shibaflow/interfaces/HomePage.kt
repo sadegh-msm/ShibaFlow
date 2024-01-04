@@ -356,7 +356,7 @@ fun SongCard(
 
         }
         if(playlists!= null){
-            CascadingMenu(playlists = playlists)
+            CascadingMenu(playlists = playlists, songID = song.id)
         }
     }
 
@@ -394,19 +394,17 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
             Toast.makeText(context, "Load...", Toast.LENGTH_SHORT).show()
             scope.launch {
                 val (songs, ok) = getAllSongs()
-
-
+                val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
+                if (userInfo != null) {
+                    userInfo.password = MyInfo.userInformation.password
+                    MyInfo.userInformation = userInfo
+                }
                 val (playlists, ok3) = getPlaylists(MyInfo.userInformation.userID)
                 playlistState.clear()
                 if (playlists != null) {
                     playlistState.addAll(playlists)
                 }
 
-                val (ok2, userInfo) = getAllUserInfo(MyInfo.userInformation.artist_name)
-                if (userInfo != null) {
-                    userInfo.password = MyInfo.userInformation.password
-                    MyInfo.userInformation = userInfo
-                }
                 songListState.clear()
                 songListState.addAll(songs)
                 if (!isFiltering) {

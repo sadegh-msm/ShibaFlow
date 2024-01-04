@@ -48,6 +48,12 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.magnifier
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -67,6 +73,7 @@ fun getByteArrayFromUri(context: Context, uri: Uri?): ByteArray? {
 
 @Composable
 fun UploadForm(navController: NavController) {
+
     var isTitleEmpty by remember { mutableStateOf(false) }
     var uploadSong by remember { mutableStateOf(UploadSong()) }
     val audioUri = remember { mutableStateOf<Uri?>(null) }
@@ -74,103 +81,118 @@ fun UploadForm(navController: NavController) {
     val audioLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { result: Uri? ->
             audioUri.value = result
-            uploadSong.mp3File = getByteArrayFromUri(context,audioUri.value)
+            uploadSong.mp3File = getByteArrayFromUri(context, audioUri.value)
         }
     val imageUri = remember { mutableStateOf<Uri?>(null) }
 
     val imageLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { result: Uri? ->
             imageUri.value = result
-            uploadSong.coverImage = getByteArrayFromUri(context,imageUri.value)
+            uploadSong.coverImage = getByteArrayFromUri(context, imageUri.value)
 
         }
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.onPrimaryContainer),
+        color = MaterialTheme.colorScheme.onPrimaryContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        )  {
+            SongTitleField(
+                value = uploadSong.title,
+                onChange = { data -> uploadSong = uploadSong.copy(title = data) },
+                isEmpty = isTitleEmpty,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(0.8f)
+            )
+            SongAlbumField(
+                value = uploadSong.album,
+                onChange = { data -> uploadSong = uploadSong.copy(album = data) },
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(0.8f)
+            )
+            SongGenreField(
+                value = uploadSong.genre,
+                onChange = { data -> uploadSong = uploadSong.copy(genre = data) },
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth(0.8f),
+            )
 
-    Column {
-        SongTitleField(
-            value = uploadSong.title,
-            onChange = { data -> uploadSong = uploadSong.copy(title = data) },
-            isEmpty = isTitleEmpty,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding()
-        )
-        SongAlbumField(
-            value = uploadSong.album,
-            onChange = { data -> uploadSong = uploadSong.copy(album = data) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding()
-        )
-        SongGenreField(
-            value = uploadSong.genre,
-            onChange = { data -> uploadSong = uploadSong.copy(genre = data) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding()
-        )
+            ShibaFlowButton(
+                text = audioUri.value?.toString() ?: "Upload music",
+                onClick = {},
+                onClickEnable = {
+                    audioLauncher.launch("audio/*")
+                },
+                enabled = true,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp),
+                color = MaterialTheme.colorScheme.surfaceTint
+            )
 
-        ShibaFlowButton(
-            text = audioUri.value?.toString() ?: "Upload music",
-            onClick = {},
-            onClickEnable = {
-                audioLauncher.launch("audio/*")
-            },
-            enabled = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
+            ShibaFlowButton(
+                text = imageUri.value?.toString() ?: "Upload cover",
+                onClick = {},
+                onClickEnable = {
+                    imageLauncher.launch("image/*")
+                },
+                enabled = true,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp),
+                color = MaterialTheme.colorScheme.surfaceTint
+            )
+            var isUpload by remember { mutableStateOf(false) }
+            val context = LocalContext.current
+            ShibaFlowButton(
+                onClick = {
+                    isTitleEmpty = uploadSong.title == ""
+                },
+                onClickEnable = {
+                    isUpload = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(top = 16.dp),
+                enabled = !uploadSong.isUploadEmpty(),
+                color = Color(255,124,76),
+            ) {
+                if (isUpload) {
+                    Text("Upload ...")
+                    val scope = rememberCoroutineScope()
 
-        ShibaFlowButton(
-            text = imageUri.value?.toString() ?: "Upload cover",
-            onClick = {},
-            onClickEnable = {
-                imageLauncher.launch("image/*")
-            },
-            enabled = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            color = MaterialTheme.colorScheme.surfaceTint
-        )
-        var isUpload by remember { mutableStateOf(false) }
-        val context = LocalContext.current
-        ShibaFlowButton(
-            onClick = {
-                isTitleEmpty = uploadSong.title == ""
-            },
-            onClickEnable = {
-                isUpload = true
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            enabled = !uploadSong.isUploadEmpty(),
-            color = MaterialTheme.colorScheme.surfaceTint,
-        ) {
-            if (isUpload) {
-                Text("Upload ...")
-                val scope = rememberCoroutineScope()
-
-                LaunchedEffect(key1 = uploadSong) {
-                    scope.launch {
-                        if (checkUpload(uploadSong)) {
-                            navController.navigate("music_page")
-                        } else {
-                            isUpload = false
-                            Toast.makeText(context, "Wrong info", Toast.LENGTH_SHORT).show()
+                    LaunchedEffect(key1 = uploadSong) {
+                        scope.launch {
+                            if (checkUpload(uploadSong)) {
+                                navController.navigate("music_page")
+                            } else {
+                                isUpload = false
+                                Toast.makeText(context, "Wrong info", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
+                } else {
+                    Text("Upload")
+
                 }
-            } else {
-                Text("Upload")
-
             }
-        }
 
+        }
     }
 }
+
+
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongTitleField(
@@ -184,11 +206,10 @@ fun SongTitleField(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val tint: Color
-    if (isEmpty){
+    if (isEmpty) {
         tint = MaterialTheme.colorScheme.error
 
-    }
-    else{
+    } else {
         tint = MaterialTheme.colorScheme.primary
     }
 
@@ -202,7 +223,11 @@ fun SongTitleField(
 
     val errorIcon = @Composable {
         if (isEmpty) {
-            Image(painter = painterResource(id = R.drawable.error_icon,), contentDescription ="",modifier = Modifier.width(25.dp))
+            Image(
+                painter = painterResource(id = R.drawable.error_icon),
+                contentDescription = "",
+                modifier = Modifier.width(25.dp)
+            )
         }
     }
 
@@ -224,6 +249,7 @@ fun SongTitleField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
+        shape = RoundedCornerShape(100)
     )
 }
 
@@ -280,16 +306,19 @@ fun SongGenreField(
     TextField(
         value = value,
         onValueChange = onChange,
-        modifier = modifier.background(
-            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
-        ),
+        modifier = modifier,
+//        modifier = modifier.background(
+//            color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)
+//        ),
         leadingIcon = leadingIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        shape = RoundedCornerShape(100)
+
     )
 
 }
@@ -314,22 +343,25 @@ fun SongAlbumField(
     TextField(
         value = value,
         onValueChange = onChange,
-        modifier = modifier.background(
-            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
-        ),
+        modifier = modifier,
+//        modifier = modifier.background(
+//            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
+//        ),
         leadingIcon = leadingIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
-        visualTransformation = VisualTransformation.None
+        visualTransformation = VisualTransformation.None,
+        shape = RoundedCornerShape(100)
+
     )
 }
 
 suspend fun checkUpload(song: UploadSong): Boolean {
-    if (song.mp3File != null){
-        Log.d("title",song.title)
+    if (song.mp3File != null) {
+        Log.d("title", song.title)
         val (message, ok) = uploadMusicHandler(
             song.title,
             song.genre,
