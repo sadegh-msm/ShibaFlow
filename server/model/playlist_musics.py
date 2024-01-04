@@ -90,3 +90,15 @@ def delete_playlist_musics_by_playlist_id_and_music_id(playlist_id, music_id):
 
     close_connection(conn)
 
+
+def find_all_songs_with_full_info_by_playlist_id(playlist_id):
+    conn, cursor = connect_to_database()
+
+    cursor.execute(
+        'SELECT musics.music_id, title, publisher_id, album_name, file_path, cover_path, genre, release_date FROM PlaylistMusic, Musics, Users WHERE PlaylistMusic.playlist_id = ? AND PlaylistMusic.music_id = Musics.music_id AND Users.user_id = Musics.publisher_id',
+        (playlist_id[0],))
+    playlist_musics = cursor.fetchall()
+
+    close_connection(conn)
+
+    return playlist_musics
