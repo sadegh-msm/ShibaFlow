@@ -102,3 +102,16 @@ def find_all_songs_with_full_info_by_playlist_id(playlist_id):
     close_connection(conn)
 
     return playlist_musics
+
+
+def check_if_music_in_playlist(playlist_id, music_id):
+    conn, cursor = connect_to_database()
+
+    cursor.execute(
+        'SELECT * FROM PlaylistMusic WHERE playlist_id = ? AND music_id = ?',
+        (playlist_id, music_id))
+    playlist_musics = cursor.fetchall()
+
+    close_connection(conn)
+
+    return playlist_musics if playlist_musics else None

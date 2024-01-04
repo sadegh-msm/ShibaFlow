@@ -682,6 +682,9 @@ def add_music_to_playlist():
     song = music.check_music_exist_by_id(playlist_info['songID'])
 
     belongs = playlist.check_playlist_belong_to_user(playlist_info['userID'], playlist_info['playlistID'])
+    if playlist_musics.check_if_music_in_playlist(playlist_info['playlistID'], playlist_info['songID']) is not None:
+        logger.info('music already in playlist', playlist_info)
+        return jsonify({'error': 'music already in playlist'}), 409
     if belongs is None:
         logger.info('user is not authorized to do this action', playlist_info)
         return jsonify({'error': 'user is not authorized to do this action'}), 401
