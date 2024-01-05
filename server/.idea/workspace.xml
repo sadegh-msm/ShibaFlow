@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="61a72f17-3149-4993-a1f6-8efde07a6abc" name="Changes" comment="change makefile rules">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/music.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/music_interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/music_interaction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/playlist.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/playlist.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/playlist_musics.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/playlist_musics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/util.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +257,8 @@
       <workItem from="1704357024121" duration="1973000" />
       <workItem from="1704359066495" duration="1528000" />
       <workItem from="1704390183436" duration="2288000" />
-      <workItem from="1704478562284" duration="3790000" />
+      <workItem from="1704478562284" duration="4202000" />
+      <workItem from="1704485445811" duration="1833000" />
     </task>
     <task id="LOCAL-00001" summary="add database logic">
       <created>1700820338800</created>

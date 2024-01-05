@@ -156,7 +156,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                 )
 
                 Text(
-                    text = "Album: ${songData.album}",
+                    text = songData.album,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
