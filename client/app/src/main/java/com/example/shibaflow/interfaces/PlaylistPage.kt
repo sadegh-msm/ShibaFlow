@@ -344,7 +344,8 @@ fun PlaylistField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
     )
 }
@@ -404,7 +405,10 @@ fun DescriptionField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent
+
+
         )
     )
 }

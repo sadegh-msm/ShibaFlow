@@ -259,43 +259,12 @@ fun SongTitleField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
     )
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun SongTitleField(
-//    value: String,
-//    onChange: (String) -> Unit,
-//    modifier: Modifier = Modifier,
-//    label: String = "Title",
-//    placeholder: String = "Enter title of song"
-//) {
-//
-//    val focusManager = LocalFocusManager.current
-//    val leadingIcon = @Composable {
-//        Icon(
-//            Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colorScheme.primary
-//        )
-//    }
-//
-//    TextField(
-//        value = value,
-//        onValueChange = onChange,
-//        modifier = modifier.background(
-//            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
-//        ),
-//        leadingIcon = leadingIcon,
-//        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-//        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-//        placeholder = { Text(placeholder) },
-//        label = { Text(label) },
-//        singleLine = true,
-//        visualTransformation = VisualTransformation.None
-//    )
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -331,7 +300,8 @@ fun SongGenreField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
 
     )
@@ -372,7 +342,8 @@ fun SongAlbumField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
 
     )

@@ -250,7 +250,8 @@ fun FirstnameField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
 
     )
@@ -312,7 +313,8 @@ fun LastnameField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+            unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
         )
 
     )
@@ -370,7 +372,8 @@ fun EmailField(
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
-        unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
+            errorIndicatorColor = Color.Transparent
     )
     )
 }
