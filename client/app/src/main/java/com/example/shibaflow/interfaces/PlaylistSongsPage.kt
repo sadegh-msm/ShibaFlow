@@ -103,8 +103,8 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
                                 .padding(20.dp)
                         ) {
                             Text(
-                                text = "This playlist is empty.",
-                                color = MaterialTheme.colorScheme.primary,
+                                text = "This playlist is empty",
+                                color = Color(170,205,230),
                                 style = MaterialTheme.typography.titleMedium
 
                             )
