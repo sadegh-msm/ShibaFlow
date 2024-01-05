@@ -197,7 +197,9 @@ fun SongCard(
                     .padding(end = 16.dp)
             ) {
                 Column(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+
                 ) {
                     Text(
                         text = song.title,
@@ -205,11 +207,20 @@ fun SongCard(
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center
                     )
-//                    Text(
-//                        text = song.album,
-//                        style = MaterialTheme.typography.titleSmall,
-//                        textAlign = TextAlign.Center
-//                    )
+                    Text(
+                        text = "Album "+ song.title,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 15.dp)
+                    )
+                    Text(
+                        text = "Genre: " +song.title,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 15.dp)
+                    )
                 }
             }
 
@@ -237,7 +248,7 @@ fun SongCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
