@@ -5,6 +5,7 @@ import com.google.gson.JsonArray
 object MyInfo {
     var userInformation: UserInformation = UserInformation()
     var song: Song = Song()
+    var uploadSong : UploadSong = UploadSong()
 }
 
 data class SongsResponse(
@@ -26,8 +27,8 @@ data class UploadSong(
     var genre: String = ""
 
 ) {
-    fun isUploadEmpty(): Boolean {
-        return title== "" || mp3File == null
+    fun uploadIsNotEmpty(): Boolean {
+        return title!= "" && mp3File != null && coverImage!= null && genre!= "" && album!=""
     }
 }
 

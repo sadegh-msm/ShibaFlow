@@ -53,6 +53,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.magnifier
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.Alignment
@@ -77,7 +79,10 @@ fun getByteArrayFromUri(context: Context, uri: Uri?): ByteArray? {
 fun UploadForm(navController: NavController) {
 
     var isTitleEmpty by remember { mutableStateOf(false) }
+    var isGenreEmpty by remember { mutableStateOf(false) }
+    var isAlbumEmpty by remember { mutableStateOf(false) }
     var uploadSong by remember { mutableStateOf(UploadSong()) }
+    MyInfo.uploadSong = uploadSong
     val audioUri = remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val audioLauncher =
@@ -109,8 +114,10 @@ fun UploadForm(navController: NavController) {
         )  {
             var isUpload by remember { mutableStateOf(false) }
             val context = LocalContext.current
+            var paddingValue by remember { mutableStateOf(20.dp) }
             if(isUpload){
-                ShowLoadPage()
+                paddingValue = 0.dp
+                CircularProgressIndicator(modifier = Modifier.padding(20.dp))
             }
 
             SongTitleField(
@@ -118,12 +125,13 @@ fun UploadForm(navController: NavController) {
                 onChange = { data -> uploadSong = uploadSong.copy(title = data) },
                 isEmpty = isTitleEmpty,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp, top =  paddingValue)
                     .fillMaxWidth(0.8f)
             )
             SongAlbumField(
                 value = uploadSong.album,
                 onChange = { data -> uploadSong = uploadSong.copy(album = data) },
+                isEmpty = isAlbumEmpty,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .fillMaxWidth(0.8f)
@@ -131,13 +139,14 @@ fun UploadForm(navController: NavController) {
             SongGenreField(
                 value = uploadSong.genre,
                 onChange = { data -> uploadSong = uploadSong.copy(genre = data) },
+                isEmpty = isGenreEmpty,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .fillMaxWidth(0.8f),
             )
 
             ShibaFlowButton(
-                text = audioUri.value?.toString() ?: "Upload music",
+                text = "Upload music",
                 onClick = {},
                 onClickEnable = {
                     audioLauncher.launch("audio/*")
@@ -147,10 +156,17 @@ fun UploadForm(navController: NavController) {
                     .fillMaxWidth(0.8f)
                     .padding(top = 16.dp),
                 color = MaterialTheme.colorScheme.surfaceTint
-            )
+            ){
+                if (uploadSong.mp3File!=null){
+                    Text(text = "Uploaded")
+                }
+                else{
+                    Text(text = "Upload music")
+                }
+            }
 
             ShibaFlowButton(
-                text = imageUri.value?.toString() ?: "Upload cover",
+                text = "Upload cover",
                 onClick = {},
                 onClickEnable = {
                     imageLauncher.launch("image/*")
@@ -160,11 +176,20 @@ fun UploadForm(navController: NavController) {
                     .fillMaxWidth(0.8f)
                     .padding(top = 16.dp),
                 color = MaterialTheme.colorScheme.surfaceTint
-            )
+            ){
+                if (uploadSong.coverImage!=null){
+                    Text(text = "Uploaded")
+                }
+                else{
+                    Text(text = "Upload cover")
+                }
+            }
 
             ShibaFlowButton(
                 onClick = {
                     isTitleEmpty = uploadSong.title == ""
+                    isAlbumEmpty = uploadSong.album == ""
+                    isGenreEmpty= uploadSong.genre == ""
                 },
                 onClickEnable = {
                     isUpload = true
@@ -172,7 +197,7 @@ fun UploadForm(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .padding(top = 16.dp),
-                enabled = !uploadSong.isUploadEmpty(),
+                enabled = !uploadSong.uploadIsNotEmpty(),
                 color = Color(255,124,76),
             ) {
                 if (isUpload) {
@@ -264,90 +289,137 @@ fun SongTitleField(
         )
     )
 }
-
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongGenreField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Genre",
-    placeholder: String = "Enter genre of song"
+    placeholder: String = "Enter genre of song",
+    isEmpty: Boolean = false
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val tint: Color
+    if (isEmpty) {
+        tint = MaterialTheme.colorScheme.error
+
+    } else {
+        tint = MaterialTheme.colorScheme.primary
+    }
+
     val leadingIcon = @Composable {
         Icon(
-            Icons.Default.Person, contentDescription = "", tint = MaterialTheme.colorScheme.primary
+            Icons.Default.Star,
+            contentDescription = "",
+            tint = tint
         )
+    }
+
+    val errorIcon = @Composable {
+        if (isEmpty) {
+            Image(
+                painter = painterResource(id = R.drawable.error_icon),
+                contentDescription = "",
+                modifier = Modifier.width(25.dp)
+            )
+        }
     }
 
     TextField(
         value = value,
         onValueChange = onChange,
         modifier = modifier,
-//        modifier = modifier.background(
-//            color = MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)
-//        ),
         leadingIcon = leadingIcon,
+        trailingIcon = errorIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.hide()
+            }
+        ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
         visualTransformation = VisualTransformation.None,
+        isError = isEmpty,
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
             unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
             errorIndicatorColor = Color.Transparent
         )
-
     )
-
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SongAlbumField(
     value: String,
     onChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String = "Album",
-    placeholder: String = "Enter album of the song"
+    placeholder: String = "Enter Album of the song",
+    isEmpty: Boolean = false
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val tint: Color
+    if (isEmpty) {
+        tint = MaterialTheme.colorScheme.error
+
+    } else {
+        tint = MaterialTheme.colorScheme.primary
+    }
+
     val leadingIcon = @Composable {
         Icon(
-            Icons.Default.List, contentDescription = "", tint = MaterialTheme.colorScheme.primary
+            Icons.Default.List,
+            contentDescription = "",
+            tint = tint
         )
+    }
+
+    val errorIcon = @Composable {
+        if (isEmpty) {
+            Image(
+                painter = painterResource(id = R.drawable.error_icon),
+                contentDescription = "",
+                modifier = Modifier.width(25.dp)
+            )
+        }
     }
 
     TextField(
         value = value,
         onValueChange = onChange,
         modifier = modifier,
-//        modifier = modifier.background(
-//            color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
-//        ),
         leadingIcon = leadingIcon,
+        trailingIcon = errorIcon,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.hide()
+            }
+        ),
         placeholder = { Text(placeholder) },
         label = { Text(label) },
         singleLine = true,
         visualTransformation = VisualTransformation.None,
+        isError = isEmpty,
         shape = RoundedCornerShape(100),
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
             unfocusedIndicatorColor = Color.Transparent, // hide the indicator when unfocused
             errorIndicatorColor = Color.Transparent
         )
-
     )
 }
+
+
+
 
 suspend fun checkUpload(song: UploadSong): Boolean {
     if (song.mp3File != null) {
