@@ -154,7 +154,6 @@ fun SearchView(
     }
 }
 
-
 @Composable
 fun SongCard(
     song: Song,
@@ -176,7 +175,6 @@ fun SongCard(
     }
     var firstTime by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
 
     Card(
         modifier = modifier
@@ -322,8 +320,6 @@ fun SongCard(
                             }
                         }
                     }
-
-
                 }
 
                 if (enableDeleteFromPlaylist) {
@@ -354,24 +350,14 @@ fun SongCard(
                             }
                         }
                     }
-
-
                 }
-
-
-        }
-
-
+            }
         }
         if(playlists!= null){
             CascadingMenu(playlists = playlists, songID = song.id)
         }
     }
-
-
-
 }
-
 
 fun downloadSong(url: String, title: String, context: Context) {
     val request = DownloadManager.Request(Uri.parse(url))
@@ -383,7 +369,6 @@ fun downloadSong(url: String, title: String, context: Context) {
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     downloadManager.enqueue(request)
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -421,14 +406,12 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
                 if (playlists.isNotEmpty()) {
                     playlistState.addAll(playlists)
                 }
-
                 songListState.clear()
                 songListState.addAll(songs)
                 if (!isFiltering) {
                     songFilteredListState.clear()
                     songFilteredListState.addAll(songListState)
                 }
-
                 if (ok == "ok" && ok2 == "ok" && ok3 == "ok") {
                     isLoad = true
                     isLoad2 = true
@@ -486,7 +469,6 @@ fun SongList(navController: NavController, modifier: Modifier = Modifier) {
 fun SongListApp(navController: NavController) {
     SongList(navController)
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

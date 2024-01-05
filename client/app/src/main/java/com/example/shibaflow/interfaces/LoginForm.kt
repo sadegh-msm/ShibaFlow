@@ -153,7 +153,6 @@ fun LoginForm(navHostController: NavHostController) {
                     }
                 } else {
                     Text("Login")
-
                 }
             }
 
@@ -231,7 +230,6 @@ fun UsernameField(
     val tint:Color
     if (isEmpty){
         tint = MaterialTheme.colorScheme.error
-
     }
     else{
         tint = MaterialTheme.colorScheme.primary
@@ -276,7 +274,6 @@ fun UsernameField(
             errorIndicatorColor = Color.Transparent
 //            disabledIndicatorColor = Color.Transparent
         )
-
     )
 }
 
@@ -290,7 +287,6 @@ fun PasswordField(
     label: String = "Password",
     placeholder: String = "Enter your Password"
 ) {
-
     var isPasswordVisible by remember { mutableStateOf(true) }
 
     val leadingIcon = @Composable {
@@ -346,6 +342,7 @@ fun PasswordField(
         )
     )
 }
+
 suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
     val (message,ok) = LoginHandler(
         userInfo.artist_name,
@@ -361,6 +358,7 @@ suspend fun checkLogin(userInfo: UserInformation): Pair<Boolean,String> {
         return Pair(false,message)
     }
 }
+
 suspend fun getAllUserInfo(username:String):Pair<String,UserInformation?>{
     val (userInfo,ok) =  getAllUserInfoHandler(username)
     if (ok == "ok"){
@@ -372,5 +370,4 @@ suspend fun getAllUserInfo(username:String):Pair<String,UserInformation?>{
     else{
         return Pair("",userInfo)
     }
-
 }

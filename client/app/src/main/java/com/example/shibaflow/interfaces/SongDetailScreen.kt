@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.shibaflow.R
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.launch
 
@@ -72,6 +73,19 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
         }
     }
 
+    LaunchedEffect(exoPlayer) {
+        scope.launch {
+            while (true) {
+                delay(1000) // Update every second
+                progress = if (exoPlayer.duration > 0) {
+                    (exoPlayer.currentPosition / exoPlayer.duration.toFloat()).coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
+            }
+        }
+    }
+
     DisposableEffect(exoPlayer) {
         val listener = object : Player.Listener {
             override fun onIsPlayingChanged(playing: Boolean) {
@@ -91,6 +105,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
             exoPlayer.release()
         }
     }
+
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.onPrimaryContainer) {
         Column(
@@ -215,11 +230,6 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
         }
     }
 }
-
-
-
-
-
 
 suspend fun fetchAllSongs(): List<Song> {
     val (songs, _) = getAllSongs()

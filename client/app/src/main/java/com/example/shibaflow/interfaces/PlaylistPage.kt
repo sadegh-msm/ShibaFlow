@@ -1,15 +1,11 @@
 package com.example.shibaflow.interfaces
 
 import ShowLoadPage
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,11 +18,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,7 +45,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,15 +52,11 @@ import androidx.navigation.NavHostController
 import com.example.shibaflow.R
 import com.example.shibaflow.api.addPlaylistHandler
 import com.example.shibaflow.api.deletePlaylistHandler
-import com.example.shibaflow.api.deleteSongHandler
-import com.example.shibaflow.api.getAllSongs
-import com.example.shibaflow.api.getAllUserInfoHandler
 import com.example.shibaflow.api.getPlaylistHandler
 import com.example.shibaflow.api.getPlaylistSongsHandler
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.Playlist
 import com.example.shibaflow.model.Song
-import com.example.shibaflow.model.UserInformation
 import kotlinx.coroutines.launch
 
 
@@ -92,7 +79,7 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
             onChange = { data -> playlistName = data },
             isEmpty= isPlaylistNameEmpty,
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.84f)
                 .padding(all = 16.dp)
         )
         DescriptionField(
@@ -103,7 +90,6 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
                 .padding(all = 8.dp)
         )
         ShibaFlowButton(
-
             onClick = {
                 isPlaylistNameEmpty = playlistName == ""
             },
@@ -141,6 +127,7 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistPage(navHostController: NavHostController){
@@ -194,9 +181,8 @@ fun PlaylistPage(navHostController: NavHostController){
             }
         }
     }
-
-
 }
+
 @Composable
 fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifier: Modifier = Modifier) {
     var isDeleted by remember { mutableStateOf(false) }
@@ -224,7 +210,8 @@ fun PlaylistCard(playlist: Playlist,navHostController: NavHostController,modifie
             )
             Text(
                 text = playlist.description,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(8.dp),
                 style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center
             )
@@ -280,9 +267,6 @@ suspend fun getPlaylists(userID: Int):Pair<List<Playlist>, String>{
         return Pair(emptyList(),"Connection error!")
     }
     return Pair(emptyList(),"")
-
-
-
 }
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -407,8 +391,6 @@ fun DescriptionField(
             focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
             unfocusedIndicatorColor = Color.Transparent,
             errorIndicatorColor = Color.Transparent
-
-
         )
     )
 }

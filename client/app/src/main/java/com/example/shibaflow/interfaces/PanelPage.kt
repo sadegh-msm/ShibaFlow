@@ -41,9 +41,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PanelPage(navController: NavController) {
-
-
-
     var songListState by remember { mutableStateOf(emptyList<Song>()) }
     var isLoad by remember { mutableStateOf(false) }
 
@@ -60,30 +57,25 @@ fun PanelPage(navController: NavController) {
             }
         }
     }
-
-
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        UserInformationSection()
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(top = 16.dp)
         ) {
-            UserInformationSection()
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 16.dp)
-            ) {
-                items(songListState) { song ->
-                    SongCard(
-                        song = song, playlists = null, modifier = Modifier.padding(8.dp), navController = navController,
-                        enableDelete = true)
-                }
+            items(songListState) { song ->
+                SongCard(
+                    song = song, playlists = null, modifier = Modifier.padding(8.dp), navController = navController,
+                    enableDelete = true)
             }
         }
     }
-
-
+}
 
 @Composable
 fun UserInformationSection() {
@@ -105,8 +97,8 @@ fun UserInformationSection() {
         }
 
         UserInfoItem(Icons.Default.Person, "Username", MyInfo.userInformation.artist_name)
-        UserInfoItem(icon = painterResource(id = R.drawable.f), "First Name", MyInfo.userInformation.fname)
-        UserInfoItem(icon = painterResource(id = R.drawable.l), "Last Name", MyInfo.userInformation.lname)
+        UserInfoItem(icon = painterResource(id = R.drawable.id), "Full Name", MyInfo.userInformation.fname + " " + MyInfo.userInformation.lname)
+//        UserInfoItem(icon = painterResource(id = R.drawable.l), "Last Name", MyInfo.userInformation.lname)
         UserInfoItem(Icons.Default.Email, "Email", MyInfo.userInformation.email)
 //        UserInfoItem(icon = painterResource(id = R.drawable.id), "UserID", MyInfo.userInformation.userID.toString())
     }
@@ -139,7 +131,3 @@ fun UserInfoItem(icon: ImageVector, label: String, value: String) {
         Text(text = "$label: $value", color = MaterialTheme.colorScheme.onPrimary)
     }
 }
-
-
-
-
