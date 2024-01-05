@@ -4,12 +4,16 @@ import ShowLoadPage
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,14 +90,27 @@ fun PlaylistSongsPage(playlistID:Int,navHostController: NavHostController){
                 }
                 if (isLoad && songListState.isEmpty()){
                     Column(
-                        modifier = Modifier.background(color = Color.White)
-                            .fillMaxSize()
-                            .padding(16.dp), verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-
+                        modifier = Modifier
+                            .fillMaxWidth() // Fill the maximum width available
+                            .padding(top = 150.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally // Align the child (Box) horizontally to the center
                     ) {
-                        Text(text = "Your playlist is empty.")
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize(0.6f)
+                                .border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(100))
+                                .padding(20.dp)
+                        ) {
+                            Text(
+                                text = "This playlist is empty.",
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.titleMedium
+
+                            )
+                        }
                     }
+
                 }
             }
 
