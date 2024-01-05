@@ -256,6 +256,9 @@ suspend fun getPlaylists(userID: Int):Pair<List<Playlist>, String>{
         if (playlists != null){
             return Pair(playlists,ok)
         }
+        else{
+            return Pair(emptyList(),ok)
+        }
     }
     else if(ok == "bad connection") {
         return Pair(emptyList(),"Connection error!")

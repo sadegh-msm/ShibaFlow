@@ -131,11 +131,20 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                         .clip(CircleShape),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    AsyncImage(
-                        model = songData.coverImage,
-                        contentDescription = "Song Cover",
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if(songData.coverImage == ""){
+                        Image(
+                            painter = painterResource(id = R.drawable.default_cover),
+                            contentDescription = "Song Cover",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                    else{
+                        AsyncImage(
+                            model = songData.coverImage,
+                            contentDescription = "Song Cover",
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -147,7 +156,7 @@ fun SongDetailScreen(songId: Int, navController: NavController) {
                 )
 
                 Text(
-                    text = "from ${songData.album}",
+                    text = "Album: ${songData.album}",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )

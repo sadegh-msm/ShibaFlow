@@ -431,6 +431,11 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
         }
         val ok = if (response.status.value == 200) "ok" else ""
         val content: String = response.bodyAsText().toString()
+//        val myVariable = "{\"ok\":\"no playlists found\"}"
+//        if (content == myVariable){
+//            return Pair(emptyList(),"ok")
+//        }
+
         val gson = Gson()
         val jsonForm = gson.fromJson(content, PlaylistResponse::class.java)
         val playlists: List<Playlist> = jsonForm.playlists.map { jsonArray ->
@@ -446,7 +451,7 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
     } catch (e: ClientRequestException) {
         return Pair(null,"bad connection")
     } catch (e: Exception) {
-        return Pair(null,"bad connection")
+        return Pair(emptyList(),"ok")
     }
 }
 suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):String{
