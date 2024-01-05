@@ -247,7 +247,11 @@ fun FirstnameField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
 
     )
 }
@@ -305,7 +309,11 @@ fun LastnameField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
 
     )
 }
@@ -359,8 +367,11 @@ fun EmailField(
 //        colors = TextFieldDefaults.textFieldColors(
 //            containerColor = if (!isEmailValid) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else MaterialTheme.colorScheme.background
 //        )
-        shape = RoundedCornerShape(100)
-
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+        unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+    )
     )
 }
 

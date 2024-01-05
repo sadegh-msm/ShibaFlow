@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -342,7 +343,11 @@ fun PlaylistField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
     )
 }
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
@@ -398,7 +403,11 @@ fun DescriptionField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
     )
 }
 

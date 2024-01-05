@@ -54,6 +54,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.magnifier
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
@@ -255,7 +256,11 @@ fun SongTitleField(
         singleLine = true,
         visualTransformation = VisualTransformation.None,
         isError = isEmpty,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
     )
 }
 
@@ -323,7 +328,11 @@ fun SongGenreField(
         label = { Text(label) },
         singleLine = true,
         visualTransformation = VisualTransformation.None,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
 
     )
 
@@ -360,7 +369,11 @@ fun SongAlbumField(
         label = { Text(label) },
         singleLine = true,
         visualTransformation = VisualTransformation.None,
-        shape = RoundedCornerShape(100)
+        shape = RoundedCornerShape(100),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent, // hide the indicator when focused
+            unfocusedIndicatorColor = Color.Transparent // hide the indicator when unfocused
+        )
 
     )
 }
