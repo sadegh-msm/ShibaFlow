@@ -132,11 +132,11 @@ fun PlaylistTopAppBar(modifier: Modifier = Modifier,navHostController: NavHostCo
 @Composable
 fun PlaylistPage(navHostController: NavHostController){
     val playlistsState = remember { mutableStateListOf<Playlist>() }
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    if (showError) {
-        ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navHostController)
-    }
+//    var showError by remember { mutableStateOf(false) }
+//    var errorMessage by remember { mutableStateOf("") }
+//    if (showError) {
+//        ErrorDialog(onDismiss = { showError = false }, text = errorMessage, navController = navHostController)
+//    }
     var isLoad by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -151,10 +151,10 @@ fun PlaylistPage(navHostController: NavHostController){
                 if (ok == "ok") {
                     isLoad = true
                 }
-                else if (ok == "Connection error!"){
-                    errorMessage = ok
-                    showError = true
-                }
+//                else if (ok == "Connection error!"){
+//                    errorMessage = ok
+//                    showError = true
+//                }
             }
         }
     }
@@ -168,12 +168,6 @@ fun PlaylistPage(navHostController: NavHostController){
     )
     { it ->
         LazyColumn(modifier = Modifier.padding(all = 10.dp), contentPadding = it) {
-            item {
-                if (!isLoad){
-                    ShowLoadPage()
-                }
-
-            }
             if (isLoad) {
                 items(playlistsState) { playlist ->
                     PlaylistCard(playlist = playlist, navHostController = navHostController,modifier = Modifier.padding(1.dp))

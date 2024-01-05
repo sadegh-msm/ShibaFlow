@@ -208,14 +208,14 @@ fun SongCard(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Album "+ song.title,
+                        text = "Album: "+ song.album,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 15.dp)
                     )
                     Text(
-                        text = "Genre: " +song.title,
+                        text = "Genre: " +song.genre,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
