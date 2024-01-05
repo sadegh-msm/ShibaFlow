@@ -13,7 +13,7 @@ CREATE TABLE PlaylistMusic (
 """
 
 
-def connect_to_database(database_name='./model/db/Flow.db'):
+def connect_to_database(database_name='./model/db/ShibaFlow.db'):
     """
     Connect to the SQLite database and return the connection and cursor.
     """

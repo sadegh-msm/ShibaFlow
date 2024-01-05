@@ -8,9 +8,6 @@ from utils import util
 import random
 import os
 
-hashem = []
-hashem
-
 app = Flask(__name__)
 logging.basicConfig(level=logging.NOTSET, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
