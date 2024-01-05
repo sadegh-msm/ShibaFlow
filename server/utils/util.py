@@ -1,4 +1,4 @@
-from model import music_interaction
+from model import music_interaction, user, music, playlist, playlist_musics
 import hashlib
 import re
 
@@ -64,3 +64,12 @@ def is_valid_email(email):
     """
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, email)
+
+
+def create_all_tables():
+    n, cu = user.connect_to_database('./model/db/ShibaFlow.db')
+    user.create_user_table(cu)
+    music.create_music(cu)
+    music_interaction.create_music(cu)
+    playlist.create_playlist_table(cu)
+    playlist_musics.create_playlist_musics_table(cu)
