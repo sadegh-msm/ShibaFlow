@@ -323,7 +323,7 @@ def get_all_songs():
         return jsonify(response_data), 200
     else:
         logger.info('songs not found')
-        return jsonify({'error': 'songs not found'}), 200
+        return jsonify({'error': 'songs not found'}), 404
 
 
 @app.route("/songbyid/<music_filename>", methods=['GET'])
@@ -550,7 +550,7 @@ def get_songs_by_artist(user_id):
             return jsonify({'ok': 'songs found', 'songs': musics}), 200
         else:
             logger.info('no songs found', user_id)
-            return jsonify({'ok': 'no songs found'}), 200
+            return jsonify({'ok': 'no songs found'}), 404
     else:
         logger.info('artist not found', user_id)
         return jsonify({'error': 'artist not found'}), 404
@@ -605,7 +605,7 @@ def get_playlists_by_user():
             return jsonify({'ok': 'playlists found', 'playlists': playlists}), 200
         else:
             logger.info('no playlists found', playlist_info)
-            return jsonify({'ok': 'no playlists found'}), 200
+            return jsonify({'ok': 'no playlists found'}), 404
     else:
         logger.info('artist not found', playlist_info)
         return jsonify({'error': 'artist not found'}), 404
