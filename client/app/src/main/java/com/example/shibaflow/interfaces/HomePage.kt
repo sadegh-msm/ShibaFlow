@@ -365,7 +365,8 @@ fun SongCard(
             }
         }
         if(playlists!= null){
-            CascadingMenu(playlists = playlists, songID = song.id)
+            val scope = rememberCoroutineScope()
+            CascadingMenu(playlists = playlists, songID = song.id,scope = scope)
         }
     }
 }

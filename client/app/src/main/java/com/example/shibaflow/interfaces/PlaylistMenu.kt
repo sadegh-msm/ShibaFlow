@@ -29,11 +29,12 @@ import androidx.compose.ui.unit.sp
 import com.example.shibaflow.api.addSongToPlaylistHandler
 import com.example.shibaflow.model.MyInfo
 import com.example.shibaflow.model.Playlist
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun CascadingMenu(playlists:List<Playlist>,songID:Int) {
+fun CascadingMenu(playlists:List<Playlist>,songID:Int,scope :CoroutineScope) {
     var selectedPlaylist by remember { mutableStateOf<Playlist?>(null) }
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -47,6 +48,8 @@ fun CascadingMenu(playlists:List<Playlist>,songID:Int) {
             onClick = {
 
             }
+            ,
+            scope
         )
     }
 }
@@ -58,7 +61,8 @@ fun CascadingDropdown(
     onItemSelected: (Playlist) -> Unit,
     songID:Int,
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    scope: CoroutineScope
 ) {
     var expanded by remember { mutableStateOf(false) }
     var isAdded by remember { mutableStateOf(false) }
@@ -98,7 +102,7 @@ fun CascadingDropdown(
                         text = { Text(text = item.name) }
                     )
                 }
-                val scope = rememberCoroutineScope()
+
                 val context = LocalContext.current
                 if (isAdded){
                     LaunchedEffect(key1 = playlistState) {
@@ -109,8 +113,8 @@ fun CascadingDropdown(
                                 Toast.makeText(context, "Song added successfully", Toast.LENGTH_SHORT).show()
                                 isAdded = false
                             } else {
-                                isAdded = false
                                 Toast.makeText(context, "Can not add song", Toast.LENGTH_SHORT).show()
+                                isAdded = false
                             }
                         }
                     }

@@ -32,7 +32,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.isSuccess
-
+import kotlinx.coroutines.withTimeout
 
 var ip_address="37.32.11.62"
 var port_address="8080"
@@ -145,31 +145,34 @@ suspend fun uploadMusicHandler(
     try {
         val client = HttpClient(CIO)
         val url = "http://$ip_address:$port_address"
-        val response: HttpResponse = client.submitFormWithBinaryData(
-            url = "$url/song",
-            formData = formData {
-                append("artist_name", artistName)
-                append("password", password)
-                append("title", title)
-                append("genre", genre)
-                append("duration", "")
-                append("album_name", albumName)
-                append("music", musicURI, Headers.build {
-                    append(HttpHeaders.ContentType, "audio/mpeg")
-                    append(HttpHeaders.ContentDisposition, "filename=\"music.mp3\"")
-                })
-                if (imageURI != null) {
-                    append("cover", imageURI, Headers.build {
-                        append(HttpHeaders.ContentType, "image/jpg")
-                        append(HttpHeaders.ContentDisposition, "filename=\"cover.jpg\"")
+        return withTimeout(1000000) {
+            val response: HttpResponse = client.submitFormWithBinaryData(
+                url = "$url/song",
+                formData = formData {
+                    append("artist_name", artistName)
+                    append("password", password)
+                    append("title", title)
+                    append("genre", genre)
+                    append("duration", "")
+                    append("album_name", albumName)
+                    append("music", musicURI, Headers.build {
+                        append(HttpHeaders.ContentType, "audio/mpeg")
+                        append(HttpHeaders.ContentDisposition, "filename=\"music.mp3\"")
                     })
+                    if (imageURI != null) {
+                        append("cover", imageURI, Headers.build {
+                            append(HttpHeaders.ContentType, "image/jpg")
+                            append(HttpHeaders.ContentDisposition, "filename=\"cover.jpg\"")
+                        })
+                    }
                 }
+            )
+            if (response.status.value == 201){
+                Pair("Your information is correct.", "ok")
+            } else{
+                Pair("Your information is incorrect.", "")
             }
-        )
-        client.close()
-        return when (response.status.value) {
-            201 -> Pair("Your information is correct.", "ok")
-            else -> Pair("Your information is incorrect.", "")
+
         }
     } catch (e: ClientRequestException) {
         return Pair("Client request error: ${e.response.status}", "bad connection")
@@ -451,29 +454,35 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
     } catch (e: ClientRequestException) {
         return Pair(null,"bad connection")
     } catch (e: Exception) {
-        return Pair(emptyList(),"ok")
+        return Pair(null,"bad connection")
     }
 }
 suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):String{
     try {
-        val client = HttpClient(CIO)
         val url = "http://$ip_address:$port_address"
-        val response: HttpResponse = client.post("$url/addplaylist") {
-            setBody(MultiPartFormDataContent(parts = formData {
-                append("userID",userID)
-                append("playlistID",playlistID)
-                append("songID", songID)
-            }))
-        }
-
-        return if (response.status.value == 200){
-            "ok"
-        } else{
-            ""
+        val client = HttpClient(CIO)
+        Log.d("check 3","song add su")
+        return withTimeout(1000000) { // Timeout of 10 seconds
+            val response: HttpResponse = client.post("$url/addplaylist") {
+                setBody(MultiPartFormDataContent(parts = formData {
+                    append("userID",userID)
+                    append("playlistID",playlistID)
+                    append("songID", songID)
+                }))
+            }
+            Log.d("check 4",response.toString())
+            Log.d("check me",response.status.value.toString())
+            if (response.status.value == 200){
+                "ok"
+            } else{
+                ""
+            }
         }
     } catch (e: ClientRequestException) {
+        Log.d("check exc2",e.toString())
         return "bad connection"
     } catch (e: Exception) {
+        Log.d("check exc",e.toString())
         return "bad connection"
     }
 
