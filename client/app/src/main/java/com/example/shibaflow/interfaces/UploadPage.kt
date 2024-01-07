@@ -189,6 +189,9 @@ fun UploadForm(navController: NavController) {
                     isGenreEmpty= uploadSong.genre == ""
                 },
                 onClickEnable = {
+                    if (!MyInfo.uploadSong.uploadIsNotEmpty()){
+                        Log.d("check upload","checked")
+                    }
                     isUpload = true
                 },
                 modifier = Modifier
