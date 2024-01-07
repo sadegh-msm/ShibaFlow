@@ -433,24 +433,26 @@ suspend fun getPlaylistHandler(userID: Int):Pair<List<Playlist>?, String>{
             }))
         }
         val ok = if (response.status.value == 200) "ok" else ""
-        val content: String = response.bodyAsText().toString()
-//        val myVariable = "{\"ok\":\"no playlists found\"}"
-//        if (content == myVariable){
-//            return Pair(emptyList(),"ok")
-//        }
+        if(ok == "ok"){
+            val content: String = response.bodyAsText().toString()
 
-        val gson = Gson()
-        val jsonForm = gson.fromJson(content, PlaylistResponse::class.java)
-        val playlists: List<Playlist> = jsonForm.playlists.map { jsonArray ->
-            Playlist(
-                id = jsonArray[0].asInt,
-                name = jsonArray[1].asString,
-                date= jsonArray[2].asString,
-                userID = jsonArray[3].asInt,
-                description = jsonArray[4].asString,
-                nField = jsonArray[5].asString,)
+
+            val gson = Gson()
+            val jsonForm = gson.fromJson(content, PlaylistResponse::class.java)
+            val playlists: List<Playlist> = jsonForm.playlists.map { jsonArray ->
+                Playlist(
+                    id = jsonArray[0].asInt,
+                    name = jsonArray[1].asString,
+                    date= jsonArray[2].asString,
+                    userID = jsonArray[3].asInt,
+                    description = jsonArray[4].asString,
+                    nField = jsonArray[5].asString,)
+            }
+            return Pair(playlists,ok)
         }
-        return Pair(playlists,ok)
+        else{
+            return Pair(emptyList(),"ok")
+        }
     } catch (e: ClientRequestException) {
         return Pair(null,"bad connection")
     } catch (e: Exception) {
@@ -461,8 +463,7 @@ suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):Strin
     try {
         val url = "http://$ip_address:$port_address"
         val client = HttpClient(CIO)
-        Log.d("check 3","song add su")
-        return withTimeout(1000000) { // Timeout of 10 seconds
+        return withTimeout(100000) { // Timeout of 10 seconds
             val response: HttpResponse = client.post("$url/addplaylist") {
                 setBody(MultiPartFormDataContent(parts = formData {
                     append("userID",userID)
@@ -470,8 +471,6 @@ suspend fun addSongToPlaylistHandler(playlistID:Int,songID:Int,userID:Int):Strin
                     append("songID", songID)
                 }))
             }
-            Log.d("check 4",response.toString())
-            Log.d("check me",response.status.value.toString())
             if (response.status.value == 200){
                 "ok"
             } else{
