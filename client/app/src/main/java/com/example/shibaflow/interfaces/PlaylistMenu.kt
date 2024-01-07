@@ -108,7 +108,7 @@ fun CascadingDropdown(
                     LaunchedEffect(key1 = playlistState) {
                         scope.launch {
 
-                            val result = addSongToPlaylistHandler(playlistID = playlistState.id,songID,MyInfo.userInformation.userID)
+                            val result = addSongToPlaylistHandler(playlistID = playlistState.id, songID = songID, MyInfo.userInformation.userID)
                             if (result == "ok") {
                                 Toast.makeText(context, "Song added successfully", Toast.LENGTH_SHORT).show()
                                 isAdded = false
