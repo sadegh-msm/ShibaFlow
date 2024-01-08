@@ -81,15 +81,15 @@ The client-side application is an Android-based music player.
 The ShibaFlow app features a user-centric interface designed for a smooth and engaging music listening experience. Here is a brief description of the user interface, accompanied by images from the app:
 
 1. **Music Browsing Screen**
-   - ![Music Browsing Screen](/assets/photo_1402-10-18 12.18.26.jpeg)
+   <img src="./assets/photo_1402-10-18 12.18.26.jpeg" width="300" height="500" />
    - This screen showcases a list of songs with album art previews, making it visually appealing and easy to navigate. Users can interact with tracks directly to play music, add to playlists, or download for offline listening. The search bar at the top allows for quick filtering to find specific tracks or albums.
 
 2. **Playlist Management Screen**
-   - ![Playlist Management Screen](/assets/photo_1402-10-18 12.18.28.jpeg)
+   <img src="./assets/photo_1402-10-18 12.18.28.jpeg" width="300" height="500" />
    - On this screen, users can create and manage their playlists. The interface provides simple controls for adding new playlists and customizing them with descriptions. Existing playlists are displayed with the option to edit or delete, providing a straightforward way to manage the user's music collections.
 
 3. **User Profile Screen**
-   - ![User Profile Screen](/assets/photo_1402-10-18 12.18.31.jpeg)
+   <img src="./assets/photo_1402-10-18 12.18.31.jpeg" width="300" height="500" />
    - The profile screen offers personalized information for the user, including username, full name, and email. It also presents a summary of the user's music preferences and recently played tracks, enhancing the personalized experience of the app.
 
 The images illustrate the vibrant and coherent color scheme of the app, reflecting a modern and dynamic aesthetic that resonates with music enthusiasts. The rounded corners and iconography contribute to a friendly and accessible user environment, ensuring an enjoyable navigation experience.
