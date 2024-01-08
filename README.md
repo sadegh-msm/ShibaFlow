@@ -1,6 +1,4 @@
 # ShibaFlow
-
-## Introduction
 ShibaFlow is a modern music player with an intuitive Android interface. Designed for ease of use and seamless music experience, ShibaFlow provides a unique way to enjoy your favorite tunes.
 
 ## Installation and Setup
