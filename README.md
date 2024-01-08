@@ -2,11 +2,6 @@
 ShibaFlow is a modern music player with an intuitive Android interface. Designed for ease of use and seamless music experience, ShibaFlow provides a unique way to enjoy your favorite tunes.
 
 ## Installation and Setup
-Given the typical structure of Android and Python server projects, I can provide you with a general template for installation steps. However, for precise instructions, you would need to tailor these steps based on the specific requirements and configurations of the ShibaFlow project. Here's a general guideline:
-
----
-
-## Installation and Setup
 
 ### Prerequisites
 Before installing ShibaFlow, ensure you have the following prerequisites installed:
