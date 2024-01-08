@@ -112,7 +112,3 @@ The ShibaFlow server utilizes a range of APIs and services to provide a robust a
 
 These services are integral to the operation of the ShibaFlow server, facilitating user registration and login, song uploads, streaming, and other user interactions such as liking, commenting, and playlist management.
 
-## Contributing
-Guidelines for contributing to the ShibaFlow project. Include coding standards, how to submit pull requests, and any other relevant information for potential contributors.
-
-
