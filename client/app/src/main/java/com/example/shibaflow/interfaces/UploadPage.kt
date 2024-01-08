@@ -77,7 +77,6 @@ fun getByteArrayFromUri(context: Context, uri: Uri?): ByteArray? {
 
 @Composable
 fun UploadForm(navController: NavController) {
-
     var isTitleEmpty by remember { mutableStateOf(false) }
     var isGenreEmpty by remember { mutableStateOf(false) }
     var isAlbumEmpty by remember { mutableStateOf(false) }
@@ -114,10 +113,8 @@ fun UploadForm(navController: NavController) {
         )  {
             var isUpload by remember { mutableStateOf(false) }
             val context = LocalContext.current
-            var paddingValue by remember { mutableStateOf(20.dp) }
             if(isUpload){
-                paddingValue = 0.dp
-                CircularProgressIndicator(modifier = Modifier.padding(20.dp))
+                CircularProgressIndicator(modifier = Modifier.padding(top =10.dp))
             }
 
             SongTitleField(
@@ -125,7 +122,7 @@ fun UploadForm(navController: NavController) {
                 onChange = { data -> uploadSong = uploadSong.copy(title = data) },
                 isEmpty = isTitleEmpty,
                 modifier = Modifier
-                    .padding(bottom = 16.dp, top =  paddingValue)
+                    .padding(bottom = 16.dp, top =  20.dp)
                     .fillMaxWidth(0.8f)
             )
             SongAlbumField(
@@ -192,6 +189,9 @@ fun UploadForm(navController: NavController) {
                     isGenreEmpty= uploadSong.genre == ""
                 },
                 onClickEnable = {
+                    if (!MyInfo.uploadSong.uploadIsNotEmpty()){
+                        Log.d("check upload","checked")
+                    }
                     isUpload = true
                 },
                 modifier = Modifier
